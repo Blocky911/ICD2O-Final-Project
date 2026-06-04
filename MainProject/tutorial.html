@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tag Royale — How to Play</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="tutorial.css" />
+</head>
+<body>
+
+  <div class="scanlines"></div>
+  <div class="bg-grid"></div>
+
+  <main class="tut-container">
+
+    <!-- TOP NAV -->
+    <nav class="tut-nav">
+      <a href="index.html" class="back-btn">← BACK</a>
+      <h1 class="tut-title">HOW TO PLAY</h1>
+    </nav>
+
+    <!-- SPLIT LAYOUT -->
+    <div class="tut-layout">
+
+      <!-- LEFT: Step list -->
+      <section class="tut-steps">
+
+        <div class="tut-step">
+          <span class="step-num">01</span>
+          <div class="step-body">
+            <div class="step-heading">Grab the Crown</div>
+            <div class="step-text">Tag your opponent to steal the crown from them. Whoever holds the crown earns 10 points per second — that's 1 point every 0.1 seconds.</div>
+          </div>
+        </div>
+
+        <div class="tut-step">
+          <span class="step-num">02</span>
+          <div class="step-body">
+            <div class="step-heading">Earn Coins While Playing</div>
+            <div class="step-text">Coins are generated passively throughout the match. Spend them wisely — each powerup has a fixed cost and its own cooldown timer.</div>
+          </div>
+        </div>
+
+        <div class="tut-step">
+          <span class="step-num">03</span>
+          <div class="step-body">
+            <div class="step-heading">Use Powerups Strategically</div>
+            <div class="step-text">Activate powerups at the right moment. Stun your rival with a Rotten Tomato, blast them with a Fart Bomb, or shield yourself with the Untaggable Potion.</div>
+          </div>
+        </div>
+
+        <div class="tut-step">
+          <span class="step-num">04</span>
+          <div class="step-body">
+            <div class="step-heading">Watch Your Stamina</div>
+            <div class="step-text">Running drains stamina. When empty, you slow to a crawl. Use an Energy Bar to keep sprinting — or time your bursts to stay ahead.</div>
+          </div>
+        </div>
+
+        <div class="tut-step">
+          <span class="step-num">05</span>
+          <div class="step-body">
+            <div class="step-heading">Mind the Gummy Bear Crash</div>
+            <div class="step-text">The Gummy Bears give a 15s speed surge — but the 8s crash afterward can leave you wide open. Plan for the comedown before you pop one.</div>
+          </div>
+        </div>
+
+        <div class="tut-step">
+          <span class="step-num">06</span>
+          <div class="step-body">
+            <div class="step-heading">The Match Lasts 2:30</div>
+            <div class="step-text">Each round is two and a half minutes. The player with the most points when the clock hits zero wins. Every second holding the crown counts.</div>
+          </div>
+        </div>
+
+        <div class="tut-step">
+          <span class="step-num">07</span>
+          <div class="step-body">
+            <div class="step-heading">Crown Holder Gets Extra Tools</div>
+            <div class="step-text">The Untaggable Potion is exclusive to the crown holder. If tagged while active, you absorb the hit and keep the crown — then a brief invincibility window kicks in.</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT: Image + Next button -->
+      <aside class="tut-visual">
+        <button class="btn btn-ghost tut-next-btn">NEXT STEP →</button>
+        <div class="tut-image-wrap">
+          <!--
+            IMAGE PLACEHOLDER
+            Replace the src below with your image filename.
+            Keep it in the same folder as this HTML file.
+            Recommended size: 800×500px or similar landscape ratio.
+            Example: src="tutorial-screenshot.png"
+          -->
+          <img
+            src="YOUR_IMAGE_HERE.png"
+            alt="Tutorial screenshot"
+            class="tut-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="tut-image-placeholder">
+            <span class="placeholder-label">YOUR_IMAGE_HERE.png</span>
+            <span class="placeholder-sub">Replace src attribute in tutorial.html</span>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+  </main>
+
+</body>
+</html>
