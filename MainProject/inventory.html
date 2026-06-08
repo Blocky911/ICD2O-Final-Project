@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tag Royale — Inventory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="inventory.css" />
+</head>
+<body>
+
+  <div class="scanlines"></div>
+  <div class="bg-grid"></div>
+
+  <main class="inventory-outer">
+    <h1 class="inventory-main-title">Inventory</h1>
+
+    <div class="inventory-container">
+      
+      <header class="inv-nav">
+        <a href="index.html" class="inv-nav-btn">back</a>
+        <a href="shop.html" class="inv-nav-btn">shop</a>
+      </header>
+
+      <div class="inv-content">
+        
+        <div class="inv-grid-wrapper">
+          <div class="inv-grid">
+            
+            <div class="inv-slot active" data-item="energy">
+              <span class="slot-art">⚡</span>
+              <span class="slot-name">Energy Bar</span>
+            </div>
+
+            <div class="inv-slot" data-item="tomatoes">
+              <span class="slot-art">🍅</span>
+              <span class="slot-name">Rotten Tomatoes</span>
+            </div>
+
+            <div class="inv-slot" data-item="gummy">
+              <span class="slot-art">🧸</span>
+              <span class="slot-name">Gummy Bears</span>
+            </div>
+
+            <div class="inv-slot" data-item="fart">
+              <span class="slot-art">💨</span>
+              <span class="slot-name">Fart Bomb</span>
+            </div>
+
+            <div class="inv-slot" data-item="potion">
+              <span class="slot-art">🧪</span>
+              <span class="slot-name">Untaggable Potion</span>
+            </div>
+
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+            <div class="inv-slot empty"></div>
+
+          </div>
+          
+          <div class="inv-scroll-accent">
+            <div class="accent-thumb"></div>
+          </div>
+        </div>
+
+        <aside class="inv-inspect">
+          
+          <div class="inspect-visual-box">
+            <div class="inspect-art-display">⚡</div>
+            <div class="inspect-title-tag">Energy Bar</div>
+          </div>
+
+          <div class="inspect-desc-box">
+            <p class="desc-text">
+              Provides a critical quick burst of stamina, immediately restoring your active sprint reserves to keep you moving at top speed.
+            </p>
+          </div>
+
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

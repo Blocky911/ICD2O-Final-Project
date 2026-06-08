@@ -1,0 +1,215 @@
+/* ── Inventory screen styling layout ── */
+
+:root {
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --border: rgba(255, 255, 255, 0.15);
+  --surface: rgba(20, 20, 20, 0.8);
+  --text: #ffffff;
+  --text-muted: #8a8a8a;
+  --gold: #d4af37;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #0c0c0c;
+  color: var(--text);
+  margin: 0;
+}
+
+/* Page title centered outside the bounding window frame */
+.inventory-main-title {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 2.2rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin: 0 0 1.5rem 0;
+}
+
+.inventory-outer {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* Main inner bounding window container box from mockup */
+.inventory-container {
+  border: 1px solid var(--border);
+  background: #0d0d0d;
+  padding: 2.5rem;
+  box-sizing: border-box;
+}
+
+/* ── Top Header Control Items ── */
+.inv-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3.5rem;
+}
+
+.inv-nav-btn {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--text);
+  padding: 0.25rem 3rem;
+  background: transparent;
+  text-transform: lowercase;
+  transition: background 0.15s, color 0.15s;
+}
+
+.inv-nav-btn:hover {
+  background: var(--text);
+  color: #000;
+}
+
+/* ── Split Window Columns ── */
+.inv-content {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 3.5rem;
+  align-items: start;
+}
+
+/* ── Left Grid and Custom Bar Accent System ── */
+.inv-grid-wrapper {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+  flex-grow: 1;
+}
+
+/* Grid matrix cell items */
+.inv-slot {
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--text);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  padding: 0.25rem;
+  transition: background 0.1s;
+}
+
+.inv-slot:not(.empty):hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Selected Active cell highlighted ring */
+.inv-slot.active {
+  outline: 2px solid var(--text);
+  outline-offset: -1px;
+}
+
+.inv-slot.empty {
+  border-color: rgba(255, 255, 255, 0.2);
+  cursor: default;
+}
+
+/* Icon / Emoji placement graphics inside grids */
+.slot-art {
+  font-size: 1.5rem;
+}
+
+/* Text is hidden inside structural tiles to follow layout mockup reference cleanly */
+.slot-name {
+  display: none;
+}
+
+/* Structural Accent Rail Line from wireframe mockup sketch */
+.inv-scroll-accent {
+  width: 14px;
+  border: 1px solid var(--text);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.accent-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 25%;
+  background: var(--text);
+}
+
+/* ── Right Column Inspect Modules ── */
+.inv-inspect {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Top item preview block matrix container */
+.inspect-visual-box {
+  width: 100%;
+  aspect-ratio: 1.45 / 1;
+  border: 1px solid var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  position: relative;
+}
+
+.inspect-art-display {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.inspect-title-tag {
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+/* Bottom summary info textbox block template */
+.inspect-desc-box {
+  border: 1px solid var(--text);
+  min-height: 120px;
+  padding: 1rem;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.desc-text {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Responsive adjustment splits */
+@media (max-width: 850px) {
+  .inv-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .inv-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .inv-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
