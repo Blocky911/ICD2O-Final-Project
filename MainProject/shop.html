@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tag Royal(e) - Shop</title>
+  <title>Tag Royale - Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css"> 
   <link rel="stylesheet" href="shop.css">
 </head>
 <body>
+
+  <div class="scanlines"></div>
+  <div class="bg-grid"></div>
 
   <div class="shop-container">
     
@@ -84,60 +90,86 @@
       <section class="shop-section">
         <h2 class="section-heading">PLAYER SKINS</h2>
         <div class="item-grid">
+          
           <div class="item-card owned">
             <div class="card-header">Default Red</div>
-            <div class="card-visual"><div class="placeholder-art">🔴</div></div>
+            <div class="card-visual">
+              <div class="placeholder-art">🔴</div>
+            </div>
             <div class="card-stats">Base Character</div>
             <button class="buy-btn equipped">EQUIPPED</button>
           </div>
+
           <div class="item-card">
             <div class="card-header">Nugget</div>
-            <div class="card-visual"><div class="placeholder-art">🍗</div></div>
+            <div class="card-visual">
+              <div class="placeholder-art">🍗</div>
+            </div>
             <div class="card-stats">Cosmetic Skin</div>
             <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">🪙 15</button>
           </div>
+
           <div class="item-card">
             <div class="card-header">George the Monkey</div>
-            <div class="card-visual"><div class="placeholder-art">🐒</div></div>
+            <div class="card-visual">
+              <div class="placeholder-art">🐒</div>
+            </div>
             <div class="card-stats">Cosmetic Skin</div>
             <button class="buy-btn" onclick="buyItem('skin_george', 25)">🪙 25</button>
           </div>
+
           <div class="item-card">
             <div class="card-header">John Pork</div>
-            <div class="card-visual"><div class="placeholder-art">🐷</div></div>
+            <div class="card-visual">
+              <div class="placeholder-art">🐷</div>
+            </div>
             <div class="card-stats">Cosmetic Skin</div>
             <button class="buy-btn" onclick="buyItem('skin_john', 50)">🪙 50</button>
           </div>
+
         </div>
       </section>
 
       <section class="shop-section">
         <h2 class="section-heading">BOT SKINS</h2>
         <div class="item-grid">
+          
           <div class="item-card owned">
             <div class="card-header">Default Blue</div>
-            <div class="card-visual"><div class="placeholder-art">🔵</div></div>
+            <div class="card-visual">
+              <div class="placeholder-art">🔵</div>
+            </div>
             <div class="card-stats">Base Enemy</div>
             <button class="buy-btn equipped">EQUIPPED</button>
           </div>
+
           <div class="item-card">
             <div class="card-header">Food Stealer</div>
-            <div class="card-visual"><div class="placeholder-art">🦝</div></div>
+            <div class="card-visual">
+              <div class="placeholder-art">🦝</div>
+            </div>
             <div class="card-stats">Cosmetic Skin</div>
             <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">🪙 15</button>
           </div>
+
           <div class="item-card">
             <div class="card-header">Mr. McRae</div>
-            <div class="card-visual"><div class="placeholder-art">👨‍🏫</div></div>
+            <div class="card-visual">
+              <div class="placeholder-art">👨‍🏫</div>
+            </div>
             <div class="card-stats">Cosmetic Skin</div>
             <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">🪙 30</button>
           </div>
+
           <div class="item-card">
             <div class="card-header">Evil Nugget</div>
-            <div class="card-visual"><div class="placeholder-art">😈</div></div>
+            <div class="card-visual">
+              <div class="placeholder-art">😈</div>
+            </div>
             <div class="card-stats">Cosmetic Skin</div>
             <button class="buy-btn" onclick="buyItem('bot_evil', 45)">🪙 45</button>
           </div>
+
         </div>
       </section>
 

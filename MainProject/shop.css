@@ -1,5 +1,24 @@
 /* ── Shop page extension using your custom variables ── */
 
+/* Global Fallbacks inside this file to prevent default Arial bugs */
+:root {
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --border: rgba(255, 255, 255, 0.15);
+  --surface: rgba(20, 20, 20, 0.8);
+  --text: #ffffff;
+  --text-muted: #8a8a8a;
+  --gold: #d4af37;
+  --gold-dim: #aa8c2c;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #0c0c0c;
+  color: var(--text);
+  margin: 0;
+}
+
 .shop-container {
   position: relative;
   z-index: 2;
@@ -20,11 +39,30 @@
   padding-bottom: 1rem;
 }
 
+.back-btn {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.3rem 0.8rem;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.back-btn:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
 .shop-title {
   font-family: var(--font-display);
   font-size: 1.6rem;
   letter-spacing: 0.12em;
   color: var(--gold);
+  margin: 0;
 }
 
 .currency-box {
@@ -56,11 +94,12 @@
 
 .section-heading {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   letter-spacing: 0.1em;
   color: var(--text);
   border-left: 2px solid var(--gold);
   padding-left: 0.75rem;
+  margin: 0;
 }
 
 /* ── Horizontal Scrolling Card Deck ── */
@@ -100,13 +139,13 @@
 }
 
 .item-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
 .card-header {
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 1rem;
   letter-spacing: 0.06em;
   color: var(--text);
   padding: 0.75rem;
@@ -121,7 +160,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 /* Wireframe cross styling lines */
@@ -163,11 +202,13 @@
 
 .info-btn:hover {
   color: var(--text);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .card-stats {
+  font-family: var(--font-body);
   font-size: 0.75rem;
+  font-weight: 500;
   color: var(--text-muted);
   text-align: center;
   padding: 0.6rem;
@@ -178,7 +219,7 @@
 /* ── Buy Action Buttons ── */
 .buy-btn {
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   letter-spacing: 0.08em;
   background: transparent;
   color: var(--gold);
@@ -198,10 +239,11 @@
 
 /* Owned/Equipped state buttons */
 .item-card.owned {
-  border-color: var(--border);
+  border-color: rgba(212, 175, 55, 0.3);
 }
 
 .buy-btn.equipped {
+  font-family: var(--font-display);
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-muted);
   border-color: var(--border);
