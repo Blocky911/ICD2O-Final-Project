@@ -11,7 +11,7 @@
   gap: 2.5rem;
 }
 
-/* ── Shop Custom Navbar Override Elements ── */
+/* ── Shop Custom Navbar Elements ── */
 .shop-nav {
   display: flex;
   align-items: center;
@@ -72,7 +72,7 @@
   scroll-behavior: smooth;
 }
 
-/* Custom slick styled scrollbar matching theme design */
+/* Scrollbar customizations */
 .item-grid::-webkit-scrollbar {
   height: 4px;
 }
@@ -124,7 +124,7 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Wireframe decorative crossed lines using linear-gradients */
+/* Wireframe cross styling lines */
 .card-visual::before {
   content: "";
   position: absolute;
@@ -141,7 +141,7 @@
   z-index: 1;
 }
 
-/* Wireframe style small info button */
+/* Small info button styling */
 .info-btn {
   position: absolute;
   bottom: 0.5rem;
@@ -196,7 +196,7 @@
   color: #fff;
 }
 
-/* Owned and Equipped Button Status Overrides */
+/* Owned/Equipped state buttons */
 .item-card.owned {
   border-color: var(--border);
 }

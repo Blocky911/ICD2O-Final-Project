@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tag Royal(e) - Shop</title> 
+  <title>Tag Royal(e) - Shop</title>
+  <link rel="stylesheet" href="styles.css"> 
   <link rel="stylesheet" href="shop.css">
 </head>
 <body>
@@ -68,12 +69,10 @@
           </div>
 
           <div class="item-card">
-            <div class="card-visual-wrap">
-              <div class="card-header">Untagable Potion</div>
-              <div class="card-visual">
-                <div class="placeholder-art">🧪</div>
-                <button class="info-btn" title="Makes you completely immune to tags!">i</button>
-              </div>
+            <div class="card-header">Untagable Potion</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🧪</div>
+              <button class="info-btn" title="Makes you completely immune to tags!">i</button>
             </div>
             <div class="card-stats">Invincibility</div>
             <button class="buy-btn" onclick="buyItem('potion', 10)">🪙 10</button>
@@ -99,7 +98,7 @@
           </div>
           <div class="item-card">
             <div class="card-header">George the Monkey</div>
-            <div class="card-visual"><div class="placeholder-art">🇲🐒</div></div>
+            <div class="card-visual"><div class="placeholder-art">🐒</div></div>
             <div class="card-stats">Cosmetic Skin</div>
             <button class="buy-btn" onclick="buyItem('skin_george', 25)">🪙 25</button>
           </div>
@@ -146,7 +145,6 @@
   </div>
 
   <script>
-    // A temporary quick placeholder function to prevent clicks from crashing before we script it out
     function buyItem(id, price) {
       console.log("Clicked to buy:", id, "for", price, "coins.");
     }
