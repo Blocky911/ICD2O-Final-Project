@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tag Royale — Options</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="settings.css" />
+</head>
+<body>
+
+  <div class="scanlines"></div>
+  <div class="bg-grid"></div>
+
+  <main class="settings-container">
+
+    <nav class="settings-nav">
+      <a href="index.html" class="back-btn">← BACK</a>
+      <h1 class="settings-title">OPTIONS</h1>
+    </nav>
+
+    <div class="settings-layout">
+
+      <section class="settings-panel">
+
+        <div class="settings-group">
+          <h2 class="group-title">VOLUME</h2>
+          
+          <div class="settings-row">
+            <label class="row-label" for="master-vol">Master Volume</label>
+            <div class="row-control">
+              <input type="range" id="master-vol" min="0" max="100" value="80" class="slider">
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <label class="row-label" for="music-vol">Music Volume</label>
+            <div class="row-control">
+              <input type="range" id="music-vol" min="0" max="100" value="50" class="slider">
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <label class="row-label" for="sfx-vol">Sound Effects</label>
+            <div class="row-control">
+              <input type="range" id="sfx-vol" min="0" max="100" value="70" class="slider">
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h2 class="group-title">ACCESSIBILITY</h2>
+
+          <div class="settings-row">
+            <span class="row-label">Colorblind Mode</span>
+            <div class="row-control">
+              <label class="checkbox-container">
+                <input type="checkbox" id="colorblind-toggle">
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <span class="row-label">Health Bar Color</span>
+            <div class="row-control">
+              <div class="cycle-selector">
+                <button type="button" class="cycle-btn" aria-label="Previous Color">◀</button>
+                <span class="cycle-value">DEFAULT (GREEN)</span>
+                <button type="button" class="cycle-btn" aria-label="Next Color">▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h2 class="group-title">STAT DISPLAYS</h2>
+
+          <div class="settings-row">
+            <span class="row-label">Show Score</span>
+            <div class="row-control">
+              <label class="checkbox-container">
+                <input type="checkbox" id="show-score" checked>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <span class="row-label">Display Match Timer</span>
+            <div class="row-control">
+              <label class="checkbox-container">
+                <input type="checkbox" id="show-timer" checked>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <span class="row-label">Display Equipped Items</span>
+            <div class="row-control">
+              <label class="checkbox-container">
+                <input type="checkbox" id="show-items" checked>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <aside class="settings-visual">
+        <div class="coin-display">
+          <span class="coin-label">COINS</span>
+          <button class="coin-add-btn" aria-label="Add Coins">+</button>
+        </div>
+
+        <div class="action-box">
+          <button type="button" class="menu-btn btn-accept">ACCEPT</button>
+          <button type="button" class="menu-btn btn-cancel">CANCEL</button>
+        </div>
+      </aside>
+
+    </div>
+
+  </main>
+
+</body>
+</html>
