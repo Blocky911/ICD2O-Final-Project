@@ -17,10 +17,10 @@ body, html {
     height: 100vh;
     overflow: hidden; 
     position: relative;
-    display: block;
+    display: block !important; /* Force visibility across all browsers */
 }
 
-/* Arena Grass Ground */
+/* Arena Grass Ground Background */
 #main-map {
     width: 5000px;
     height: 5000px;
@@ -34,10 +34,10 @@ body, html {
 }
 
 /* ==========================================
-   2. RECREATED REFERENCE STRUCTURES
+   2. CUSTOM RECREATED STRUCTURES
    ========================================== */
 
-/* The Red Wood Plank House Container */
+/* Red Wood Plank House Container */
 .house-container {
     position: absolute;
     left: 2200px;
@@ -47,17 +47,49 @@ body, html {
     z-index: 5;
 }
 
-/* Red Wood Siding Texture styling */
+/* House Base with Dark Red Horizontal Wood Siding panels */
 .house-base {
     width: 100%;
     height: 100%;
     position: absolute;
     bottom: 0;
     background-color: #a22c26;
-    /* Creates realistic horizontal wooden panels */
     background-image: linear-gradient(0deg, rgba(0,0,0,0.15) 4px, transparent 4px);
     background-size: 100% 30px;
     border: 5px solid #5a1512;
     box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     box-sizing: border-box;
+    border-radius: 4px;
+}
+
+/* House Roof Triangle Accent */
+.house-roof {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: -95px;
+    left: -5px;
+    border-left: 250px solid transparent;
+    border-right: 250px solid transparent;
+    border-bottom: 95px solid #b83d35; 
+}
+
+/* Glowing Yellow Front Door */
+.house-door {
+    position: absolute;
+    bottom: 0;
+    left: 80px;
+    width: 70px;
+    height: 120px;
+    background: #fbc531;
+    border: 4px solid #5a1512;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0 0 20px rgba(251, 197, 49, 0.5);
+}
+
+/* Window Grid Frame Elements */
+.house-window {
+    position: absolute;
+    top: 35px;
 }

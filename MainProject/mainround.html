@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Custom Level Map</title>
+    <title>Tag Royale - Fixed Safe Spawn Arena</title>
     <style>
         /* ==========================================
-           1. BASE LAYOUT & VIEWPORT FRAME
+           1. COMPACT INTEGRATED CSS LAYOUT
            ========================================== */
         body, html {
             margin: 0;
@@ -24,10 +24,9 @@
             height: 100vh;
             overflow: hidden; 
             position: relative;
-            display: block;
+            display: block !important; /* Force visibility */
         }
 
-        /* Arena Grass Ground */
         #main-map {
             width: 5000px;
             height: 5000px;
@@ -40,11 +39,7 @@
             background-position: 0 0, 25px 25px;
         }
 
-        /* ==========================================
-           2. RECREATED REFERENCE STRUCTURES
-           ========================================== */
-        
-        /* The Red Wood Plank House Container */
+        /* Red Wood House Layout */
         .house-container {
             position: absolute;
             left: 2200px;
@@ -54,14 +49,12 @@
             z-index: 5;
         }
 
-        /* Red Wood Siding Texture styling */
         .house-base {
             width: 100%;
             height: 100%;
             position: absolute;
             bottom: 0;
             background-color: #a22c26;
-            /* Creates realistic horizontal wooden panels */
             background-image: linear-gradient(0deg, rgba(0,0,0,0.15) 4px, transparent 4px);
             background-size: 100% 30px;
             border: 5px solid #5a1512;
@@ -70,7 +63,6 @@
             border-radius: 4px;
         }
 
-        /* House Roof Triangle Accent */
         .house-roof {
             width: 0;
             height: 0;
@@ -80,10 +72,8 @@
             border-left: 250px solid transparent;
             border-right: 250px solid transparent;
             border-bottom: 95px solid #b83d35; 
-            filter: drop-shadow(0 -4px 4px rgba(0,0,0,0.15));
         }
 
-        /* Glowing Entrance Door */
         .house-door {
             position: absolute;
             bottom: 0;
@@ -97,7 +87,6 @@
             box-shadow: 0 0 20px rgba(251, 197, 49, 0.5);
         }
 
-        /* Side Window Grid Pane */
         .house-window {
             position: absolute;
             top: 100px;
@@ -106,10 +95,10 @@
             height: 90px;
             background: #edf2f7;
             border: 4px solid #5a1512;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
             display: flex;
             flex-wrap: wrap;
         }
+
         .window-pane {
             width: calc(50% - 2px);
             height: calc(50% - 2px);
@@ -117,7 +106,7 @@
             background: #7ed6df;
         }
 
-        /* The Big Round Bush / Hedge Barrier */
+        /* Round Bush Barrier */
         .big-hedge {
             position: absolute;
             left: 2850px;
@@ -127,33 +116,11 @@
             background: radial-gradient(circle, #27ae60 40%, #1e8449 80%, #145a32 100%);
             border-radius: 50%;
             border: 8px solid #0e3a20;
-            box-shadow: 
-                0 15px 30px rgba(0,0,0,0.4),
-                inset 0 -15px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
             z-index: 6;
         }
-        /* Leafy organic textured bumps on the bush */
-        .big-hedge::before, .big-hedge::after {
-            content: '';
-            position: absolute;
-            background: inherit;
-            border: inherit;
-            border-radius: 50%;
-        }
-        .big-hedge::before {
-            width: 180px;
-            height: 180px;
-            top: -40px;
-            left: 60px;
-        }
-        .big-hedge::after {
-            width: 160px;
-            height: 160px;
-            bottom: 40px;
-            right: -40px;
-        }
 
-        /* Swimming Pool Container */
+        /* Swimming Pool & Steps */
         .pool {
             position: absolute;
             left: 1400px;
@@ -168,7 +135,6 @@
             box-sizing: border-box;
         }
 
-        /* Yellow Walkway Floating Board Mats */
         .pool-mat {
             position: absolute;
             width: 110px;
@@ -179,14 +145,11 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.35);
             z-index: 3;
         }
-        /* Aligned in a straight step layout across the pool body */
         .mat1 { left: 40px; top: 130px; }
         .mat2 { left: 180px; top: 130px; }
         .mat3 { left: 320px; top: 130px; }
 
-        /* ==========================================
-           3. STANDARD ENVIRONMENT & MAP OBSTACLES
-           ========================================== */
+        /* Obstacles & Map Decoration */
         .border-tree {
             position: absolute;
             width: 120px;
@@ -224,14 +187,13 @@
             z-index: 4;
         }
 
-        /* ==========================================
-           4. PLAYER CHARACTER COMPOSITION
-           ========================================== */
+        /* Character Layout Anatomy */
         .character {
             position: absolute;
             width: 120px;
             height: 120px;
             z-index: 20;
+            display: block !important; /* Lock display state */
         }
 
         .char-body {
@@ -269,22 +231,21 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.95);
             color: #fff;
             padding: 14px 22px;
             border-radius: 8px;
             z-index: 100;
             pointer-events: none;
             border: 2px solid #fbc531;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
     <div id="UI-overlay">
-        <div style="font-weight: bold; color: #fbc531; margin-bottom: 4px;">MAP UPDATE ACTIVE</div>
-        <div style="font-size: 0.85rem; color: #cbd5e1;">Walk safely across the pool using the yellow board mats! Move with WASD / Arrows.</div>
+        <div style="font-weight: bold; color: #fbc531; margin-bottom: 4px;">SYSTEM OPERATIONAL</div>
+        <div style="font-size: 0.85rem; color: #cbd5e1;">Use WASD or Arrow Keys to move. Walk on the yellow planks to cross the water!</div>
     </div>
 
     <div id="viewport">
@@ -307,100 +268,3 @@
                         <div class="window-pane"></div>
                         <div class="window-pane"></div>
                         <div class="window-pane"></div>
-                        <div class="window-pane"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="big-hedge"></div>
-
-            <div class="rock" style="left: 1000px; top: 1900px; width: 120px; height: 100px;"></div>
-            <div class="rock" style="left: 2500px; top: 1700px; width: 140px; height: 110px;"></div>
-
-            <div class="character">
-                <div class="char-head"></div>
-                <div class="char-body"></div>
-                <div class="sleeve-l1"></div>
-                <div class="hand-l2"></div>
-                <div class="sleeve-r1"></div>
-                <div class="hand-r2"></div>
-                <div class="leg-l"></div>
-                <div class="leg-r"></div>
-            </div>
-
-            <div id="tree-container"></div>
-
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const viewport = document.getElementById('viewport');
-            const player = document.querySelector('.character');
-            const mudPatches = document.querySelectorAll('.mud-patch');
-            const treeContainer = document.getElementById('tree-container');
-
-            let playerX = 1950;
-            let playerY = 1850;
-            
-            // Scaled collision hitboxes for precise moving over structures
-            const boxWidth = 36;
-            const boxHeight = 36;
-            const boxOffsetX = 42;
-            const boxOffsetY = 42;
-
-            const NORMAL_SPEED = 7;
-            const MUD_SPEED = 3;
-            let currentSpeed = NORMAL_SPEED;
-
-            const keys = {
-                w: false, a: false, s: false, d: false,
-                ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
-            };
-
-            let obstacles = [];
-
-            // Procedural Forest Boundaries
-            const mapSize = 5000;
-            for (let i = 0; i < mapSize; i += 100) {
-                createTree(i, 0, 'border-tree'); 
-                createTree(i, mapSize - 120, 'border-tree'); 
-                createTree(0, i, 'border-tree'); 
-                createTree(mapSize - 120, i, 'border-tree'); 
-            }
-            
-            for (let i = 0; i < 50; i++) {
-                let randX = Math.floor(Math.random() * (mapSize - 400)) + 200;
-                let randY = Math.floor(Math.random() * (mapSize - 400)) + 200;
-                // Exclude placement near your custom structures
-                if (!(randX > 1200 && randX < 3400 && randY > 2000 && randY < 3000)) {
-                    createTree(randX, randY, 'map-tree');
-                }
-            }
-
-            function createTree(x, y, className) {
-                const tree = document.createElement('div');
-                tree.className = className;
-                tree.style.left = x + 'px';
-                tree.style.top = y + 'px';
-                treeContainer.appendChild(tree);
-                const radius = className === 'border-tree' ? 60 : 65;
-                obstacles.push({ type: 'circle', x: x + radius, y: y + radius, radius: radius - 20 });
-            }
-
-            function registerObstacles() {
-                // Red Wood House Structure hit wall
-                obstacles.push({ type: 'rect', x: 2200, y: 2100, w: 500, h: 340 });
-                
-                // Big Round Bush Circular Obstacle layout
-                obstacles.push({ type: 'circle', x: 2850 + 160, y: 2200 + 160, radius: 155 });
-                
-                // Total Pool Frame Water Trap Floor
-                obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350 });
-            }
-
-            registerObstacles();
-        });
-    </script>
-</body>
-</html>
