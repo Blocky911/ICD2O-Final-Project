@@ -12,62 +12,6 @@ body, html {
     user-select: none;
 }
 
-/* Difficulty Selection Screen Menu Overlay */
-#menu-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1e272e 0%, #0f141c 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 200;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-#menu-screen.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.menu-title {
-    color: #ffd32a;
-    font-size: 3rem;
-    margin-bottom: 30px;
-    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    letter-spacing: 2px;
-}
-
-.btn-container {
-    display: flex;
-    gap: 20px;
-}
-
-.difficulty-btn {
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-    transition: transform 0.2s, filter 0.2s;
-}
-
-.difficulty-btn:hover {
-    transform: translateY(-3px);
-    filter: brightness(1.2);
-}
-
-.easy { background-color: #05c46b; }
-.medium { background-color: #ffa801; }
-.hard { background-color: #ff3f34; }
-
-/* The Camera Box window frame */
 #viewport {
     width: 100vw;
     height: 100vh;
@@ -90,4 +34,34 @@ body, html {
         radial-gradient(#3a5f0b 15%, transparent 16%);
     background-size: 60px 60px;
     background-position: 0 0, 30px 30px;
+}
+
+/* ==========================================
+   3. ENVIRONMENT & OBSTACLES
+   ========================================== */
+.border-tree {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #2e5c1e 60%, #1a3610 100%);
+    border-radius: 50%;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    z-index: 10;
+}
+
+.map-tree {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
+    border-radius: 50%;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+
+/* Mud Patches (Designed with smooth, organic asymmetric blob borders) */
+.mud-patch {
+    position: absolute;
+    background: #573b12;
+    border-radius: 50% 40% 60% 45%;
 }
