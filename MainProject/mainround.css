@@ -1,5 +1,5 @@
 /* ==========================================
-   1. CORE VIEWPORT & GRASS MAP STYLES
+   1. FIXED VIEWPORT LAYOUT & MAP STYLES
    ========================================== */
 body, html {
     margin: 0;
@@ -7,33 +7,36 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #0c1015;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     user-select: none;
 }
 
+/* Container that hides scrollbars and prevents browser layout glitching */
 #viewport {
     width: 100vw;
     height: 100vh;
-    overflow: hidden; 
     position: relative;
-    display: block !important; /* Force render engine backup */
+    overflow: hidden;
+    display: block !important;
 }
 
+/* The giant 5000x5000px battle arena grid */
 #main-map {
     width: 5000px;
     height: 5000px;
-    position: relative;
+    position: absolute;
     background-color: #4b861d;
     background-image: 
         radial-gradient(#5a9727 15%, transparent 16%),
         radial-gradient(#3f7416 15%, transparent 16%);
     background-size: 50px 50px;
     background-position: 0 0, 25px 25px;
+    will-change: transform;
 }
 
 /* ==========================================
-   2. RED WOOD HOUSE STRUCTURE (REFERENCE DESIGN)
+   2. RED WOOD PLANK HOUSE STRUCTURE
    ========================================== */
 .house-container {
     position: absolute;
@@ -48,13 +51,10 @@ body, html {
     width: 100%;
     height: 100%;
     position: absolute;
-    bottom: 0;
     background-color: #a22c26;
-    /* Generates horizontal wood siding panels */
     background-image: linear-gradient(0deg, rgba(0,0,0,0.15) 4px, transparent 4px);
     background-size: 100% 30px;
     border: 5px solid #5a1512;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     box-sizing: border-box;
     border-radius: 4px;
 }
@@ -80,5 +80,87 @@ body, html {
     border: 4px solid #5a1512;
     border-bottom: none;
     border-radius: 5px 5px 0 0;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
+
+.house-window {
+    position: absolute;
+    top: 100px;
+    right: 80px;
+    width: 90px;
+    height: 90px;
+    background: #edf2f7;
+    border: 4px solid #5a1512;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.window-pane {
+    width: calc(50% - 2px);
+    height: calc(50% - 2px);
+    border: 1px solid #718096;
+    background: #7ed6df;
+}
+
+/* ==========================================
+   3. SWIMMING POOL & OBSTACLES
+   ========================================== */
+.pool {
+    position: absolute;
+    left: 1400px;
+    top: 2500px;
+    width: 500px;
+    height: 350px;
+    background: radial-gradient(circle, #34e7f4 30%, #0fbcf9 100%);
+    border: 12px solid #d1d8e0;
+    border-radius: 16px;
+    box-shadow: inset 0 12px 24px rgba(0,0,0,0.4);
+    z-index: 2;
+    box-sizing: border-box;
+}
+
+.pool-mat {
+    position: absolute;
+    width: 110px;
+    height: 70px;
+    background: repeating-linear-gradient(90deg, #ffca28, #ffca28 12px, #ffb300 12px, #ffb300 24px);
+    border-radius: 6px;
+    border: 3px solid #b78103;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+    z-index: 3;
+}
+.mat1 { left: 40px; top: 130px; }
+.mat2 { left: 180px; top: 130px; }
+.mat3 { left: 320px; top: 130px; }
+
+.big-hedge {
+    position: absolute;
+    left: 2850px;
+    top: 2200px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, #27ae60 40%, #1e8449 80%, #145a32 100%);
+    border-radius: 50%;
+    border: 8px solid #0e3a20;
+    z-index: 6;
+}
+
+.border-tree {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #1e4611 50%, #0f2707 100%);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.mud-patch {
+    position: absolute;
+    background: #523610;
+    border-radius: 40%;
+    opacity: 0.9;
+    z-index: 1;
+}
+
+/* ==========================================
+   4. EXTRA-STABLE CHARACTER ANATOMY
+   ========================================== */
