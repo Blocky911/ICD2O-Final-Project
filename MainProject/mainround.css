@@ -19,36 +19,36 @@ body, html {
 }
 
 #main-map {
-    width: 4000px;
-    height: 4000px;
+    width: 5000px;
+    height: 5000px;
     position: absolute;
-    background-color: #4b861d; /* Field Green */
+    background-color: #4b861d; /* Base Grass Green */
     background-image: radial-gradient(#3f7416 18%, transparent 19%);
     background-size: 50px 50px;
     will-change: transform;
 }
 
-/* Boundary White Fences */
+/* Boundary White Fences (From your screenshot) */
 .boundary-fence {
     position: absolute;
     background-color: #ffffff;
-    border: 4px solid #000;
+    border: 5px solid #000;
     z-index: 8;
 }
-.fence-top    { top: 100px; left: 100px; width: 3800px; height: 16px; background-image: linear-gradient(90deg, #fff 50%, #000 50%); background-size: 20px; }
-.fence-bottom { bottom: 100px; left: 100px; width: 3800px; height: 16px; background-image: linear-gradient(90deg, #fff 50%, #000 50%); background-size: 20px; }
-.fence-left   { top: 100px; left: 100px; width: 16px; height: 3800px; background-image: linear-gradient(0deg, #fff 50%, #000 50%); background-size: 20px; }
-.fence-right  { top: 100px; right: 100px; width: 16px; height: 3800px; background-image: linear-gradient(0deg, #fff 50%, #000 50%); background-size: 20px; }
+.fence-top    { top: 100px; left: 100px; width: 4800px; height: 16px; background-image: linear-gradient(90deg, #fff 50%, #000 50%); background-size: 20px; }
+.fence-bottom { bottom: 100px; left: 100px; width: 4800px; height: 16px; background-image: linear-gradient(90deg, #fff 50%, #000 50%); background-size: 20px; }
+.fence-left   { top: 100px; left: 100px; width: 16px; height: 4800px; background-image: linear-gradient(0deg, #fff 50%, #000 50%); background-size: 20px; }
+.fence-right  { top: 100px; right: 100px; width: 16px; height: 4800px; background-image: linear-gradient(0deg, #fff 50%, #000 50%); background-size: 20px; }
 
 /* ==========================================
-   2. EXPLICIT L-SHAPED HOUSE GRAPHICS
+   2. REMADE DETAILED L-SHAPED HOUSE
    ========================================== */
 .l-house {
     position: absolute;
-    left: 1700px;
-    top: 2100px;
-    width: 450px;
-    height: 450px;
+    left: 2200px;
+    top: 2500px;
+    width: 500px;
+    height: 500px;
     z-index: 5;
 }
 
@@ -59,152 +59,14 @@ body, html {
     border: 5px solid #000;
     box-sizing: border-box;
 }
-.porch-top  { width: 490px; height: 190px; top: -20px; left: -20px; }
-.porch-left { width: 190px; height: 320px; top: 150px; left: -20px; }
+.porch-top  { width: 540px; height: 210px; top: -20px; left: -20px; }
+.porch-left { width: 210px; height: 350px; top: 170px; left: -20px; }
 
-/* Terracotta Orange Roof Structures */
+/* Terracotta Orange Roof Matrix */
 .roof-structure {
     position: absolute;
     width: 100%;
     height: 100%;
     background-color: #cc6a4e;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 33.3%, 33.3% 33.3%, 33.3% 100%, 0% 100%);
-    border: 6px solid #000;
-    box-sizing: border-box;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 30%, 60% 30%, 60% 100%, 0% 100%);
 }
-
-/* Darker Shaded Roof Crease/Seam Panels */
-.roof-seam {
-    position: absolute;
-    background-color: #7c3824;
-}
-.seam-vertical   { left: 147px; top: 0; width: 6px; height: 450px; opacity: 0.4; }
-.seam-horizontal { left: 0; top: 147px; width: 450px; height: 6px; opacity: 0.4; }
-
-/* ==========================================
-   3. HEDGE MAZE WALL (CURVED & SPIKY)
-   ========================================== */
-.hedge-maze-container {
-    position: absolute;
-    left: 1600px;
-    top: 1400px;
-    width: 800px;
-    height: 800px;
-    z-index: 4;
-}
-
-/* Uses spiky jagged patterns to replicate the pixel bush artwork */
-.hedge-arc {
-    width: 600px;
-    height: 600px;
-    background-color: #22550e;
-    border: 8px solid #1a3c08;
-    border-radius: 50%;
-    position: absolute;
-    left: 100px;
-    top: 100px;
-    background-image: 
-        repeating-linear-gradient(45deg, #163a09 0px, #163a09 4px, transparent 4px, transparent 12px),
-        repeating-linear-gradient(-45deg, #163a09 0px, #163a09 4px, #22550e 4px, #22550e 12px);
-}
-
-/* Masks the inner circle out so it stays a walkable C-shape path corridor */
-.inner-maze-ground {
-    width: 360px;
-    height: 360px;
-    background-color: #4b861d;
-    border: 8px solid #1a3c08;
-    border-radius: 50%;
-    position: absolute;
-    left: 220px;
-    top: 220px;
-}
-
-/* ==========================================
-   4. ENVIRONMENT OBSTACLES (TREES / BOULDERS)
-   ========================================== */
-.tree-canopy {
-    position: absolute;
-    background-color: #2d6a24;
-    border: 5px solid #12330d;
-    border-radius: 50%;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    z-index: 6;
-}
-
-.boulder {
-    position: absolute;
-    background-color: #838784;
-    border: 4px solid #414241;
-    border-radius: 40%;
-    z-index: 3;
-}
-
-/* ==========================================
-   5. CHARACTER ANATOMY LAYER (SURVIV.IO DESIGN)
-   ========================================== */
-.character {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    z-index: 999 !important;
-}
-
-.player-body {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    width: 40px;
-    height: 40px;
-    background-color: #223c5e; /* Blue Vest Shirt */
-    border: 4px solid #000;
-    border-radius: 50%;
-    box-sizing: border-box;
-    z-index: 2;
-}
-
-.player-head-hair {
-    position: absolute;
-    left: 27px;
-    top: 27px;
-    width: 26px;
-    height: 26px;
-    background-color: #e8c42c; /* Spiky Blonde Hair */
-    border: 3.5px solid #000;
-    border-radius: 50%;
-    box-sizing: border-box;
-    z-index: 3;
-}
-
-/* Floating Independent Left and Right Hands */
-.hand {
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    background-color: #ffdb99; /* Punch Skin Tone */
-    border: 3px solid #000;
-    border-radius: 50%;
-    box-sizing: border-box;
-    z-index: 4;
-}
-.hand-left  { top: 14px; right: 8px; }
-.hand-right { bottom: 14px; right: 8px; }
-
-/* ==========================================
-   6. UI HUD CONTAINERS
-   ========================================== */
-#UI-overlay {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(15, 23, 42, 0.95);
-    color: #fff;
-    padding: 14px 22px;
-    border-radius: 8px;
-    z-index: 10000;
-    pointer-events: none;
-    border: 2px solid #fbc531;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-.ui-title { font-weight: bold; color: #fbc531; font-size: 1.1rem; margin-bottom: 2px; }
-.ui-sub   { font-size: 0.85rem; color: #cbd5e1; }

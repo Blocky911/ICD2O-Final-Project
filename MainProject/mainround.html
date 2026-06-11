@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top-Down Arena Engine</title>
+    <title>Tag Royale - Remade Battle Map</title>
     <style>
+        /* ==========================================
+           1. VIEWPORT & ARENA BACKGROUND GRID
+           ========================================== */
         body, html {
             margin: 0;
             padding: 0;
@@ -15,11 +18,218 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             user-select: none;
         }
-        #gameCanvas {
-            display: block;
+
+        #viewport {
             width: 100vw;
             height: 100vh;
+            position: relative;
+            overflow: hidden;
         }
+
+        #main-map {
+            width: 5000px;
+            height: 5000px;
+            position: absolute;
+            background-color: #4b861d;
+            background-image: radial-gradient(#3f7416 18%, transparent 19%);
+            background-size: 50px 50px;
+            will-change: transform;
+        }
+
+        /* Boundary White Fences */
+        .boundary-fence {
+            position: absolute;
+            background-color: #ffffff;
+            border: 5px solid #000;
+            z-index: 8;
+        }
+        .fence-top    { top: 100px; left: 100px; width: 4800px; height: 16px; background-image: linear-gradient(90deg, #fff 50%, #000 50%); background-size: 20px; }
+        .fence-bottom { bottom: 100px; left: 100px; width: 4800px; height: 16px; background-image: linear-gradient(90deg, #fff 50%, #000 50%); background-size: 20px; }
+        .fence-left   { top: 100px; left: 100px; width: 16px; height: 4800px; background-image: linear-gradient(0deg, #fff 50%, #000 50%); background-size: 20px; }
+        .fence-right  { top: 100px; right: 100px; width: 16px; height: 4800px; background-image: linear-gradient(0deg, #fff 50%, #000 50%); background-size: 20px; }
+
+        /* ==========================================
+           2. NEW DESIGN: L-SHAPED HOUSE GRAPHICS
+           ========================================== */
+        .l-house {
+            position: absolute;
+            left: 2200px;
+            top: 2500px;
+            width: 500px;
+            height: 500px;
+            z-index: 5;
+        }
+
+        .porch-deck {
+            position: absolute;
+            background-color: #e2db6c;
+            border: 5px solid #000;
+            box-sizing: border-box;
+        }
+        .porch-top  { width: 540px; height: 210px; top: -20px; left: -20px; }
+        .porch-left { width: 210px; height: 350px; top: 170px; left: -20px; }
+
+        .roof-structure {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #cc6a4e;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 34%, 34% 34%, 34% 100%, 0% 100%);
+            border: 6px solid #000;
+            box-sizing: border-box;
+        }
+
+        .roof-seam {
+            position: absolute;
+            background-color: #7c3824;
+        }
+        .seam-vertical   { left: 165px; top: 0; width: 6px; height: 500px; opacity: 0.4; }
+        .seam-horizontal { left: 0; top: 165px; width: 500px; height: 6px; opacity: 0.4; }
+
+        /* ==========================================
+           3. NEW DESIGN: TOP-RIGHT HEDGE MAZE
+           ========================================== */
+        .hedge-maze-container {
+            position: absolute;
+            left: 3300px;
+            top: 600px;
+            width: 800px;
+            height: 800px;
+            z-index: 4;
+        }
+
+        .hedge-arc {
+            width: 600px;
+            height: 600px;
+            background-color: #22550e;
+            border: 8px solid #1a3c08;
+            border-radius: 50%;
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            background-image: 
+                repeating-linear-gradient(45deg, #163a09 0px, #163a09 4px, transparent 4px, transparent 12px),
+                repeating-linear-gradient(-45deg, #163a09 0px, #163a09 4px, #22550e 4px, #22550e 12px);
+        }
+
+        .inner-maze-ground {
+            width: 360px;
+            height: 360px;
+            background-color: #4b861d;
+            border: 8px solid #1a3c08;
+            border-radius: 50%;
+            position: absolute;
+            left: 2200px; /* Offset matched to map world coordinate calculations */
+            left: 220px;
+            top: 220px;
+        }
+
+        /* ==========================================
+           4. ORIGINAL DESIGN: SWIMMING POOL & MATS
+           ========================================== */
+        .pool {
+            position: absolute;
+            left: 1400px;
+            top: 2500px;
+            width: 500px;
+            height: 350px;
+            background: radial-gradient(circle, #34e7f4 30%, #0fbcf9 100%);
+            border: 12px solid #d1d8e0;
+            border-radius: 16px;
+            box-shadow: inset 0 12px 24px rgba(0,0,0,0.4);
+            z-index: 2;
+            box-sizing: border-box;
+        }
+
+        .pool-mat {
+            position: absolute;
+            width: 110px;
+            height: 70px;
+            background: repeating-linear-gradient(90deg, #ffca28, #ffca28 12px, #ffb300 12px, #ffb300 24px);
+            border-radius: 6px;
+            border: 3px solid #b78103;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+            z-index: 3;
+        }
+        .mat1 { left: 40px; top: 130px; }
+        .mat2 { left: 180px; top: 130px; }
+        .mat3 { left: 320px; top: 130px; }
+
+        /* Mud Patches & Scatter Objects */
+        .mud-patch {
+            position: absolute;
+            background: #523610;
+            border-radius: 40%;
+            opacity: 0.9;
+            z-index: 1;
+        }
+
+        .tree-canopy {
+            position: absolute;
+            background-color: #2d6a24;
+            border: 5px solid #12330d;
+            border-radius: 50%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            z-index: 6;
+        }
+
+        .boulder {
+            position: absolute;
+            background-color: #838784;
+            border: 4px solid #414241;
+            border-radius: 40%;
+            z-index: 3;
+        }
+
+        /* ==========================================
+           5. CHARACTER ANATOMY LAYER (SURVIV.IO DESIGN)
+           ========================================== */
+        .character {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            z-index: 999 !important;
+        }
+
+        .player-body {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #223c5e; /* Blue Vest Shirt */
+            border: 4px solid #000;
+            border-radius: 50%;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+
+        .player-head-hair {
+            position: absolute;
+            left: 27px;
+            top: 27px;
+            width: 26px;
+            height: 26px;
+            background-color: #e8c42c; /* Spiky Blonde Hair */
+            border: 3.5px solid #000;
+            border-radius: 50%;
+            box-sizing: border-box;
+            z-index: 3;
+        }
+
+        .hand {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background-color: #ffdb99; /* Punch Skin Tone */
+            border: 3px solid #000;
+            border-radius: 50%;
+            box-sizing: border-box;
+            z-index: 4;
+        }
+        .hand-left  { top: 14px; right: 8px; }
+        .hand-right { bottom: 14px; right: 8px; }
+
         #UI-overlay {
             position: fixed;
             top: 20px;
@@ -28,7 +238,7 @@
             color: #fff;
             padding: 14px 22px;
             border-radius: 8px;
-            z-index: 10;
+            z-index: 10000;
             pointer-events: none;
             border: 2px solid #fbc531;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
@@ -38,215 +248,13 @@
 <body>
 
     <div id="UI-overlay">
-        <div style="font-weight: bold; color: #fbc531; margin-bottom: 4px;">ENGINE RENDERING ONLINE</div>
-        <div style="font-size: 0.85rem; color: #cbd5e1;">Move with WASD or Arrow Keys. Explore the L-House and Hedge Maze!</div>
+        <div style="font-weight: bold; color: #fbc531; font-size: 1.1rem; margin-bottom: 2px;">MAP RECONSTRUCTION COMPLETE</div>
+        <div style="font-size: 0.85rem; color: #cbd5e1;">Hedge Maze moved to Top Right. L-House design implemented. WASD to Move.</div>
     </div>
 
-    <canvas id="gameCanvas"></canvas>
-
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Resize handler
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // Game Arena Properties
-        const WORLD_SIZE = 4000;
-        
-        // Spawn Player right next to the house (matching the layout in your screenshot)
-        let player = {
-            x: 2200,
-            y: 2300,
-            radius: 20,
-            speed: 6,
-            angle: 0
-        };
-
-        const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
-
-        // Keyboard Event Listeners
-        window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
-        window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
-
-        // Track Mouse angle to rotate player head/hands toward crosshair
-        window.addEventListener('mousemove', (e) => {
-            const screenCenterX = canvas.width / 2;
-            const screenCenterY = canvas.height / 2;
-            player.angle = Math.atan2(e.clientY - screenCenterY, e.clientX - screenCenterX);
-        });
-
-        // Dynamic Environmental Assets Map Objects
-        const objects = {
-            trees: [
-                {x: 1500, y: 1600, r: 55}, {x: 1620, y: 1510, r: 60}, {x: 2500, y: 1600, r: 55},
-                {x: 2350, y: 1800, r: 50}, {x: 1450, y: 2210, r: 55}, {x: 2600, y: 2500, r: 65},
-                {x: 1800, y: 2650, r: 50}
-            ],
-            boulders: [
-                {x: 1950, y: 1750, r: 25}, {x: 1910, y: 1950, r: 20}
-            ],
-            // Hardcoded structural layout for the L-Shaped House wall collisions
-            houseWalls: [
-                {x: 1700, y: 2100, w: 450, h: 150}, // Top arm of the L
-                {x: 1700, y: 2250, w: 150, h: 300}  // Bottom leg of the L
-            ]
-        };
-
-        // Collision Check Logic
-        function checkCollisions(nextX, nextY) {
-            // World Border boundaries
-            if (nextX < 100 || nextX > WORLD_SIZE - 100 || nextY < 100 || nextY > WORLD_SIZE - 100) return true;
-
-            // Check against solid house wall rectangles
-            for (let wall of objects.houseWalls) {
-                if (nextX + player.radius > wall.x && nextX - player.radius < wall.x + wall.w &&
-                    nextY + player.radius > wall.y && nextY - player.radius < wall.y + wall.h) {
-                    return true;
-                }
-            }
-
-            // Check against trees/rocks circles
-            for (let obj of [...objects.trees, ...objects.boulders]) {
-                let dx = nextX - obj.x;
-                let dy = nextY - obj.y;
-                if (Math.sqrt(dx*dx + dy*dy) < player.radius + (obj.r * 0.6)) { // 0.6 scales down collision to match trunk size
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        // Main Drawing Loop
-        function draw() {
-            // Clear screen
-            ctx.fillStyle = '#0c1015';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Establish Camera tracking offsets locked to player center coordinates
-            const camX = canvas.width / 2 - player.x;
-            const camY = canvas.height / 2 - player.y;
-
-            ctx.save();
-            ctx.translate(camX, camY);
-
-            // 1. DRAW TILE GRASS BACKGROUND
-            ctx.fillStyle = '#4b861d'; // Base grass green color
-            ctx.fillRect(0, 0, WORLD_SIZE, WORLD_SIZE);
+    <div id="viewport">
+        <div id="main-map">
             
-            // Draw grid dots overlay
-            ctx.fillStyle = '#3f7416';
-            for (let x = 0; x < WORLD_SIZE; x += 50) {
-                for (let y = 0; y < WORLD_SIZE; y += 50) {
-                    ctx.beginPath();
-                    ctx.arc(x, y, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            // 2. DRAW C-SHAPED SPIKY HEDGE WALL MAZE (From your screenshot)
-            ctx.strokeStyle = '#1a3c08';
-            ctx.fillStyle = '#22550e';
-            ctx.lineWidth = 8;
-            
-            ctx.beginPath();
-            // Complex arc tracing the outline curve path of the hedge maze
-            ctx.arc(2000, 1800, 220, 0.2 * Math.PI, 1.35 * Math.PI, false);
-            ctx.arc(2000, 1800, 340, 1.35 * Math.PI, 0.2 * Math.PI, true);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            // 3. DRAW L-SHAPED PLANK HOUSE STRUCTURE WITH ROOF SHADING
-            // Exterior Yellow Porch Decks
-            ctx.fillStyle = '#e2db6c';
-            ctx.fillRect(1680, 2080, 490, 190);
-            ctx.fillRect(1680, 2250, 190, 320);
-
-            // Solid Roof Base Foundation Color (Terracotta Orange)
-            ctx.fillStyle = '#cc6a4e';
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 3;
-
-            // Draw the house roof and walls
-            ctx.fillRect(1700, 2100, 280, 150);
-            ctx.fillRect(1700, 2250, 150, 300);
-            ctx.strokeRect(1700, 2100, 280, 150);
-            ctx.strokeRect(1700, 2250, 150, 300);
-
-            // Draw trees
-            ctx.fillStyle = '#1a4213';
-            ctx.strokeStyle = '#18400f';
-            ctx.lineWidth = 2;
-            for (let tree of objects.trees) {
-                ctx.beginPath();
-                ctx.arc(tree.x, tree.y, tree.r, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-            }
-
-            // Draw rocks
-            ctx.fillStyle = '#6f6f6f';
-            ctx.strokeStyle = '#4a4a4a';
-            for (let rock of objects.boulders) {
-                ctx.beginPath();
-                ctx.arc(rock.x, rock.y, rock.r, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-            }
-
-            ctx.restore();
-
-            // Draw player at center screen
-            const playerScreenX = canvas.width / 2;
-            const playerScreenY = canvas.height / 2;
-            ctx.save();
-            ctx.translate(playerScreenX, playerScreenY);
-            ctx.rotate(player.angle);
-            ctx.fillStyle = '#f2f2f2';
-            ctx.beginPath();
-            ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(-6, -6, player.radius - 4, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.restore();
-
-            // Crosshair indicator
-            ctx.strokeStyle = '#fbc531';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(playerScreenX - 12, playerScreenY);
-            ctx.lineTo(playerScreenX + 12, playerScreenY);
-            ctx.moveTo(playerScreenX, playerScreenY - 12);
-            ctx.lineTo(playerScreenX, playerScreenY + 12);
-            ctx.stroke();
-
-            // Update player movement
-            let nextX = player.x;
-            let nextY = player.y;
-            if (keys.w || keys.ArrowUp) nextY -= player.speed;
-            if (keys.s || keys.ArrowDown) nextY += player.speed;
-            if (keys.a || keys.ArrowLeft) nextX -= player.speed;
-            if (keys.d || keys.ArrowRight) nextX += player.speed;
-
-            if (!checkCollisions(nextX, nextY)) {
-                player.x = nextX;
-                player.y = nextY;
-            }
-
-            requestAnimationFrame(draw);
-        }
-
-        draw();
-    </script>
-</body>
-</html>
+            <div class="boundary-fence fence-top"></div>
+            <div class="boundary-fence fence-right"></div>
+            <div class="boundary-fence fence-bottom"></div>
