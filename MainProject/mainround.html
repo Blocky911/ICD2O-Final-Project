@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Game Session</title>
+    <title>Tag Royale - Refined Map</title>
     <style>
         /* ==========================================
            1. BASE VIEWPORT & LAYOUT SETUP
@@ -19,7 +19,6 @@
             user-select: none;
         }
 
-        /* Difficulty Menu Screen Overlay */
         #menu-screen {
             position: fixed;
             top: 0;
@@ -74,7 +73,6 @@
         .medium { background-color: #ffa801; }
         .hard { background-color: #ff3f34; }
 
-        /* The Camera Window Box */
         #viewport {
             width: 100vw;
             height: 100vh;
@@ -121,25 +119,14 @@
             z-index: 10;
         }
 
-        /* Spike / Mud Traps */
+        /* Mud Patches: Modified to be organic blob shapes */
         .mud-patch {
             position: absolute;
             background: #573b12;
-            border-radius: 20px; 
-            opacity: 0.9;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 50% 40% 60% 45% / 40% 50% 45% 55%; /* Smooth blob styling */
+            opacity: 0.95;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
             z-index: 1;
-            overflow: hidden;
-        }
-
-        /* Spike visual details inside the mud patches */
-        .spike-visual {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 20px solid #7f8c8d;
         }
 
         .rock {
@@ -149,7 +136,7 @@
                 linear-gradient(45deg, #4b5563 25%, transparent 25%), 
                 linear-gradient(-45deg, #4b5563 25%, transparent 25%);
             background-size: 30px 30px;
-            border-radius: 20px;
+            border-radius: 25px;
             border: 5px solid #4b6584;
             box-shadow: 5px 10px 15px rgba(0,0,0,0.3);
             z-index: 4;
@@ -158,7 +145,6 @@
         /* ==========================================
            4. STRUCTURES (LONGER HOUSE & POOL)
            ========================================== */
-        /* House made LONGER (Width increased to 650px) */
         .house-container {
             position: absolute;
             left: 2200px;
@@ -186,7 +172,7 @@
             box-sizing: border-box;
         }
 
-        /* Elongated Triangle Roof line matching the new house width */
+        /* Triangle Roof Projection */
         .house-roof {
             width: 0;
             height: 0;
@@ -212,18 +198,20 @@
             box-sizing: border-box;
         }
 
+        /* Yellow boards on the water */
         .pool-mat {
             position: absolute;
-            width: 100px;
-            height: 60px;
+            width: 110px;
+            height: 65px;
             background: repeating-linear-gradient(0deg, #ffc048, #ffc048 10px, #ffa801 10px, #ffa801 20px);
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             border: 2px solid #c57e00;
+            z-index: 3;
         }
-        .mat1 { left: 40px; top: 60px; }
-        .mat2 { left: 180px; top: 140px; }
-        .mat3 { left: 320px; top: 220px; }
+        .mat1 { left: 30px; top: 140px; }
+        .mat2 { left: 190px; top: 140px; }
+        .mat3 { left: 350px; top: 140px; }
 
         /* ==========================================
            5. CHARACTER COMPOSITION (8 Circle Anatomy)
@@ -231,7 +219,7 @@
         .character {
             position: absolute;
             left: 2000px;
-            top: 2000px;
+            top: 1900px;
             width: 120px;
             height: 120px;
             z-index: 20;
@@ -269,7 +257,6 @@
         .leg-l { position: absolute; left: 33px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
         .leg-r { position: absolute; left: 67px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
 
-        /* HUD Display Overlays */
         #UI-overlay {
             position: fixed;
             top: 20px;
@@ -297,15 +284,15 @@
 
     <div id="UI-overlay" style="display: none;">
         <span id="difficulty-display" style="font-weight: bold; color: #ffd32a;">Difficulty: None</span>
-        <div style="margin-top: 5px; font-size: 0.9rem; color: #ccc;">Use <b>WASD</b> or <b>Arrows</b> to move!</div>
+        <div style="margin-top: 5px; font-size: 0.9rem; color: #ccc;">Walk ONLY on the yellow boards to cross the pool!</div>
     </div>
 
     <div id="viewport">
         <div id="main-map">
             
-            <div id="spike1" class="mud-patch" style="left: 1200px; top: 1400px; width: 450px; height: 300px;"></div>
-            <div id="spike2" class="mud-patch" style="left: 2900px; top: 2100px; width: 350px; height: 250px;"></div>
-            <div id="spike3" class="mud-patch" style="left: 1800px; top: 3200px; width: 500px; height: 400px;"></div>
+            <div class="mud-patch" style="left: 1200px; top: 1400px; width: 450px; height: 350px;"></div>
+            <div class="mud-patch" style="left: 2900px; top: 1900px; width: 400px; height: 300px;"></div>
+            <div class="mud-patch" style="left: 1800px; top: 3200px; width: 550px; height: 420px;"></div>
 
             <div id="main-pool" class="pool">
                 <div class="pool-mat mat1"></div>
@@ -346,11 +333,10 @@
         const mudPatches = document.querySelectorAll('.mud-patch');
         const treeContainer = document.getElementById('tree-container');
 
-        // Character hitbox setup (The body circle area is roughly 60x60 in center of 120x120 element)
         let playerX = 2000;
         let playerY = 1900;
-        const playerSize = 60; // Using central body circle as accurate bounding box
-        const playerOffset = 30; // Offset inside 120px container
+        const playerSize = 50; 
+        const playerOffset = 35; 
 
         let gameActive = false;
         let selectedDifficulty = "";
@@ -364,25 +350,9 @@
             ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
         };
 
-        // Static obstacle tracking lists for wall collisions
         let obstacles = [];
 
-        // Generate spike elements inside the hazard zones
-        mudPatches.forEach(patch => {
-            const w = parseInt(patch.style.width);
-            const h = parseInt(patch.style.height);
-            for(let l = 20; l < w - 20; l += 40){
-                for(let t = 20; t < h - 20; t += 40){
-                    const spike = document.createElement('div');
-                    spike.className = 'spike-visual';
-                    spike.style.left = l + 'px';
-                    spike.style.top = t + 'px';
-                    patch.appendChild(spike);
-                }
-            }
-        });
-
-        // Procedural Map Tree Initialization & Obstacle list registration
+        // Procedural Map Tree Initialization (Skips Pool and House safety zones)
         const mapSize = 5000;
         for (let i = 0; i < mapSize; i += 100) {
             createTree(i, 0, 'border-tree'); 
@@ -390,11 +360,13 @@
             createTree(0, i, 'border-tree'); 
             createTree(mapSize - 120, i, 'border-tree'); 
         }
-        for (let i = 0; i < 70; i++) {
+        for (let i = 0; i < 75; i++) {
             let randX = Math.floor(Math.random() * (mapSize - 400)) + 200;
             let randY = Math.floor(Math.random() * (mapSize - 400)) + 200;
-            // Space clearing around starting zones
-            if (!(randX > 1800 && randX < 2900 && randY > 1800 && randY < 2700)) {
+            
+            // Strictly prevent trees from spawning on or near the pool (1400,2500) and house (2200,2200)
+            if (!(randX > 1250 && randX < 2000 && randY > 2350 && randY < 2950) && 
+                !(randX > 2050 && randX < 2950 && randY > 2050 && randY < 2750)) {
                 createTree(randX, randY, 'map-tree');
             }
         }
@@ -406,19 +378,17 @@
             tree.style.top = y + 'px';
             treeContainer.appendChild(tree);
             
-            // Trees act as solid round hitboxes
             const radius = className === 'border-tree' ? 60 : 70;
             obstacles.push({
                 type: 'circle',
                 x: x + radius,
                 y: y + radius,
-                radius: radius - 15 // slight buffer room for branches
+                radius: radius - 20 
             });
         }
 
-        // Register custom map structures into collision data loop
         function registerStructureObstacles() {
-            // 1. House box geometry
+            // House Box: Hard wall stopping players from moving on top of the roof structure
             obstacles.push({
                 type: 'rect',
                 x: 2200,
@@ -427,17 +397,17 @@
                 h: 400
             });
 
-            // 2. Pool box geometry
+            // Pool Box: Total barrier (Unless explicitly standing on floating boards)
             obstacles.push({
                 type: 'rect',
                 x: 1400,
                 y: 2500,
                 w: 500,
                 h: 350,
-                hasMats: true // custom parameter so floating mats bypass collision
+                isPoolWater: true 
             });
 
-            // 3. Rocks
+            // Rocks
             document.querySelectorAll('.rock').forEach(rock => {
                 obstacles.push({
                     type: 'rect',
@@ -449,7 +419,6 @@
             });
         }
 
-        // Main Menu Button Action
         function startGame(difficulty) {
             selectedDifficulty = difficulty;
             document.getElementById('difficulty-display').innerText = "Difficulty: " + difficulty;
@@ -466,7 +435,6 @@
         window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
         window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
 
-        // Checks if position is slowed down by spikes
         function checkMudCollision(x, y) {
             const px = x + 60;
             const py = y + 60;
@@ -482,103 +450,3 @@
             });
             return isSlowing;
         }
-
-        // Floating pool mats exception coordinates check
-        function isOnPoolMat(x, y) {
-            const px = x + 60;
-            const py = y + 60;
-            // Absolute positions of mat 1, 2, and 3 based on pool layout placement
-            const mats = [
-                {x: 1440, y: 2560, w: 100, h: 60},
-                {x: 1580, y: 2640, w: 100, h: 60},
-                {x: 1720, y: 2720, w: 100, h: 60}
-            ];
-            return mats.some(m => px >= m.x && px <= (m.x + m.w) && py >= m.y && py <= (m.y + m.h));
-        }
-
-        // Dynamic collision algorithm checks
-        function isColliding(targetX, targetY) {
-            // Player Box properties
-            const px = targetX + playerOffset;
-            const py = targetY + playerOffset;
-            const pw = playerSize;
-            const ph = playerSize;
-            const pCenterX = px + pw/2;
-            const pCenterY = py + ph/2;
-
-            // Map Edge limits check
-            if (px < 120 || px + pw > 4880 || py < 120 || py + ph > 4880) return true;
-
-            // Loop through all registered obstacles on map
-            for (let obs of obstacles) {
-                if (obs.type === 'rect') {
-                    // If target is pool, check if player is walking on mats safely
-                    if (obs.hasMats && isOnPoolMat(targetX, targetY)) {
-                        continue; // skip pool collision check
-                    }
-
-                    // AABB Rectangle Intersection check
-                    if (px < obs.x + obs.w &&
-                        px + pw > obs.x &&
-                        py < obs.y + obs.h &&
-                        py + ph > obs.y) {
-                        return true; 
-                    }
-                } 
-                else if (obs.type === 'circle') {
-                    // Circle Distance Intersection check
-                    const distX = pCenterX - obs.x;
-                    const distY = pCenterY - obs.y;
-                    const distance = Math.sqrt(distX * distX + distY * distY);
-                    if (distance < (pw / 2) + obs.radius) {
-                        return true; 
-                    }
-                }
-            }
-            return false;
-        }
-
-        // Active Frame Tick
-        function gameLoop() {
-            if (!gameActive) return;
-
-            // Speed multiplier check inside hazard zone 
-            if (checkMudCollision(playerX, playerY)) {
-                currentSpeed = MUD_SPEED;
-                player.style.filter = "sepia(0.6) saturate(1.4)"; // gives muddy status color shift
-            } else {
-                currentSpeed = NORMAL_SPEED;
-                player.style.filter = "none";
-            }
-
-            // Predictive axis shifting logic (prevents getting stuck)
-            let nextX = playerX;
-            let nextY = playerY;
-
-            if (keys.w || keys.ArrowUp)    nextY -= currentSpeed;
-            if (keys.s || keys.ArrowDown)  nextY += currentSpeed;
-            if (keys.a || keys.ArrowLeft)  nextX -= currentSpeed;
-            if (keys.d || keys.ArrowRight) nextX += currentSpeed;
-
-            // Apply horizontal moves independently if clear
-            if (!isColliding(nextX, playerY)) {
-                playerX = nextX;
-            }
-            // Apply vertical moves independently if clear
-            if (!isColliding(playerX, nextY)) {
-                playerY = nextY;
-            }
-
-            // Render modifications onto DOM node
-            player.style.left = playerX + 'px';
-            player.style.top = playerY + 'px';
-
-            // Auto Camera Tracking adjustment center calculation
-            viewport.scrollLeft = playerX - (window.innerWidth / 2) + 60;
-            viewport.scrollTop = playerY - (window.innerHeight / 2) + 60;
-
-            requestAnimationFrame(gameLoop);
-        }
-    </script>
-</body>
-</html>

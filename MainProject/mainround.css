@@ -67,7 +67,7 @@ body, html {
 .medium { background-color: #ffa801; }
 .hard { background-color: #ff3f34; }
 
-/* The Camera Viewing Window Frame */
+/* The Camera Box window frame */
 #viewport {
     width: 100vw;
     height: 100vh;
@@ -83,34 +83,11 @@ body, html {
     width: 5000px;
     height: 5000px;
     position: relative;
-    /* High-Performance Grass Pattern CSS Design */
+    /* Grass Texture Design using layered CSS gradients */
     background-color: #458b00;
     background-image: 
         radial-gradient(#556b2f 15%, transparent 16%),
         radial-gradient(#3a5f0b 15%, transparent 16%);
     background-size: 60px 60px;
     background-position: 0 0, 30px 30px;
-}
-
-/* ==========================================
-   3. ENVIRONMENT & OBSTACLES
-   ========================================== */
-.border-tree {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, #2e5c1e 60%, #1a3610 100%);
-    border-radius: 50%;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-    z-index: 10;
-}
-
-.map-tree {
-    position: absolute;
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
-    border-radius: 50%;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.35);
-    z-index: 20;
 }
