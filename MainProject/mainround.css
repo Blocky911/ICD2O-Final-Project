@@ -1,5 +1,5 @@
 /* ==========================================
-   1. BASE VIEWPORT & LAYOUT SETUP
+   1. BASE LAYOUT & VIEWPORT FRAME
    ========================================== */
 body, html {
     margin: 0;
@@ -8,7 +8,7 @@ body, html {
     height: 100%;
     overflow: hidden;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #111;
+    background-color: #0c1015;
     user-select: none;
 }
 
@@ -17,196 +17,47 @@ body, html {
     height: 100vh;
     overflow: hidden; 
     position: relative;
-    display: block; /* Guarantees the map and game view render instantly */
+    display: block;
 }
 
-/* ==========================================
-   2. MAIN MAP & PROCEDURAL TEXTURES
-   ========================================== */
+/* Arena Grass Ground */
 #main-map {
     width: 5000px;
     height: 5000px;
     position: relative;
-    /* Layered CSS gradients creating a textured grass look */
-    background-color: #458b00;
+    background-color: #4b861d;
     background-image: 
-        radial-gradient(#556b2f 15%, transparent 16%),
-        radial-gradient(#3a5f0b 15%, transparent 16%);
-    background-size: 60px 60px;
-    background-position: 0 0, 30px 30px;
+        radial-gradient(#5a9727 15%, transparent 16%),
+        radial-gradient(#3f7416 15%, transparent 16%);
+    background-size: 50px 50px;
+    background-position: 0 0, 25px 25px;
 }
 
 /* ==========================================
-   3. ENVIRONMENT & OBSTACLES
+   2. RECREATED REFERENCE STRUCTURES
    ========================================== */
-.border-tree {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, #2e5c1e 60%, #1a3610 100%);
-    border-radius: 50%;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-    z-index: 10;
-}
 
-.map-tree {
-    position: absolute;
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
-    border-radius: 50%;
-    box-shadow: 0 15px 25px rgba(0,0,0,0.5);
-    z-index: 10;
-}
-
-/* Mud Pools: Organic natural blob structures */
-.mud-patch {
-    position: absolute;
-    background: #573b12;
-    border-radius: 50% 40% 60% 45% / 40% 50% 45% 55%; 
-    opacity: 0.95;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
-    z-index: 1;
-}
-
-/* Textured gray rocks */
-.rock {
-    position: absolute;
-    background-color: #778ca3;
-    background-image: 
-        linear-gradient(45deg, #4b5563 25%, transparent 25%), 
-        linear-gradient(-45deg, #4b5563 25%, transparent 25%);
-    background-size: 30px 30px;
-    border-radius: 25px;
-    border: 5px solid #4b6584;
-    box-shadow: 5px 10px 15px rgba(0,0,0,0.3);
-    z-index: 4;
-}
-
-/* ==========================================
-   4. STRUCTURES (HOUSE & SWIMMING POOL)
-   ========================================== */
+/* The Red Wood Plank House Container */
 .house-container {
     position: absolute;
     left: 2200px;
-    top: 2200px;
-    width: 650px; 
-    height: 400px;
+    top: 2100px;
+    width: 500px; 
+    height: 340px;
     z-index: 5;
 }
 
-/* Base brick walls */
+/* Red Wood Siding Texture styling */
 .house-base {
     width: 100%;
     height: 100%;
     position: absolute;
     bottom: 0;
-    background-color: #b24223;
-    background-image: 
-        linear-gradient(335deg, #8a3016 23px, transparent 23px),
-        linear-gradient(155deg, #8a3016 23px, transparent 23px);
-    background-size: 58px 58px;
-    border: 4px solid #5a1e0e;
-    box-shadow: 0 20px 30px rgba(0,0,0,0.4);
+    background-color: #a22c26;
+    /* Creates realistic horizontal wooden panels */
+    background-image: linear-gradient(0deg, rgba(0,0,0,0.15) 4px, transparent 4px);
+    background-size: 100% 30px;
+    border: 5px solid #5a1512;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     box-sizing: border-box;
-}
-
-/* Triangle roof layout */
-.house-roof {
-    width: 0;
-    height: 0;
-    position: absolute;
-    top: -100px;
-    left: -4px;
-    border-left: 329px solid transparent;
-    border-right: 329px solid transparent;
-    border-bottom: 100px solid #5c2c16; 
-}
-
-/* Swimming pool body */
-.pool {
-    position: absolute;
-    left: 1400px;
-    top: 2500px;
-    width: 500px;
-    height: 350px;
-    background: radial-gradient(circle, #4ed4ff 40%, #1797c4 100%);
-    border: 12px solid #d1d8e0;
-    border-radius: 20px;
-    box-shadow: inset 0 10px 20px rgba(0,0,0,0.3);
-    z-index: 2;
-    box-sizing: border-box;
-}
-
-/* Walkable floating wood planks over the pool water */
-.pool-mat {
-    position: absolute;
-    width: 110px;
-    height: 65px;
-    background: repeating-linear-gradient(0deg, #ffc048, #ffc048 10px, #ffa801 10px, #ffa801 20px);
-    border-radius: 5px;
-    border: 2px solid #c57e00;
-    z-index: 3;
-}
-.mat1 { left: 30px; top: 140px; }
-.mat2 { left: 190px; top: 140px; }
-.mat3 { left: 350px; top: 140px; }
-
-/* ==========================================
-   5. CHARACTER DESIGN (8 Circle Anatomy)
-   ========================================== */
-.character {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    z-index: 20;
-    transition: filter 0.1s ease;
-}
-
-.char-body {
-    position: absolute;
-    left: 30px;
-    top: 30px;
-    width: 60px;
-    height: 60px;
-    background-color: #ff3838; 
-    border-radius: 50%;
-    border: 3px solid #bc2020;
-    z-index: 3;
-}
-
-.char-head {
-    position: absolute;
-    left: 40px;
-    top: 40px;
-    width: 40px;
-    height: 40px;
-    background-color: #ffdd59; 
-    border-radius: 50%;
-    border: 3px solid #e5c130;
-    z-index: 4;
-}
-
-.sleeve-l1 { position: absolute; left: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
-.hand-l2   { position: absolute; left: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
-.sleeve-r1 { position: absolute; right: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
-.hand-r2   { position: absolute; right: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
-.leg-l { position: absolute; left: 33px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
-.leg-r { position: absolute; left: 67px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
-
-/* ==========================================
-   6. HEADS UP DISPLAY OVERLAY
-   ========================================== */
-#UI-overlay {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(0,0,0,0.85);
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 8px;
-    z-index: 100;
-    pointer-events: none;
-    border: 2px solid #ffd32a;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }

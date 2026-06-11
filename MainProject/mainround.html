@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Fixed Arena</title>
+    <title>Tag Royale - Custom Level Map</title>
     <style>
         /* ==========================================
-           CSS STYLING (Embedded to guarantee loading)
+           1. BASE LAYOUT & VIEWPORT FRAME
            ========================================== */
         body, html {
             margin: 0;
@@ -15,7 +15,7 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #111;
+            background-color: #0c1015;
             user-select: none;
         }
 
@@ -24,126 +24,209 @@
             height: 100vh;
             overflow: hidden; 
             position: relative;
-            display: block; /* Force visible */
+            display: block;
         }
 
+        /* Arena Grass Ground */
         #main-map {
             width: 5000px;
             height: 5000px;
             position: relative;
-            background-color: #458b00;
+            background-color: #4b861d;
             background-image: 
-                radial-gradient(#556b2f 15%, transparent 16%),
-                radial-gradient(#3a5f0b 15%, transparent 16%);
-            background-size: 60px 60px;
-            background-position: 0 0, 30px 30px;
+                radial-gradient(#5a9727 15%, transparent 16%),
+                radial-gradient(#3f7416 15%, transparent 16%);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
         }
 
-        .border-tree {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, #2e5c1e 60%, #1a3610 100%);
-            border-radius: 50%;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            z-index: 10;
-        }
-
-        .map-tree {
-            position: absolute;
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
-            border-radius: 50%;
-            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-
-        .mud-patch {
-            position: absolute;
-            background: #573b12;
-            border-radius: 50% 40% 60% 45% / 40% 50% 45% 55%; 
-            opacity: 0.95;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
-            z-index: 1;
-        }
-
-        .rock {
-            position: absolute;
-            background-color: #778ca3;
-            background-image: 
-                linear-gradient(45deg, #4b5563 25%, transparent 25%), 
-                linear-gradient(-45deg, #4b5563 25%, transparent 25%);
-            background-size: 30px 30px;
-            border-radius: 25px;
-            border: 5px solid #4b6584;
-            box-shadow: 5px 10px 15px rgba(0,0,0,0.3);
-            z-index: 4;
-        }
-
+        /* ==========================================
+           2. RECREATED REFERENCE STRUCTURES
+           ========================================== */
+        
+        /* The Red Wood Plank House Container */
         .house-container {
             position: absolute;
             left: 2200px;
-            top: 2200px;
-            width: 650px; 
-            height: 400px;
+            top: 2100px;
+            width: 500px; 
+            height: 340px;
             z-index: 5;
         }
 
+        /* Red Wood Siding Texture styling */
         .house-base {
             width: 100%;
             height: 100%;
             position: absolute;
             bottom: 0;
-            background-color: #b24223;
-            background-image: 
-                linear-gradient(335deg, #8a3016 23px, transparent 23px),
-                linear-gradient(155deg, #8a3016 23px, transparent 23px);
-            background-size: 58px 58px;
-            border: 4px solid #5a1e0e;
-            box-shadow: 0 20px 30px rgba(0,0,0,0.4);
+            background-color: #a22c26;
+            /* Creates realistic horizontal wooden panels */
+            background-image: linear-gradient(0deg, rgba(0,0,0,0.15) 4px, transparent 4px);
+            background-size: 100% 30px;
+            border: 5px solid #5a1512;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             box-sizing: border-box;
+            border-radius: 4px;
         }
 
+        /* House Roof Triangle Accent */
         .house-roof {
             width: 0;
             height: 0;
             position: absolute;
-            top: -100px;
-            left: -4px;
-            border-left: 329px solid transparent;
-            border-right: 329px solid transparent;
-            border-bottom: 100px solid #5c2c16; 
+            top: -95px;
+            left: -5px;
+            border-left: 250px solid transparent;
+            border-right: 250px solid transparent;
+            border-bottom: 95px solid #b83d35; 
+            filter: drop-shadow(0 -4px 4px rgba(0,0,0,0.15));
         }
 
+        /* Glowing Entrance Door */
+        .house-door {
+            position: absolute;
+            bottom: 0;
+            left: 80px;
+            width: 70px;
+            height: 120px;
+            background: #fbc531;
+            border: 4px solid #5a1512;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            box-shadow: 0 0 20px rgba(251, 197, 49, 0.5);
+        }
+
+        /* Side Window Grid Pane */
+        .house-window {
+            position: absolute;
+            top: 100px;
+            right: 80px;
+            width: 90px;
+            height: 90px;
+            background: #edf2f7;
+            border: 4px solid #5a1512;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .window-pane {
+            width: calc(50% - 2px);
+            height: calc(50% - 2px);
+            border: 1px solid #718096;
+            background: #7ed6df;
+        }
+
+        /* The Big Round Bush / Hedge Barrier */
+        .big-hedge {
+            position: absolute;
+            left: 2850px;
+            top: 2200px;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, #27ae60 40%, #1e8449 80%, #145a32 100%);
+            border-radius: 50%;
+            border: 8px solid #0e3a20;
+            box-shadow: 
+                0 15px 30px rgba(0,0,0,0.4),
+                inset 0 -15px 30px rgba(0,0,0,0.3);
+            z-index: 6;
+        }
+        /* Leafy organic textured bumps on the bush */
+        .big-hedge::before, .big-hedge::after {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border: inherit;
+            border-radius: 50%;
+        }
+        .big-hedge::before {
+            width: 180px;
+            height: 180px;
+            top: -40px;
+            left: 60px;
+        }
+        .big-hedge::after {
+            width: 160px;
+            height: 160px;
+            bottom: 40px;
+            right: -40px;
+        }
+
+        /* Swimming Pool Container */
         .pool {
             position: absolute;
             left: 1400px;
             top: 2500px;
             width: 500px;
             height: 350px;
-            background: radial-gradient(circle, #4ed4ff 40%, #1797c4 100%);
+            background: radial-gradient(circle, #34e7f4 30%, #0fbcf9 100%);
             border: 12px solid #d1d8e0;
-            border-radius: 20px;
-            box-shadow: inset 0 10px 20px rgba(0,0,0,0.3);
+            border-radius: 16px;
+            box-shadow: inset 0 12px 24px rgba(0,0,0,0.4);
             z-index: 2;
             box-sizing: border-box;
         }
 
+        /* Yellow Walkway Floating Board Mats */
         .pool-mat {
             position: absolute;
             width: 110px;
-            height: 65px;
-            background: repeating-linear-gradient(0deg, #ffc048, #ffc048 10px, #ffa801 10px, #ffa801 20px);
-            border-radius: 5px;
-            border: 2px solid #c57e00;
+            height: 70px;
+            background: repeating-linear-gradient(90deg, #ffca28, #ffca28 12px, #ffb300 12px, #ffb300 24px);
+            border-radius: 6px;
+            border: 3px solid #b78103;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.35);
             z-index: 3;
         }
-        .mat1 { left: 30px; top: 140px; }
-        .mat2 { left: 190px; top: 140px; }
-        .mat3 { left: 350px; top: 140px; }
+        /* Aligned in a straight step layout across the pool body */
+        .mat1 { left: 40px; top: 130px; }
+        .mat2 { left: 180px; top: 130px; }
+        .mat3 { left: 320px; top: 130px; }
 
-        /* Character Pieces */
+        /* ==========================================
+           3. STANDARD ENVIRONMENT & MAP OBSTACLES
+           ========================================== */
+        .border-tree {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #1e4611 50%, #0f2707 100%);
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .map-tree {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, #2d6619 40%, #193d0c 100%);
+            border-radius: 50%;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .mud-patch {
+            position: absolute;
+            background: #523610;
+            border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
+            opacity: 0.9;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
+        .rock {
+            position: absolute;
+            background-color: #8395a7;
+            border-radius: 18px;
+            border: 4px solid #576574;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            z-index: 4;
+        }
+
+        /* ==========================================
+           4. PLAYER CHARACTER COMPOSITION
+           ========================================== */
         .character {
             position: absolute;
             width: 120px;
@@ -153,61 +236,62 @@
 
         .char-body {
             position: absolute;
-            left: 30px;
-            top: 30px;
-            width: 60px;
-            height: 60px;
-            background-color: #ff3838; 
+            left: 35px;
+            top: 35px;
+            width: 50px;
+            height: 50px;
+            background-color: #eb2f06; 
             border-radius: 50%;
-            border: 3px solid #bc2020;
+            border: 3px solid #b31600;
             z-index: 3;
         }
 
         .char-head {
             position: absolute;
-            left: 40px;
-            top: 40px;
-            width: 40px;
-            height: 40px;
-            background-color: #ffdd59; 
+            left: 43px;
+            top: 43px;
+            width: 34px;
+            height: 34px;
+            background-color: #fdd835; 
             border-radius: 50%;
-            border: 3px solid #e5c130;
+            border: 3px solid #c4a300;
             z-index: 4;
         }
 
-        .sleeve-l1 { position: absolute; left: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
-        .hand-l2   { position: absolute; left: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
-        .sleeve-r1 { position: absolute; right: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
-        .hand-r2   { position: absolute; right: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
-        .leg-l { position: absolute; left: 33px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
-        .leg-r { position: absolute; left: 67px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
+        .sleeve-l1 { position: absolute; left: 12px; top: 48px; width: 20px; height: 20px; background: #eb2f06; border-radius: 50%; z-index: 2; }
+        .hand-l2   { position: absolute; left: 3px; top: 50px; width: 14px; height: 14px; background: #fdd835; border-radius: 50%; z-index: 2; }
+        .sleeve-r1 { position: absolute; right: 12px; top: 48px; width: 20px; height: 20px; background: #eb2f06; border-radius: 50%; z-index: 2; }
+        .hand-r2   { position: absolute; right: 3px; top: 50px; width: 14px; height: 14px; background: #fdd835; border-radius: 50%; z-index: 2; }
+        .leg-l     { position: absolute; left: 38px; bottom: 20px; width: 16px; height: 16px; background: #1e272e; border-radius: 50%; z-index: 1; }
+        .leg-r     { position: absolute; left: 66px; bottom: 20px; width: 16px; height: 16px; background: #1e272e; border-radius: 50%; z-index: 1; }
 
         #UI-overlay {
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(0,0,0,0.85);
+            background: rgba(15, 23, 42, 0.9);
             color: #fff;
-            padding: 12px 20px;
+            padding: 14px 22px;
             border-radius: 8px;
             z-index: 100;
             pointer-events: none;
-            border: 2px solid #ffd32a;
+            border: 2px solid #fbc531;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
     <div id="UI-overlay">
-        <div>Use WASD or Arrow Keys to move! Cross the pool safely using the yellow mats.</div>
+        <div style="font-weight: bold; color: #fbc531; margin-bottom: 4px;">MAP UPDATE ACTIVE</div>
+        <div style="font-size: 0.85rem; color: #cbd5e1;">Walk safely across the pool using the yellow board mats! Move with WASD / Arrows.</div>
     </div>
 
     <div id="viewport">
         <div id="main-map">
             
-            <div class="mud-patch" style="left: 1200px; top: 1400px; width: 450px; height: 350px;"></div>
-            <div class="mud-patch" style="left: 2900px; top: 1900px; width: 400px; height: 300px;"></div>
-            <div class="mud-patch" style="left: 1800px; top: 3200px; width: 550px; height: 420px;"></div>
+            <div class="mud-patch" style="left: 1100px; top: 1500px; width: 450px; height: 350px;"></div>
+            <div class="mud-patch" style="left: 3200px; top: 1800px; width: 400px; height: 300px;"></div>
 
             <div id="main-pool" class="pool">
                 <div class="pool-mat mat1"></div>
@@ -217,12 +301,21 @@
 
             <div id="main-house" class="house-container">
                 <div class="house-roof"></div>
-                <div class="house-base"></div>
+                <div class="house-base">
+                    <div class="house-door"></div>
+                    <div class="house-window">
+                        <div class="window-pane"></div>
+                        <div class="window-pane"></div>
+                        <div class="window-pane"></div>
+                        <div class="window-pane"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="rock" style="left: 1000px; top: 1800px; width: 130px; height: 110px;"></div>
-            <div class="rock" style="left: 2900px; top: 2600px; width: 180px; height: 140px;"></div>
-            <div class="rock" style="left: 2100px; top: 1600px; width: 100px; height: 90px;"></div>
+            <div class="big-hedge"></div>
+
+            <div class="rock" style="left: 1000px; top: 1900px; width: 120px; height: 100px;"></div>
+            <div class="rock" style="left: 2500px; top: 1700px; width: 140px; height: 110px;"></div>
 
             <div class="character">
                 <div class="char-head"></div>
@@ -247,13 +340,16 @@
             const mudPatches = document.querySelectorAll('.mud-patch');
             const treeContainer = document.getElementById('tree-container');
 
-            // Coordinates matching where the screen camera centers
-            let playerX = 2000;
-            let playerY = 1900;
-            const playerSize = 50; 
-            const playerOffset = 35; 
+            let playerX = 1950;
+            let playerY = 1850;
+            
+            // Scaled collision hitboxes for precise moving over structures
+            const boxWidth = 36;
+            const boxHeight = 36;
+            const boxOffsetX = 42;
+            const boxOffsetY = 42;
 
-            const NORMAL_SPEED = 8;
+            const NORMAL_SPEED = 7;
             const MUD_SPEED = 3;
             let currentSpeed = NORMAL_SPEED;
 
@@ -264,7 +360,7 @@
 
             let obstacles = [];
 
-            // Spawn Map Boundary Trees
+            // Procedural Forest Boundaries
             const mapSize = 5000;
             for (let i = 0; i < mapSize; i += 100) {
                 createTree(i, 0, 'border-tree'); 
@@ -273,12 +369,11 @@
                 createTree(mapSize - 120, i, 'border-tree'); 
             }
             
-            // Random Trees
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 50; i++) {
                 let randX = Math.floor(Math.random() * (mapSize - 400)) + 200;
                 let randY = Math.floor(Math.random() * (mapSize - 400)) + 200;
-                if (!(randX > 1200 && randX < 2000 && randY > 2300 && randY < 3000) && 
-                    !(randX > 2000 && randX < 3000 && randY > 2000 && randY < 2800)) {
+                // Exclude placement near your custom structures
+                if (!(randX > 1200 && randX < 3400 && randY > 2000 && randY < 3000)) {
                     createTree(randX, randY, 'map-tree');
                 }
             }
@@ -289,110 +384,22 @@
                 tree.style.left = x + 'px';
                 tree.style.top = y + 'px';
                 treeContainer.appendChild(tree);
-                
-                const radius = className === 'border-tree' ? 60 : 70;
+                const radius = className === 'border-tree' ? 60 : 65;
                 obstacles.push({ type: 'circle', x: x + radius, y: y + radius, radius: radius - 20 });
             }
 
             function registerObstacles() {
-                obstacles.push({ type: 'rect', x: 2200, y: 2200, w: 650, h: 400 });
-                obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350, isPoolWater: true });
-
-                document.querySelectorAll('.rock').forEach(rock => {
-                    obstacles.push({
-                        type: 'rect',
-                        x: parseInt(rock.style.left),
-                        y: parseInt(rock.style.top),
-                        w: parseInt(rock.style.width),
-                        h: parseInt(rock.style.height)
-                    });
-                });
+                // Red Wood House Structure hit wall
+                obstacles.push({ type: 'rect', x: 2200, y: 2100, w: 500, h: 340 });
+                
+                // Big Round Bush Circular Obstacle layout
+                obstacles.push({ type: 'circle', x: 2850 + 160, y: 2200 + 160, radius: 155 });
+                
+                // Total Pool Frame Water Trap Floor
+                obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350 });
             }
 
-            window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
-            window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
-
-            function checkMud(x, y) {
-                const px = x + 60;
-                const py = y + 60;
-                let slow = false;
-                mudPatches.forEach(patch => {
-                    const mx = parseInt(patch.style.left);
-                    const my = parseInt(patch.style.top);
-                    if (px >= mx && px <= (mx + parseInt(patch.style.width)) && py >= my && py <= (my + parseInt(patch.style.height))) {
-                        slow = true;
-                    }
-                });
-                return slow;
-            }
-
-            function isOnMat(x, y) {
-                const px = x + playerOffset + (playerSize / 2);
-                const py = y + playerOffset + (playerSize / 2);
-                const mats = [
-                    {x: 1430, y: 2640, w: 110, h: 65},
-                    {x: 1590, y: 2640, w: 110, h: 65},
-                    {x: 1750, y: 2640, w: 110, h: 65}
-                ];
-                return mats.some(m => px >= m.x && px <= (m.x + m.w) && py >= m.y && py <= (m.y + m.h));
-            }
-
-            function isColliding(targetX, targetY) {
-                const px = targetX + playerOffset;
-                const py = targetY + playerOffset;
-                const pw = playerSize;
-                const ph = playerSize;
-
-                if (px < 120 || px + pw > 4880 || py < 120 || py + ph > 4880) return true;
-
-                for (let obs of obstacles) {
-                    if (obs.type === 'rect') {
-                        if (obs.isPoolWater && isOnMat(targetX, targetY)) continue;
-                        if (px < obs.x + obs.w && px + pw > obs.x && py < obs.y + obs.h && py + ph > obs.y) return true;
-                    } else if (obs.type === 'circle') {
-                        const distX = (px + pw/2) - obs.x;
-                        const distY = (py + ph/2) - obs.y;
-                        if (Math.sqrt(distX * distX + distY * distY) < (pw / 2) + obs.radius) return true;
-                    }
-                }
-                return false;
-            }
-
-            function gameLoop() {
-                if (checkMud(playerX, playerY)) {
-                    currentSpeed = MUD_SPEED;
-                    player.style.filter = "sepia(0.5) brightness(0.8)";
-                } else {
-                    currentSpeed = NORMAL_SPEED;
-                    player.style.filter = "none";
-                }
-
-                let nextX = playerX;
-                let nextY = playerY;
-
-                if (keys.w || keys.ArrowUp)    nextY -= currentSpeed;
-                if (keys.s || keys.ArrowDown)  nextY += currentSpeed;
-                if (keys.a || keys.ArrowLeft)  nextX -= currentSpeed;
-                if (keys.d || keys.ArrowRight) nextX += currentSpeed;
-
-                if (!isColliding(nextX, playerY))  playerX = nextX;
-                if (!isColliding(playerX, nextY))  playerY = nextY;
-
-                player.style.left = playerX + 'px';
-                player.style.top = playerY + 'px';
-
-                // Keeps view scrolling directly over character coordinates center
-                viewport.scrollLeft = playerX - (window.innerWidth / 2) + 60;
-                viewport.scrollTop = playerY - (window.innerHeight / 2) + 60;
-
-                requestAnimationFrame(gameLoop);
-            }
-
-            // Initialization
             registerObstacles();
-            viewport.scrollLeft = playerX - (window.innerWidth / 2) + 60;
-            viewport.scrollTop = playerY - (window.innerHeight / 2) + 60;
-            requestAnimationFrame(gameLoop);
         });
     </script>
 </body>
