@@ -3,171 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Absolute Visibility Fix</title>
+    <title>Top-Down Arena Engine</title>
     <style>
-        /* ==========================================
-           1. HARD-LOCKED BASE VIEWPORT STYLES
-           ========================================== */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #0c1015; /* The dark page background */
-            font-family: sans-serif;
+            background-color: #0c1015;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
-
-        /* This container forces the game to stay visible on your screen */
-        #viewport {
+        #gameCanvas {
+            display: block;
             width: 100vw;
             height: 100vh;
-            position: relative;
-            overflow: hidden;
-            display: block !important;
         }
-
-        /* The giant map arena */
-        #main-map {
-            width: 5000px;
-            height: 5000px;
-            position: absolute;
-            background-color: #4b861d; /* Grass Green */
-            background-image: 
-                radial-gradient(#5a9727 15%, transparent 16%),
-                radial-gradient(#3f7416 15%, transparent 16%);
-            background-size: 50px 50px;
-            background-position: 0 0, 25px 25px;
-        }
-
-        /* ==========================================
-           2. MAP STRUCTURES & OBSTACLES
-           ========================================== */
-        .house-container {
-            position: absolute;
-            left: 2200px;
-            top: 2100px;
-            width: 500px; 
-            height: 340px;
-            z-index: 5;
-        }
-        .house-base {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            background-color: #a22c26;
-            border: 5px solid #5a1512;
-            box-sizing: border-box;
-        }
-        .house-door {
-            position: absolute;
-            bottom: 0;
-            left: 80px;
-            width: 70px;
-            height: 120px;
-            background: #fbc531;
-        }
-
-        .big-hedge {
-            position: absolute;
-            left: 2850px;
-            top: 2200px;
-            width: 320px;
-            height: 320px;
-            background: #1e8449;
-            border-radius: 50%;
-            z-index: 6;
-        }
-
-        .pool {
-            position: absolute;
-            left: 1400px;
-            top: 2500px;
-            width: 500px;
-            height: 350px;
-            background: #0fbcf9;
-            border: 12px solid #d1d8e0;
-            z-index: 2;
-            box-sizing: border-box;
-        }
-        .pool-mat {
-            position: absolute;
-            width: 110px;
-            height: 70px;
-            background: #ffca28;
-            border: 3px solid #b78103;
-            z-index: 3;
-        }
-        .mat1 { left: 40px; top: 130px; }
-        .mat2 { left: 180px; top: 130px; }
-        .mat3 { left: 320px; top: 130px; }
-
-        .border-tree {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            background: #1e4611;
-            border-radius: 50%;
-            z-index: 10;
-        }
-        .mud-patch {
-            position: absolute;
-            background: #523610;
-            opacity: 0.9;
-            z-index: 1;
-        }
-
-        /* ==========================================
-           3. SIMPLIFIED EXTRA-VISIBLE CHARACTER
-           ========================================== */
-        .character {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background-color: #eb2f06; /* Bright Red Body */
-            border: 4px solid #ffffff; /* Bright white border to see it easily */
-            border-radius: 50%;
-            z-index: 9999 !important; /* Force it on top of everything */
-            box-shadow: 0 0 20px #ffffff; /* Glow effect so you spot it instantly */
-        }
-
         #UI-overlay {
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(15, 23, 42, 0.95);
             color: #fff;
-            padding: 15px;
-            border-radius: 5px;
-            z-index: 10000;
+            padding: 14px 22px;
+            border-radius: 8px;
+            z-index: 10;
+            pointer-events: none;
             border: 2px solid #fbc531;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
     <div id="UI-overlay">
-        <strong>SCREEN REFRESH SUCCESSFUL</strong><br>
-        Use WASD or Arrow Keys to move your character.
+        <div style="font-weight: bold; color: #fbc531; margin-bottom: 4px;">ENGINE RENDERING ONLINE</div>
+        <div style="font-size: 0.85rem; color: #cbd5e1;">Move with WASD or Arrow Keys. Explore the L-House and Hedge Maze!</div>
     </div>
 
-    <div id="viewport">
-        <div id="main-map">
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Resize handler
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Game Arena Properties
+        const WORLD_SIZE = 4000;
+        
+        // Spawn Player right next to the house (matching the layout in your screenshot)
+        let player = {
+            x: 2200,
+            y: 2300,
+            radius: 20,
+            speed: 6,
+            angle: 0
+        };
+
+        const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+
+        // Keyboard Event Listeners
+        window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
+        window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
+
+        // Track Mouse angle to rotate player head/hands toward crosshair
+        window.addEventListener('mousemove', (e) => {
+            const screenCenterX = canvas.width / 2;
+            const screenCenterY = canvas.height / 2;
+            player.angle = Math.atan2(e.clientY - screenCenterY, e.clientX - screenCenterX);
+        });
+
+        // Dynamic Environmental Assets Map Objects
+        const objects = {
+            trees: [
+                {x: 1500, y: 1600, r: 55}, {x: 1620, y: 1510, r: 60}, {x: 2500, y: 1600, r: 55},
+                {x: 2350, y: 1800, r: 50}, {x: 1450, y: 2210, r: 55}, {x: 2600, y: 2500, r: 65},
+                {x: 1800, y: 2650, r: 50}
+            ],
+            boulders: [
+                {x: 1950, y: 1750, r: 25}, {x: 1910, y: 1950, r: 20}
+            ],
+            // Hardcoded structural layout for the L-Shaped House wall collisions
+            houseWalls: [
+                {x: 1700, y: 2100, w: 450, h: 150}, // Top arm of the L
+                {x: 1700, y: 2250, w: 150, h: 300}  // Bottom leg of the L
+            ]
+        };
+
+        // Collision Check Logic
+        function checkCollisions(nextX, nextY) {
+            // World Border boundaries
+            if (nextX < 100 || nextX > WORLD_SIZE - 100 || nextY < 100 || nextY > WORLD_SIZE - 100) return true;
+
+            // Check against solid house wall rectangles
+            for (let wall of objects.houseWalls) {
+                if (nextX + player.radius > wall.x && nextX - player.radius < wall.x + wall.w &&
+                    nextY + player.radius > wall.y && nextY - player.radius < wall.y + wall.h) {
+                    return true;
+                }
+            }
+
+            // Check against trees/rocks circles
+            for (let obj of [...objects.trees, ...objects.boulders]) {
+                let dx = nextX - obj.x;
+                let dy = nextY - obj.y;
+                if (Math.sqrt(dx*dx + dy*dy) < player.radius + (obj.r * 0.6)) { // 0.6 scales down collision to match trunk size
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Main Drawing Loop
+        function draw() {
+            // Clear screen
+            ctx.fillStyle = '#0c1015';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Establish Camera tracking offsets locked to player center coordinates
+            const camX = canvas.width / 2 - player.x;
+            const camY = canvas.height / 2 - player.y;
+
+            ctx.save();
+            ctx.translate(camX, camY);
+
+            // 1. DRAW TILE GRASS BACKGROUND
+            ctx.fillStyle = '#4b861d'; // Base grass green color
+            ctx.fillRect(0, 0, WORLD_SIZE, WORLD_SIZE);
             
-            <div class="mud-patch" style="left: 1100px; top: 1500px; width: 450px; height: 350px;"></div>
+            // Draw grid dots overlay
+            ctx.fillStyle = '#3f7416';
+            for (let x = 0; x < WORLD_SIZE; x += 50) {
+                for (let y = 0; y < WORLD_SIZE; y += 50) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
 
-            <div id="main-pool" class="pool">
-                <div class="pool-mat mat1"></div>
-                <div class="pool-mat mat2"></div>
-                <div class="pool-mat mat3"></div>
-            </div>
+            // 2. DRAW C-SHAPED SPIKY HEDGE WALL MAZE (From your screenshot)
+            ctx.strokeStyle = '#1a3c08';
+            ctx.fillStyle = '#22550e';
+            ctx.lineWidth = 8;
+            
+            ctx.beginPath();
+            // Complex arc tracing the outline curve path of the hedge maze
+            ctx.arc(2000, 1800, 220, 0.2 * Math.PI, 1.35 * Math.PI, false);
+            ctx.arc(2000, 1800, 340, 1.35 * Math.PI, 0.2 * Math.PI, true);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
 
-            <div id="main-house" class="house-container">
-                <div class="house-base">
-                    <div class="house-door"></div>
-                </div>
-            </div>
+            // 3. DRAW L-SHAPED PLANK HOUSE STRUCTURE WITH ROOF SHADING
+            // Exterior Yellow Porch Decks
+            ctx.fillStyle = '#e2db6c';
+            ctx.fillRect(1680, 2080, 490, 190);
+            ctx.fillRect(1680, 2250, 190, 320);
 
-            <div class="big-hedge"></div>
+            // Solid Roof Base Foundation Color (Terracotta Orange)
+            ctx.fillStyle = '#cc6a4e';
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
 
-            <div class="character"></div>
+            // Draw the house roof and walls
+            ctx.fillRect(1700, 2100, 280, 150);
+            ctx.fillRect(1700, 2250, 150, 300);
+            ctx.strokeRect(1700, 2100, 280, 150);
+            ctx.strokeRect(1700, 2250, 150, 300);
+
+            // Draw trees
+            ctx.fillStyle = '#1a4213';
+            ctx.strokeStyle = '#18400f';
+            ctx.lineWidth = 2;
+            for (let tree of objects.trees) {
+                ctx.beginPath();
+                ctx.arc(tree.x, tree.y, tree.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Draw rocks
+            ctx.fillStyle = '#6f6f6f';
+            ctx.strokeStyle = '#4a4a4a';
+            for (let rock of objects.boulders) {
+                ctx.beginPath();
+                ctx.arc(rock.x, rock.y, rock.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            ctx.restore();
+
+            // Draw player at center screen
+            const playerScreenX = canvas.width / 2;
+            const playerScreenY = canvas.height / 2;
+            ctx.save();
+            ctx.translate(playerScreenX, playerScreenY);
+            ctx.rotate(player.angle);
+            ctx.fillStyle = '#f2f2f2';
+            ctx.beginPath();
+            ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(-6, -6, player.radius - 4, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // Crosshair indicator
+            ctx.strokeStyle = '#fbc531';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(playerScreenX - 12, playerScreenY);
+            ctx.lineTo(playerScreenX + 12, playerScreenY);
+            ctx.moveTo(playerScreenX, playerScreenY - 12);
+            ctx.lineTo(playerScreenX, playerScreenY + 12);
+            ctx.stroke();
+
+            // Update player movement
+            let nextX = player.x;
+            let nextY = player.y;
+            if (keys.w || keys.ArrowUp) nextY -= player.speed;
+            if (keys.s || keys.ArrowDown) nextY += player.speed;
+            if (keys.a || keys.ArrowLeft) nextX -= player.speed;
+            if (keys.d || keys.ArrowRight) nextX += player.speed;
+
+            if (!checkCollisions(nextX, nextY)) {
+                player.x = nextX;
+                player.y = nextY;
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>
