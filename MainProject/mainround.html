@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - 100% Guaranteed Fixed Arena</title>
+    <title>Tag Royale - Hardcoded Character Fix</title>
     <style>
         /* ==========================================
            1. CORE VIEWPORT & GRASS MAP STYLES
@@ -24,7 +24,7 @@
             height: 100vh;
             overflow: hidden; 
             position: relative;
-            display: block !important; /* Force render */
+            display: block !important;
         }
 
         #main-map {
@@ -40,7 +40,7 @@
         }
 
         /* ==========================================
-           2. NEW RED WOOD HOUSE STRUCTURE
+           2. RED WOOD HOUSE STRUCTURE
            ========================================== */
         .house-container {
             position: absolute;
@@ -123,7 +123,7 @@
         }
 
         /* ==========================================
-           3. POOL WITH INDEPENDENT WALKABLE MATS
+           3. POOL WITH WALKABLE BOARD MATS
            ========================================== */
         .pool {
             position: absolute;
@@ -153,7 +153,7 @@
         .mat2 { left: 180px; top: 130px; }
         .mat3 { left: 320px; top: 130px; }
 
-        /* Environmental Decor */
+        /* Obstacles & Decoration */
         .border-tree {
             position: absolute;
             width: 120px;
@@ -192,14 +192,15 @@
         }
 
         /* ==========================================
-           4. CHARACTER RENDERING LAYER
+           4. FIXED PLAYER RENDER LAYER
            ========================================== */
         .character {
             position: absolute;
             width: 120px;
             height: 120px;
-            z-index: 20;
-            display: block !important; /* Lock open */
+            z-index: 999 !important; /* Force render on top of all layers */
+            display: block !important;
+            /* Explicit fallback CSS positioning matching engine coordinates */
             left: 1800px;
             top: 1900px;
         }
@@ -218,43 +219,15 @@
 
         .char-head {
             position: absolute;
-            left: 20px;
-            top: -15px;
-            width: 60px;
-            height: 60px;
-            background-color: #f9d342;
+            left: 43px;
+            top: 43px;
+            width: 34px;
+            height: 34px;
+            background-color: #fdd835; 
             border-radius: 50%;
-            border: 3px solid #b31600;
+            border: 3px solid #c4a300;
             z-index: 4;
         }
-    </style>
-</head>
-<body>
-    <div id="viewport">
-        <div id="main-map">
-            <div class="house-container">
-                <div class="house-roof"></div>
-                <div class="house-base">
-                    <div class="house-door"></div>
-                    <div class="house-window">
-                        <div class="window-pane"></div>
-                        <div class="window-pane"></div>
-                        <div class="window-pane"></div>
-                        <div class="window-pane"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="big-hedge"></div>
-            <div class="pool">
-                <div class="pool-mat mat1"></div>
-                <div class="pool-mat mat2"></div>
-                <div class="pool-mat mat3"></div>
-            </div>
-            <div class="character">
-                <div class="char-body"></div>
-                <div class="char-head"></div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+
+        .sleeve-l1 { position: absolute; left: 12px; top: 48px; width: 20px; height: 20px; background: #eb2f06; border-radius: 50%; z-index: 2; }
+        .hand-l2   { position: absolute; left: 3px; top: 50px; width: 14px; height: 14px; }
