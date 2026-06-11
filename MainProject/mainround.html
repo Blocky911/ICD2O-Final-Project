@@ -3,81 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Game Session</title>
-    <style>
-        /* ==========================================
-           1. BASE VIEWPORT & LAYOUT SETUP
-           ========================================== */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #111;
-            user-select: none;
-        }
+    <title>Tag Royale - Scrollable Map</title>
+    <link rel="stylesheet" href="mainround.css">
+</head>
+<body>
 
-        /* Difficulty Menu Screen Overlay */
-        #menu-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1e272e 0%, #0f141c 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
+    <div id="UI-overlay">
+        <h3>🏆 Tag Royale Map Preview</h3>
+        <p>🎮 Use <b>WASD</b> or <b>Arrow Keys</b> to control the player!</p>
+        <p>🖱️ <b>Click and drag</b> anywhere to manual-scroll the massive 5000x5000 map.</p>
+    </div>
 
-        #menu-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+    <div id="viewport">
+        <div id="main-map">
+            
+            <div class="mud-patch" style="left: 1200px; top: 1400px; width: 450px; height: 300px;"></div>
+            <div class="mud-patch" style="left: 2600px; top: 2100px; width: 350px; height: 250px;"></div>
+            <div class="mud-patch" style="left: 1800px; top: 3200px; width: 500px; height: 400px;"></div>
 
-        .menu-title {
-            color: #ffd32a;
-            font-size: 3rem;
-            margin-bottom: 30px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            letter-spacing: 2px;
-        }
+            <div class="pool">
+                <div class="pool-mat mat1"></div>
+                <div class="pool-mat mat2"></div>
+                <div class="pool-mat mat3"></div>
+            </div>
 
-        .btn-container {
-            display: flex;
-            gap: 20px;
-        }
+            <div class="house-container">
+                <div class="house-roof"></div>
+                <div class="house-base"></div>
+            </div>
 
-        .difficulty-btn {
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-            transition: transform 0.2s, filter 0.2s;
-        }
+            <div class="rock" style="left: 1000px; top: 1800px; width: 130px; height: 110px;"></div>
+            <div class="rock" style="left: 2800px; top: 2600px; width: 180px; height: 140px;"></div>
+            <div class="rock" style="left: 2100px; top: 1600px; width: 100px; height: 90px;"></div>
+            <div class="rock" style="left: 1400px; top: 2900px; width: 150px; height: 130px;"></div>
 
-        .difficulty-btn:hover {
-            transform: translateY(-3px);
-            filter: brightness(1.2);
-        }
+            <div class="character">
+                <div class="char-head"></div>
+                <div class="char-body"></div>
+                <div class="sleeve-l1"></div>
+                <div class="hand-l2"></div>
+                <div class="sleeve-r1"></div>
+                <div class="hand-r2"></div>
+                <div class="leg-l"></div>
+                <div class="leg-r"></div>
+            </div>
 
-        .easy { background-color: #05c46b; }
-        .medium { background-color: #ffa801; }
-        .hard { background-color: #ff3f34; }
+            <div id="tree-container"></div>
 
-        /* The Camera Window Box hiding the rest of the map */
-        #viewport {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden; /* JavaScript moves this, standard scrollbars hidden */
-            position: relative;
-        }
+        </div>
+    </div>
+
+    <script src="mainround.js"></script>
+</body>
+</html>

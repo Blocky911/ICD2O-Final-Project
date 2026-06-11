@@ -12,11 +12,11 @@ body, html {
     user-select: none;
 }
 
-/* The Camera Box (Screen window that hides the rest of the huge map) */
+/* Camera Viewport (The screen window) */
 #viewport {
     width: 100vw;
     height: 100vh;
-    overflow: auto; /* Enables custom dragging/scrollbars */
+    overflow: auto; /* Enables fallback scrollbars/dragging */
     cursor: grab;
     position: relative;
 }
@@ -25,9 +25,7 @@ body, html {
     cursor: grabbing;
 }
 
-/* ==========================================
-   2. MAIN MAP & PROCEDURAL TEXTURES
-   ========================================== */
+/* The Main Map (Huge 5000x5000 World Layer) */
 #main-map {
     width: 5000px;
     height: 5000px;
@@ -41,4 +39,177 @@ body, html {
     background-size: 60px 60px;
     background-position: 0 0, 30px 30px;
     background-repeat: repeat;
+}
+
+/* ==========================================
+   2. ENVIRONMENT OBJECTS & GRAPHICS
+   ========================================== */
+
+/* Structural Obstacle Border Trees */
+.border-tree {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #2e5c1e 60%, #1a3610 100%);
+    border-radius: 50%;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    z-index: 10;
+}
+
+/* Scattered Map Forest Elements */
+.map-tree {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
+    border-radius: 50%;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+
+/* Base Camp Safe-House Structure */
+.house-container {
+    position: absolute;
+    left: 2200px;
+    top: 2200px;
+    width: 400px;
+    height: 500px;
+    z-index: 5;
+}
+
+.house-base {
+    width: 400px;
+    height: 400px;
+    position: absolute;
+    bottom: 0;
+    background-color: #b24223;
+    background-image: 
+        linear-gradient(335deg, #8a3016 23px, transparent 23px),
+        linear-gradient(155deg, #8a3016 23px, transparent 23px),
+        linear-gradient(335deg, #8a3016 23px, transparent 23px),
+        linear-gradient(155deg, #8a3016 23px, transparent 23px);
+    background-size: 58px 58px;
+    background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
+    border: 4px solid #5a1e0e;
+    box-shadow: 0 20px 30px rgba(0,0,0,0.4);
+}
+
+.house-roof {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 0;
+    border-left: 204px solid transparent;
+    border-right: 204px solid transparent;
+    border-bottom: 100px solid #5c2c16;
+}
+
+/* Swimming Pool & Dynamic Floating Mats */
+.pool {
+    position: absolute;
+    left: 1500px;
+    top: 2500px;
+    width: 500px;
+    height: 350px;
+    background: radial-gradient(circle, #4ed4ff 40%, #1797c4 100%);
+    border: 12px solid #d1d8e0;
+    border-radius: 20px;
+    box-shadow: inset 0 10px 20px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+.pool-mat {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background: repeating-linear-gradient(0deg, #ffc048, #ffc048 10px, #ffa801 10px, #ffa801 20px);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border: 2px solid #c57e00;
+}
+.mat1 { left: 40px; top: 60px; }
+.mat2 { left: 180px; top: 140px; }
+.mat3 { left: 320px; top: 220px; }
+
+/* Mud patches slowing speed configurations */
+.mud-patch {
+    position: absolute;
+    background: #573b12;
+    border-radius: 43% 57% 70% 30% / 45% 45% 55% 55%;
+    opacity: 0.9;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    z-index: 1;
+}
+
+/* Scattered Rock Formations */
+.rock {
+    position: absolute;
+    background-color: #778ca3;
+    background-image: 
+        linear-gradient(45deg, #4b5563 25%, transparent 25%), 
+        linear-gradient(-45deg, #4b5563 25%, transparent 25%);
+    background-size: 30px 30px;
+    border-radius: 30% 70% 50% 50% / 50% 60% 40% 50%;
+    border: 5px solid #4b6584;
+    box-shadow: 5px 10px 15px rgba(0,0,0,0.3);
+    z-index: 4;
+}
+
+/* ==========================================
+   3. CHARACTER CONTROLS & DESIGNS
+   ========================================== */
+.character {
+    position: absolute;
+    left: 2000px;
+    top: 2100px;
+    width: 120px;
+    height: 120px;
+    z-index: 20;
+}
+
+.char-body {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #ff3838;
+    border-radius: 50%;
+    border: 3px solid #bc2020;
+    z-index: 3;
+}
+
+.char-head {
+    position: absolute;
+    left: 40px;
+    top: 40px;
+    width: 40px;
+    height: 40px;
+    background-color: #ffdd59;
+    border-radius: 50%;
+    border: 3px solid #e5c130;
+    z-index: 4;
+}
+
+.sleeve-l1 { position: absolute; left: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
+.hand-l2   { position: absolute; left: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
+.sleeve-r1 { position: absolute; right: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
+.hand-r2   { position: absolute; right: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
+
+.leg-l { position: absolute; left: 33px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
+.leg-r { position: absolute; left: 67px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
+
+/* Informational Heads Up Display Panel */
+#UI-overlay {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 10px;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 2px solid #ffd32a;
 }
