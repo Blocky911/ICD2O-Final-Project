@@ -3,72 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Gameplay Arena</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Tag Royale - Active Arena</title>
+    <style>
+        /* ==========================================
+           1. BASE VIEWPORT & LAYOUT SETUP
+           ========================================== */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #111;
+            user-select: none;
+        }
+
+        #viewport {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; 
+            position: relative;
+            display: block; /* Ensures map is visible instantly */
+        }
+
+        /* ==========================================
+           2. MAIN MAP & PROCEDURAL TEXTURES
+           ========================================== */
+        #main-map {
+            width: 5000px;
+            height: 5000px;
+            position: relative;
+            background-color: #458b00;
+            background-image: 
+                radial-gradient(#556b2f 15%, transparent 16%),
+                radial-gradient(#3a5f0b 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+
+        /* ==========================================
+           3. ENVIRONMENT & OBSTACLES
+           ========================================== */
+        .border-tree {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #2e5c1e 60%, #1a3610 100%);
+            border-radius: 50%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .map-tree {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
+            border-radius: 50%;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        /* Mud Pools: Organic asynchronous blob vectors */
+        .mud-patch {
+            position: absolute;
+            background: #573b12;
+            border-radius: 50% 40% 60% 45% / 40% 50% 45% 55%; 
+            opacity: 0.95;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+            z-index: 1;
+        }
+
+        .rock {
+            position: absolute;
+            background-color: #778ca3;
+            background-image: 
+                linear-gradient(45deg, #4b5563 25%, transparent 25%), 
+                linear-gradient(-45deg, #4b5563 25%, transparent 25%);
+            background-size: 30px 30px;
+            border-radius: 25px;
+            border: 5px solid #4b6584;
+            box-shadow: 5px 10px 15px rgba(0,0,0,0.3);
+            z-index: 4;
+        }
+
+        /* ==========================================
+           4. STRUCTURES (LONGER HOUSE & POOL)
+           ========================================== */
+        .house-container {
+            position: absolute;
+            left: 2200px;
+            top: 2200px;
+            width: 650px;
+            height: 420px;
+            background: linear-gradient(180deg, #8c6b4f 0%, #5a3820 100%);
+            border: 10px solid #3e2a22;
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+            z-index: 5;
+        }
+
+    </style>
 </head>
 <body>
-
-    <div id="UI-overlay">
-        <div style="font-size: 0.9rem; color: #ccc;">Walk ONLY on the yellow boards to cross the pool!</div>
-    </div>
-
     <div id="viewport">
-        <div id="main-map">
-            
-            <div class="mud-patch" style="left: 1200px; top: 1400px; width: 450px; height: 350px;"></div>
-            <div class="mud-patch" style="left: 2900px; top: 1900px; width: 400px; height: 300px;"></div>
-            <div class="mud-patch" style="left: 1800px; top: 3200px; width: 550px; height: 420px;"></div>
-
-            <div id="main-pool" class="pool">
-                <div class="pool-mat mat1"></div>
-                <div class="pool-mat mat2"></div>
-                <div class="pool-mat mat3"></div>
-            </div>
-
-            <div id="main-house" class="house-container">
-                <div class="house-roof"></div>
-                <div class="house-base"></div>
-            </div>
-
-            <div class="rock" style="left: 1000px; top: 1800px; width: 130px; height: 110px;"></div>
-            <div class="rock" style="left: 2900px; top: 2600px; width: 180px; height: 140px;"></div>
-            <div class="rock" style="left: 2100px; top: 1600px; width: 100px; height: 90px;"></div>
-            <div class="rock" style="left: 1400px; top: 2900px; width: 150px; height: 130px;"></div>
-
-            <div class="character">
-                <div class="char-head"></div>
-                <div class="char-body"></div>
-                <div class="sleeve-l1"></div>
-                <div class="hand-l2"></div>
-                <div class="sleeve-r1"></div>
-                <div class="hand-r2"></div>
-                <div class="leg-l"></div>
-                <div class="leg-r"></div>
-            </div>
-
-            <div id="tree-container"></div>
-
-        </div>
+        <div id="main-map"></div>
     </div>
-
-    <script>
-        const map = document.getElementById('main-map');
-        const viewport = document.getElementById('viewport');
-        const player = document.querySelector('.character');
-        const mudPatches = document.querySelectorAll('.mud-patch');
-        const treeContainer = document.getElementById('tree-container');
-
-        let playerX = 2000;
-        let playerY = 1900;
-        const playerSize = 50; 
-        const playerOffset = 35; 
-
-        const NORMAL_SPEED = 8;
-        const MUD_SPEED = 3;
-        let currentSpeed = NORMAL_SPEED;
-
-        const keys = {
-            w: false, a: false, s: false, d: false,
-            ArrowUp: false, ArrowDown: false,
-            ArrowLeft: false, ArrowRight: false
-        };
+</body>
+</html>
