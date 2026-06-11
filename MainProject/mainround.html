@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Fixed Safe Spawn Arena</title>
+    <title>Tag Royale - 100% Guaranteed Fixed Arena</title>
     <style>
         /* ==========================================
-           1. COMPACT INTEGRATED CSS LAYOUT
+           1. CORE VIEWPORT & GRASS MAP STYLES
            ========================================== */
         body, html {
             margin: 0;
@@ -24,7 +24,7 @@
             height: 100vh;
             overflow: hidden; 
             position: relative;
-            display: block !important; /* Force visibility */
+            display: block !important; /* Force render */
         }
 
         #main-map {
@@ -39,7 +39,9 @@
             background-position: 0 0, 25px 25px;
         }
 
-        /* Red Wood House Layout */
+        /* ==========================================
+           2. NEW RED WOOD HOUSE STRUCTURE
+           ========================================== */
         .house-container {
             position: absolute;
             left: 2200px;
@@ -106,7 +108,7 @@
             background: #7ed6df;
         }
 
-        /* Round Bush Barrier */
+        /* Big Round Hedge Barrier */
         .big-hedge {
             position: absolute;
             left: 2850px;
@@ -120,7 +122,9 @@
             z-index: 6;
         }
 
-        /* Swimming Pool & Steps */
+        /* ==========================================
+           3. POOL WITH INDEPENDENT WALKABLE MATS
+           ========================================== */
         .pool {
             position: absolute;
             left: 1400px;
@@ -149,7 +153,7 @@
         .mat2 { left: 180px; top: 130px; }
         .mat3 { left: 320px; top: 130px; }
 
-        /* Obstacles & Map Decoration */
+        /* Environmental Decor */
         .border-tree {
             position: absolute;
             width: 120px;
@@ -187,13 +191,17 @@
             z-index: 4;
         }
 
-        /* Character Layout Anatomy */
+        /* ==========================================
+           4. CHARACTER RENDERING LAYER
+           ========================================== */
         .character {
             position: absolute;
             width: 120px;
             height: 120px;
             z-index: 20;
-            display: block !important; /* Lock display state */
+            display: block !important; /* Lock open */
+            left: 1800px;
+            top: 1900px;
         }
 
         .char-body {
@@ -210,57 +218,21 @@
 
         .char-head {
             position: absolute;
-            left: 43px;
-            top: 43px;
-            width: 34px;
-            height: 34px;
-            background-color: #fdd835; 
-            border-radius: 50%;
-            border: 3px solid #c4a300;
-            z-index: 4;
-        }
-
-        .sleeve-l1 { position: absolute; left: 12px; top: 48px; width: 20px; height: 20px; background: #eb2f06; border-radius: 50%; z-index: 2; }
-        .hand-l2   { position: absolute; left: 3px; top: 50px; width: 14px; height: 14px; background: #fdd835; border-radius: 50%; z-index: 2; }
-        .sleeve-r1 { position: absolute; right: 12px; top: 48px; width: 20px; height: 20px; background: #eb2f06; border-radius: 50%; z-index: 2; }
-        .hand-r2   { position: absolute; right: 3px; top: 50px; width: 14px; height: 14px; background: #fdd835; border-radius: 50%; z-index: 2; }
-        .leg-l     { position: absolute; left: 38px; bottom: 20px; width: 16px; height: 16px; background: #1e272e; border-radius: 50%; z-index: 1; }
-        .leg-r     { position: absolute; left: 66px; bottom: 20px; width: 16px; height: 16px; background: #1e272e; border-radius: 50%; z-index: 1; }
-
-        #UI-overlay {
-            position: fixed;
-            top: 20px;
             left: 20px;
-            background: rgba(15, 23, 42, 0.95);
-            color: #fff;
-            padding: 14px 22px;
-            border-radius: 8px;
-            z-index: 100;
-            pointer-events: none;
-            border: 2px solid #fbc531;
+            top: -15px;
+            width: 60px;
+            height: 60px;
+            background-color: #f9d342;
+            border-radius: 50%;
+            border: 3px solid #b31600;
+            z-index: 4;
         }
     </style>
 </head>
 <body>
-
-    <div id="UI-overlay">
-        <div style="font-weight: bold; color: #fbc531; margin-bottom: 4px;">SYSTEM OPERATIONAL</div>
-        <div style="font-size: 0.85rem; color: #cbd5e1;">Use WASD or Arrow Keys to move. Walk on the yellow planks to cross the water!</div>
-    </div>
-
     <div id="viewport">
         <div id="main-map">
-            
-            <div class="mud-patch" style="left: 1100px; top: 1500px; width: 450px; height: 350px;"></div>
-            <div class="mud-patch" style="left: 3200px; top: 1800px; width: 400px; height: 300px;"></div>
-
-            <div id="main-pool" class="pool">
-                <div class="pool-mat mat1"></div>
-                <div class="pool-mat mat2"></div>
-                <div class="pool-mat mat3"></div>
-            </div>
-
-            <div id="main-house" class="house-container">
+            <div class="house-container">
                 <div class="house-roof"></div>
                 <div class="house-base">
                     <div class="house-door"></div>
@@ -268,3 +240,21 @@
                         <div class="window-pane"></div>
                         <div class="window-pane"></div>
                         <div class="window-pane"></div>
+                        <div class="window-pane"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="big-hedge"></div>
+            <div class="pool">
+                <div class="pool-mat mat1"></div>
+                <div class="pool-mat mat2"></div>
+                <div class="pool-mat mat3"></div>
+            </div>
+            <div class="character">
+                <div class="char-body"></div>
+                <div class="char-head"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
