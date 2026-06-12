@@ -22,102 +22,156 @@ body{
         #45a049 25px,
         #45a049 50px
     );
-}.house{
-    position:absolute;
-    left:900px;
-    top:700px;
+}
 
+/* HOUSE */
+
+.house{
+    position:absolute;
     width:500px;
     height:250px;
 
+    left:900px;
+    top:700px;
+
     background:#b65f2a;
-    border:5px solid #8b4513;
+    border:6px solid #8b4513;
 }
 
 .roof{
     position:absolute;
-    top:-160px;
-    left:-25px;
 
     width:0;
     height:0;
 
-    border-left:275px solid transparent;
-    border-right:275px solid transparent;
-    border-bottom:160px solid #8b0000;
-}.pool{
+    top:-170px;
+    left:-30px;
+
+    border-left:280px solid transparent;
+    border-right:280px solid transparent;
+    border-bottom:170px solid #8b0000;
+}
+
+/* POOL */
+
+.pool{
     position:absolute;
-    left:400px;
-    top:1100px;
 
     width:500px;
     height:300px;
 
-    background:#1e90ff;
-    border:5px solid #0066cc;
+    left:350px;
+    top:1100px;
+
+    background:#2196F3;
+    border:5px solid #1565C0;
 }
 
 .mat{
     position:absolute;
+
     width:100px;
     height:40px;
+
     background:#d2b48c;
 }
 
 .mat1{
-    top:50px;
     left:200px;
+    top:40px;
 }
 
 .mat2{
-    top:130px;
     left:200px;
+    top:130px;
 }
 
 .mat3{
-    top:210px;
     left:200px;
-}.mud{
+    top:220px;
+}
+
+/* MUD */
+
+.mud{
     position:absolute;
-    background:#654321;
+    background:#5d4037;
     border-radius:50%;
 }
 
 .mud1{
-    width:200px;
-    height:150px;
-    left:1400px;
-    top:900px;
+    width:220px;
+    height:170px;
+
+    left:1500px;
+    top:1000px;
 }
 
 .mud2{
     width:180px;
     height:180px;
-    left:600px;
+
+    left:700px;
     top:1700px;
-}.spike{
+}
+
+/* ROCKS */
+
+.rock{
     position:absolute;
+
+    background:#777;
+    border-radius:35%;
+}
+
+.rock1{
+    width:100px;
+    height:80px;
+
+    left:1800px;
+    top:500px;
+}
+
+.rock2{
+    width:120px;
+    height:90px;
+
+    left:400px;
+    top:1800px;
+}
+
+/* SPIKES */
+
+.spike{
+    position:absolute;
+
     width:60px;
     height:60px;
 
-    background:
-    linear-gradient(
-        45deg,
-        transparent 50%,
-        gray 50%
+    clip-path:polygon(
+        50% 0%,
+        100% 100%,
+        0% 100%
     );
+
+    background:gray;
 }
 
 .spike1{
     left:1500px;
-    top:1200px;
+    top:1300px;
 }
 
 .spike2{
-    left:1550px;
-    top:1200px;
-}.tree{
+    left:1570px;
+    top:1300px;
+}
+
+/* TREES */
+
+.tree{
     position:absolute;
+
     width:70px;
     height:70px;
 
@@ -127,6 +181,7 @@ body{
 
 .tree::after{
     content:"";
+
     position:absolute;
 
     width:20px;
@@ -135,46 +190,92 @@ body{
     background:brown;
 
     left:25px;
-    top:50px;
-}#player{
+    top:55px;
+}
+
+/* PLAYER */
+
+#player{
     position:absolute;
+
+    left:200px;
+    top:200px;
+
     width:80px;
     height:120px;
 }
 
 .head{
+    position:absolute;
+
     width:30px;
     height:30px;
-    background:#ffe0bd;
-    border-radius:50%;
-    position:absolute;
+
     left:25px;
+
+    border-radius:50%;
+    background:#ffe0bd;
 }
 
 .body{
+    position:absolute;
+
     width:40px;
     height:40px;
-    background:red;
-    border-radius:50%;
-    position:absolute;
-    top:30px;
-    left:20px;
-}
 
-.arm,
-.leg{
-    position:absolute;
+    left:20px;
+    top:35px;
+
     border-radius:50%;
+    background:red;
 }
 
 .arm{
+    position:absolute;
+
     width:15px;
     height:15px;
+
+    border-radius:50%;
     background:#ffe0bd;
 }
 
+.arm1{
+    left:5px;
+    top:45px;
+}
+
+.arm2{
+    left:60px;
+    top:45px;
+}
+
+.arm3{
+    left:5px;
+    top:65px;
+}
+
+.arm4{
+    left:60px;
+    top:65px;
+}
+
 .leg{
+    position:absolute;
+
     width:18px;
     height:18px;
+
+    border-radius:50%;
     background:black;
+}
+
+.leg1{
+    left:22px;
+    top:90px;
+}
+
+.leg2{
+    left:42px;
+    top:90px;
 }
