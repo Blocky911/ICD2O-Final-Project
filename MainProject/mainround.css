@@ -1,281 +1,292 @@
-body{
-    margin:0;
-    overflow:hidden;
+/* ==========================================
+   1. BASE VIEWPORT & LAYOUT SETUP
+   ========================================== */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #111;
+    user-select: none;
 }
 
-#gameContainer{
-    width:100vw;
-    height:100vh;
-    overflow:auto;
+/* Difficulty Selection Screen Menu Overlay */
+#menu-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1e272e 0%, #0f141c 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-#map{
-    position:relative;
-    width:2500px;
-    height:2500px;
-
-    background:
-    repeating-linear-gradient(
-        45deg,
-        #4CAF50,
-        #4CAF50 25px,
-        #45a049 25px,
-        #45a049 50px
-    );
+#menu-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
-/* HOUSE */
-
-.house{
-    position:absolute;
-    width:500px;
-    height:250px;
-
-    left:900px;
-    top:700px;
-
-    background:#b65f2a;
-    border:6px solid #8b4513;
+.menu-title {
+    color: #ffd32a;
+    font-size: 3rem;
+    margin-bottom: 30px;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    letter-spacing: 2px;
 }
 
-.roof{
-    position:absolute;
-
-    width:0;
-    height:0;
-
-    top:-170px;
-    left:-30px;
-
-    border-left:280px solid transparent;
-    border-right:280px solid transparent;
-    border-bottom:170px solid #8b0000;
+.btn-container {
+    display: flex;
+    gap: 20px;
 }
 
-/* POOL */
-
-.pool{
-    position:absolute;
-
-    width:500px;
-    height:300px;
-
-    left:350px;
-    top:1100px;
-
-    background:#2196F3;
-    border:5px solid #1565C0;
+.difficulty-btn {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s, filter 0.2s;
 }
 
-.mat{
-    position:absolute;
-
-    width:100px;
-    height:40px;
-
-    background:#d2b48c;
+.difficulty-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.2);
 }
 
-.mat1{
-    left:200px;
-    top:40px;
+.easy { background-color: #05c46b; }
+.medium { background-color: #ffa801; }
+.hard { background-color: #ff3f34; }
+
+/* The Camera Viewing Window Frame */
+#viewport {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; 
+    position: relative;
+    display: none; 
 }
 
-.mat2{
-    left:200px;
-    top:130px;
+/* ==========================================
+   2. MAIN MAP & PROCEDURAL TEXTURES
+   ========================================== */
+#main-map {
+    width: 5000px;
+    height: 5000px;
+    position: relative;
+    /* High-Performance Grass Pattern CSS Design */
+    background-color: #458b00;
+    background-image: 
+        radial-gradient(#556b2f 15%, transparent 16%),
+        radial-gradient(#3a5f0b 15%, transparent 16%);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
 }
 
-.mat3{
-    left:200px;
-    top:220px;
+/* ==========================================
+   3. ENVIRONMENT & OBSTACLES
+   ========================================== */
+.border-tree {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #2e5c1e 60%, #1a3610 100%);
+    border-radius: 50%;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    z-index: 10;
 }
 
-/* MUD */
-
-.mud{
-    position:absolute;
-    background:#5d4037;
-    border-radius:50%;
+.map-tree {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
+    border-radius: 50%;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+    z-index: 10;
 }
 
-.mud1{
-    width:220px;
-    height:170px;
-
-    left:1500px;
-    top:1000px;
+/* Mud / Hazard Pools */
+.mud-patch {
+    position: absolute;
+    background: #573b12;
+    border-radius: 20px; 
+    opacity: 0.9;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    z-index: 1;
+    overflow: hidden; /* Clips spikes neatly to fit patch borders */
 }
 
-.mud2{
-    width:180px;
-    height:180px;
-
-    left:700px;
-    top:1700px;
+/* Triangular sharp spikes rendered inside the mud areas via script */
+.spike-visual {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid #7f8c8d; /* Iron gray color */
 }
 
-/* ROCKS */
-
-.rock{
-    position:absolute;
-
-    background:#777;
-    border-radius:35%;
+/* Rocks with textured linear cracks */
+.rock {
+    position: absolute;
+    background-color: #778ca3;
+    background-image: 
+        linear-gradient(45deg, #4b5563 25%, transparent 25%), 
+                linear-gradient(-45deg, #4b5563 25%, transparent 25%);
+    background-size: 30px 30px;
+    border-radius: 20px;
+    border: 5px solid #4b6584;
+    box-shadow: 5px 10px 15px rgba(0,0,0,0.3);
+    z-index: 4;
 }
 
-.rock1{
-    width:100px;
-    height:80px;
-
-    left:1800px;
-    top:500px;
+/* ==========================================
+   4. STRUCTURES (ELONGATED HOUSE & POOL)
+   ========================================== */
+/* Upgraded elongated house layout wrapper */
+.house-container {
+    position: absolute;
+    left: 2200px;
+    top: 2200px;
+    width: 650px; 
+    height: 400px;
+    z-index: 5;
 }
 
-.rock2{
-    width:120px;
-    height:90px;
-
-    left:400px;
-    top:1800px;
+/* Base brick styling matching new extended length dimensions */
+.house-base {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    background-color: #b24223;
+    background-image: 
+        linear-gradient(335deg, #8a3016 23px, transparent 23px),
+        linear-gradient(155deg, #8a3016 23px, transparent 23px),
+        linear-gradient(335deg, #8a3016 23px, transparent 23px),
+        linear-gradient(155deg, #8a3016 23px, transparent 23px);
+    background-size: 58px 58px;
+    background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
+    border: 4px solid #5a1e0e;
+    box-shadow: 0 20px 30px rgba(0,0,0,0.4);
+    box-sizing: border-box;
 }
 
-/* SPIKES */
-
-.spike{
-    position:absolute;
-
-    width:60px;
-    height:60px;
-
-    clip-path:polygon(
-        50% 0%,
-        100% 100%,
-        0% 100%
-    );
-
-    background:gray;
+/* Elongated Triangle Roof line calculation */
+.house-roof {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: -100px;
+    left: -4px;
+    border-left: 329px solid transparent;
+    border-right: 329px solid transparent;
+    border-bottom: 100px solid #5c2c16; 
 }
 
-.spike1{
-    left:1500px;
-    top:1300px;
+/* Swimming Pool Base styling */
+.pool {
+    position: absolute;
+    left: 1400px;
+    top: 2500px;
+    width: 500px;
+    height: 350px;
+    background: radial-gradient(circle, #4ed4ff 40%, #1797c4 100%);
+    border: 12px solid #d1d8e0;
+    border-radius: 20px;
+    box-shadow: inset 0 10px 20px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.2);
+    z-index: 2;
+    box-sizing: border-box;
 }
 
-.spike2{
-    left:1570px;
-    top:1300px;
+/* Walkable Floating Mats crossing the water safely */
+.pool-mat {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background: repeating-linear-gradient(0deg, #ffc048, #ffc048 10px, #ffa801 10px, #ffa801 20px);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border: 2px solid #c57e00;
+}
+.mat1 { left: 40px; top: 60px; }
+.mat2 { left: 180px; top: 140px; }
+.mat3 { left: 320px; top: 220px; }
+
+/* ==========================================
+   5. CHARACTER COMPOSITION (8 Circle Anatomy)
+   ========================================== */
+.character {
+    position: absolute;
+    left: 2000px;
+    top: 2000px;
+    width: 120px;
+    height: 120px;
+    z-index: 20;
+    transition: filter 0.1s ease; /* Fluid color transformation when entering spikes */
 }
 
-/* TREES */
-
-.tree{
-    position:absolute;
-
-    width:70px;
-    height:70px;
-
-    background:green;
-    border-radius:50%;
+/* 1. Body Circle Component */
+.char-body {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #ff3838; 
+    border-radius: 50%;
+    border: 3px solid #bc2020;
+    z-index: 3;
 }
 
-.tree::after{
-    content:"";
-
-    position:absolute;
-
-    width:20px;
-    height:35px;
-
-    background:brown;
-
-    left:25px;
-    top:55px;
+/* 2. Head Circle Component */
+.char-head {
+    position: absolute;
+    left: 40px;
+    top: 40px;
+    width: 40px;
+    height: 40px;
+    background-color: #ffdd59; 
+    border-radius: 50%;
+    border: 3px solid #e5c130;
+    z-index: 4;
 }
 
-/* PLAYER */
+/* 3 & 4. Left Arm Structure (Sleeve Circle + Hand Circle) */
+.sleeve-l1 { position: absolute; left: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
+.hand-l2   { position: absolute; left: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
 
-#player{
-    position:absolute;
+/* 5 & 6. Right Arm Structure (Sleeve Circle + Hand Circle) */
+.sleeve-r1 { position: absolute; right: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
+.hand-r2   { position: absolute; right: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
 
-    left:200px;
-    top:200px;
+/* 7 & 8. Leg Circle Components */
+.leg-l { position: absolute; left: 33px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
+.leg-r { position: absolute; left: 67px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
 
-    width:80px;
-    height:120px;
-}
-
-.head{
-    position:absolute;
-
-    width:30px;
-    height:30px;
-
-    left:25px;
-
-    border-radius:50%;
-    background:#ffe0bd;
-}
-
-.body{
-    position:absolute;
-
-    width:40px;
-    height:40px;
-
-    left:20px;
-    top:35px;
-
-    border-radius:50%;
-    background:red;
-}
-
-.arm{
-    position:absolute;
-
-    width:15px;
-    height:15px;
-
-    border-radius:50%;
-    background:#ffe0bd;
-}
-
-.arm1{
-    left:5px;
-    top:45px;
-}
-
-.arm2{
-    left:60px;
-    top:45px;
-}
-
-.arm3{
-    left:5px;
-    top:65px;
-}
-
-.arm4{
-    left:60px;
-    top:65px;
-}
-
-.leg{
-    position:absolute;
-
-    width:18px;
-    height:18px;
-
-    border-radius:50%;
-    background:black;
-}
-
-.leg1{
-    left:22px;
-    top:90px;
-}
-
-.leg2{
-    left:42px;
-    top:90px;
+/* ==========================================
+   6. HUD DISPLAY OVERLAYS
+   ========================================== */
+#UI-overlay {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 100;
+    pointer-events: none;
+    border: 2px solid #ffd32a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
