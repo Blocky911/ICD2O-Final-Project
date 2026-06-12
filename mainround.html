@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - 700 Line Engine</title>
+    <title>Tag Royale</title>
     <style>
         /* ==========================================================
            1. CORE VIEWPORT AND LAYOUT MANAGEMENT
@@ -304,8 +304,7 @@
 <body>
 
     <div id="UI-overlay">
-        <div style="font-size: 1.2rem; font-weight: 800; color: #fbc531; margin-bottom: 6px; letter-spacing: 0.5px;">Tag Royale Core Engine</div>
-        <div style="font-size: 0.95rem; color: #dcdde1;">Safely cross the pool using the floating yellow platforms!</div>
+        <div style="font-size: 0.95rem; color: #dcdde1; font-weight: 500;">Safely cross the pool using the floating yellow platforms!</div>
     </div>
 
     <div id="viewport">
@@ -391,6 +390,7 @@
         const mapSize = 5000;
 
         function populateMapEnvironment() {
+            // Draw map borders using tree barriers
             for (let i = 0; i < mapSize; i += 100) {
                 createTreeObstacle(i, 0, 'border-tree');
                 createTreeObstacle(i, mapSize - 130, 'border-tree'); 
@@ -398,14 +398,22 @@
                 createTreeObstacle(mapSize - 130, i, 'border-tree');
             }
             
-            for (let i = 0; i < 48; i++) {
+            // INCREASED INTERIOR TREES TO 350 FOR A RICH ENVIRONMENT
+            for (let i = 0; i < 350; i++) {
                 let randX = Math.floor(Math.random() * (mapSize - 450)) + 220;
                 let randY = Math.floor(Math.random() * (mapSize - 450)) + 220;
+
+                // Safety boundaries to prevent trees spawning on top of game pieces
                 const insidePoolZone = (randX > 1200 && randX < 2100 && randY > 2300 && randY < 3050);
-                const insideHouseZone = (randX > 2000 && randX < 3400 && randY > 1600 && randY < 3000);
-                const insideHedgeZone1 = (randX > 2400 && randY < 4300);
-                const insideHedgeZone2 = (randX < 1600 && randY < 2400);
-                if (!insidePoolZone && !insideHouseZone && !insideHedgeZone1 && !insideHedgeZone2) {
+                const insideHouseZone = (randX > 1950 && randX < 3450 && randY > 1550 && randY < 3050);
+                
+                // Top-right hedge quadrant zone safety buffer
+                const insideHedgeZone = (randX > 2500 && randY < 2500);
+                
+                // Spawn buffer around character start location
+                const insideSpawnZone = (randX > 1750 && randX < 2050 && randY > 1750 && randY < 2050);
+
+                if (!insidePoolZone && !insideHouseZone && !insideHedgeZone && !insideSpawnZone) {
                     createTreeObstacle(randX, randY, 'map-tree');
                 }
             }
@@ -426,6 +434,7 @@
             obstacles.push({ type: 'rect', x: 2460, y: 1700, w: 440, h: 360 });
             obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350, isPoolWater: true });
             
+            // MASTER OBSTACLE MATRIX: SYNCED TOP-RIGHT HEDGES ONLY
             obstacles.push({ type: 'rect', x: 3500, y: 250,  w: 1250, h: 130 });
             obstacles.push({ type: 'rect', x: 4620, y: 380,  w: 130,  h: 950 });
             obstacles.push({ type: 'rect', x: 3850, y: 600,  w: 450,  h: 110 });
@@ -447,6 +456,7 @@
 
         window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
         window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
+        
         function checkMudCollision(x, y) {
             const px = x + 60, py = y + 60;
             let insideMud = false;
