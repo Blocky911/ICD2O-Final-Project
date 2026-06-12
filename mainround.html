@@ -24,7 +24,7 @@
             height: 100vh;
             overflow: hidden; 
             position: relative;
-            display: block; /* Launches instantly */
+            display: block; /* Changed to block to display instantly */
         }
 
         /* ==========================================
@@ -61,15 +61,393 @@
             height: 140px;
             background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
             border-radius: 50%;
-            box-shadow: 0 15px 25px rgba(0,0,0,0.45);
-                }
-        
-                /* fallback end of stylesheet, close remaining blocks */
-            </style>
-        </head>
-        <body>
-            <div id="viewport">
-                <div id="main-map"></div>
+            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        /* Mud Patches: Modified to be organic blob shapes */
+        .mud-patch {
+            position: absolute;
+            background: #573b12;
+            border-radius: 50% 40% 60% 45% / 40% 50% 45% 55%;
+            opacity: 0.95;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+            z-index: 1;
+        }
+
+        .rock {
+            position: absolute;
+            background-color: #778ca3;
+            background-image: 
+                linear-gradient(45deg, #4b5563 25%, transparent 25%), 
+                linear-gradient(-45deg, #4b5563 25%, transparent 25%);
+            background-size: 30px 30px;
+            border-radius: 25px;
+            border: 5px solid #4b6584;
+            box-shadow: 5px 10px 15px rgba(0,0,0,0.3);
+            z-index: 4;
+        }
+
+        /* ==========================================
+           4. STRUCTURES (LONGER HOUSE & POOL)
+           ========================================== */
+        .house-container {
+            position: absolute;
+            left: 2200px;
+            top: 2200px;
+            width: 650px; 
+            height: 400px;
+            z-index: 5;
+        }
+
+        .house-base {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            bottom: 0;
+            background-color: #b24223;
+            background-image: 
+                linear-gradient(335deg, #8a3016 23px, transparent 23px),
+                linear-gradient(155deg, #8a3016 23px, transparent 23px),
+                linear-gradient(335deg, #8a3016 23px, transparent 23px),
+                linear-gradient(155deg, #8a3016 23px, transparent 23px);
+            background-size: 58px 58px;
+            background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
+            border: 4px solid #5a1e0e;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.4);
+            box-sizing: border-box;
+        }
+
+        /* Triangle Roof Projection */
+        .house-roof {
+            width: 0;
+            height: 0;
+            position: absolute;
+            top: -100px;
+            left: -4px;
+            border-left: 329px solid transparent;
+            border-right: 329px solid transparent;
+            border-bottom: 100px solid #5c2c16;
+        }
+
+        .pool {
+            position: absolute;
+            left: 1400px;
+            top: 2500px;
+            width: 500px;
+            height: 350px;
+            background: radial-gradient(circle, #4ed4ff 40%, #1797c4 100%);
+            border: 12px solid #d1d8e0;
+            border-radius: 20px;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 2;
+            box-sizing: border-box;
+        }
+
+        /* Yellow boards on the water */
+        .pool-mat {
+            position: absolute;
+            width: 110px;
+            height: 65px;
+            background: repeating-linear-gradient(0deg, #ffc048, #ffc048 10px, #ffa801 10px, #ffa801 20px);
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border: 2px solid #c57e00;
+            z-index: 3;
+        }
+        .mat1 { left: 30px; top: 140px; }
+        .mat2 { left: 190px; top: 140px; }
+        .mat3 { left: 350px; top: 140px; }
+
+        /* ==========================================
+           5. CHARACTER COMPOSITION (8 Circle Anatomy)
+           ========================================== */
+        .character {
+            position: absolute;
+            left: 2000px;
+            top: 1900px;
+            width: 120px;
+            height: 120px;
+            z-index: 20;
+        }
+
+        .char-body {
+            position: absolute;
+            left: 30px;
+            top: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #ff3838; 
+            border-radius: 50%;
+            border: 3px solid #bc2020;
+            z-index: 3;
+        }
+
+        .char-head {
+            position: absolute;
+            left: 40px;
+            top: 40px;
+            width: 40px;
+            height: 40px;
+            background-color: #ffdd59; 
+            border-radius: 50%;
+            border: 3px solid #e5c130;
+            z-index: 4;
+        }
+
+        .sleeve-l1 { position: absolute; left: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
+        .hand-l2   { position: absolute; left: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
+        .sleeve-r1 { position: absolute; right: 5px; top: 45px; width: 22px; height: 22px; background: #ff3838; border-radius: 50%; z-index: 2; }
+        .hand-r2   { position: absolute; right: -5px; top: 48px; width: 16px; height: 16px; background: #ffdd59; border-radius: 50%; z-index: 2; }
+
+        .leg-l { position: absolute; left: 33px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
+        .leg-r { position: absolute; left: 67px; bottom: 10px; width: 20px; height: 20px; background: #2c3e50; border-radius: 50%; z-index: 1; }
+
+        #UI-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 100;
+            pointer-events: none;
+            border: 2px solid #ffd32a;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="UI-overlay">
+        <div style="font-size: 0.9rem; color: #ccc;">Walk ONLY on the yellow boards to cross the pool!</div>
+    </div>
+
+    <div id="viewport">
+        <div id="main-map">
+            
+            <div class="mud-patch" style="left: 1200px; top: 1400px; width: 450px; height: 350px;"></div>
+            <div class="mud-patch" style="left: 2900px; top: 1900px; width: 400px; height: 300px;"></div>
+            <div class="mud-patch" style="left: 1800px; top: 3200px; width: 550px; height: 420px;"></div>
+
+            <div id="main-pool" class="pool">
+                <div class="pool-mat mat1"></div>
+                <div class="pool-mat mat2"></div>
+                <div class="pool-mat mat3"></div>
             </div>
-        </body>
-        </html>
+
+            <div id="main-house" class="house-container">
+                <div class="house-roof"></div>
+                <div class="house-base"></div>
+            </div>
+
+            <div class="rock" style="left: 1000px; top: 1800px; width: 130px; height: 110px;"></div>
+            <div class="rock" style="left: 2900px; top: 2600px; width: 180px; height: 140px;"></div>
+            <div class="rock" style="left: 2100px; top: 1600px; width: 100px; height: 90px;"></div>
+            <div class="rock" style="left: 1400px; top: 2900px; width: 150px; height: 130px;"></div>
+
+            <div class="character">
+                <div class="char-head"></div>
+                <div class="char-body"></div>
+                <div class="sleeve-l1"></div>
+                <div class="hand-l2"></div>
+                <div class="sleeve-r1"></div>
+                <div class="hand-r2"></div>
+                <div class="leg-l"></div>
+                <div class="leg-r"></div>
+            </div>
+
+            <div id="tree-container"></div>
+
+        </div>
+    </div>
+
+    <script>
+        const map = document.getElementById('main-map');
+        const viewport = document.getElementById('viewport');
+        const player = document.querySelector('.character');
+        const mudPatches = document.querySelectorAll('.mud-patch');
+        const treeContainer = document.getElementById('tree-container');
+
+        let playerX = 2000;
+        let playerY = 1900;
+        const playerSize = 50; 
+        const playerOffset = 35; 
+
+        let gameActive = false;
+
+        const NORMAL_SPEED = 8;
+        const MUD_SPEED = 3;
+        let currentSpeed = NORMAL_SPEED;
+
+        const keys = {
+            w: false, a: false, s: false, d: false,
+            ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
+        };
+        let obstacles = [];
+
+        // Procedural Map Tree Initialization
+        const mapSize = 5000;
+        for (let i = 0; i < mapSize; i += 100) {
+            createTree(i, 0, 'border-tree');
+            createTree(i, mapSize - 120, 'border-tree'); 
+            createTree(0, i, 'border-tree'); 
+            createTree(mapSize - 120, i, 'border-tree');
+        }
+        for (let i = 0; i < 75; i++) {
+            let randX = Math.floor(Math.random() * (mapSize - 400)) + 200;
+            let randY = Math.floor(Math.random() * (mapSize - 400)) + 200;
+            if (!(randX > 1250 && randX < 2000 && randY > 2350 && randY < 2950) && 
+                !(randX > 2050 && randX < 2950 && randY > 2050 && randY < 2750)) {
+                createTree(randX, randY, 'map-tree');
+            }
+        }
+
+        function createTree(x, y, className) {
+            const tree = document.createElement('div');
+            tree.className = className;
+            tree.style.left = x + 'px';
+            tree.style.top = y + 'px';
+            treeContainer.appendChild(tree);
+            const radius = className === 'border-tree' ? 60 : 70;
+            obstacles.push({
+                type: 'circle',
+                x: x + radius,
+                y: y + radius,
+                radius: radius - 20 
+            });
+        }
+
+        function registerStructureObstacles() {
+            obstacles.push({
+                type: 'rect',
+                x: 2200,
+                y: 2200,
+                w: 650,
+                h: 400
+            });
+            obstacles.push({
+                type: 'rect',
+                x: 1400,
+                y: 2500,
+                w: 500,
+                h: 350,
+                isPoolWater: true 
+            });
+            document.querySelectorAll('.rock').forEach(rock => {
+                obstacles.push({
+                    type: 'rect',
+                    x: parseInt(rock.style.left),
+                    y: parseInt(rock.style.top),
+                    w: parseInt(rock.style.width),
+                    h: parseInt(rock.style.height)
+                });
+            });
+        }
+
+        // New execution routine that initializes map and loop instantly
+        function initGame() {
+            registerStructureObstacles();
+            gameActive = true;
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
+        window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
+        
+        function checkMudCollision(x, y) {
+            const px = x + 60;
+            const py = y + 60;
+            let isSlowing = false;
+            mudPatches.forEach(patch => {
+                const mx = parseInt(patch.style.left);
+                const my = parseInt(patch.style.top);
+                const mw = parseInt(patch.style.width);
+                const mh = parseInt(patch.style.height);
+                if (px >= mx && px <= (mx + mw) && py >= my && py <= (my + mh)) {
+                    isSlowing = true;
+                }
+            });
+            return isSlowing;
+        }
+
+        function isOnPoolMat(x, y) {
+            const px = x + playerOffset + (playerSize / 2);
+            const py = y + playerOffset + (playerSize / 2);
+            const mats = [
+                {x: 1430, y: 2640, w: 110, h: 65},
+                {x: 1590, y: 2640, w: 110, h: 65},
+                {x: 1750, y: 2640, w: 110, h: 65}
+            ];
+            return mats.some(m => px >= m.x && px <= (m.x + m.w) && py >= m.y && py <= (m.y + m.h));
+        }
+
+        function isColliding(targetX, targetY) {
+            const px = targetX + playerOffset;
+            const py = targetY + playerOffset;
+            const pw = playerSize;
+            const ph = playerSize;
+            const pCenterX = px + pw/2;
+            const pCenterY = py + ph/2;
+
+            if (px < 120 || px + pw > 4880 || py < 120 || py + ph > 4880) return true;
+            for (let obs of obstacles) {
+                if (obs.type === 'rect') {
+                    if (obs.isPoolWater && isOnPoolMat(targetX, targetY)) {
+                        continue;
+                    }
+                    if (px < obs.x + obs.w && px + pw > obs.x && py < obs.y + obs.h && py + ph > obs.y) {
+                        return true;
+                    }
+                } 
+                else if (obs.type === 'circle') {
+                    const distX = pCenterX - obs.x;
+                    const distY = pCenterY - obs.y;
+                    const distance = Math.sqrt(distX * distX + distY * distY);
+                    if (distance < (pw / 2) + obs.radius) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function gameLoop() {
+            if (!gameActive) return;
+            if (checkMudCollision(playerX, playerY)) {
+                currentSpeed = MUD_SPEED;
+                player.style.filter = "sepia(0.5) brightness(0.8)";
+            } else {
+                currentSpeed = NORMAL_SPEED;
+                player.style.filter = "none";
+            }
+
+            let nextX = playerX;
+            let nextY = playerY;
+
+            if (keys.w || keys.ArrowUp)    nextY -= currentSpeed;
+            if (keys.s || keys.ArrowDown)  nextY += currentSpeed;
+            if (keys.a || keys.ArrowLeft)  nextX -= currentSpeed;
+            if (keys.d || keys.ArrowRight) nextX += currentSpeed;
+
+            if (!isColliding(nextX, playerY)) {
+                playerX = nextX;
+            }
+            if (!isColliding(playerX, nextY)) {
+                playerY = nextY;
+            }
+
+            player.style.left = playerX + 'px';
+            player.style.top = playerY + 'px';
+
+            viewport.scrollLeft = playerX - (window.innerWidth / 2) + 60;
+            viewport.scrollTop = playerY - (window.innerHeight / 2) + 60;
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game right away when the script executes
+        initGame();
+    </script>
+</body>
+</html>
