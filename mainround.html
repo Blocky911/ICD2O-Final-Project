@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Hardened Engine Edition</title>
+    <title>Tag Royale - 700 Line Engine</title>
     <style>
-        /* ==========================================
-           1. BASE VIEWPORT & LAYOUT ENGINE
-           ========================================== */
+        /* ==========================================================
+           1. CORE VIEWPORT AND LAYOUT MANAGEMENT
+           ========================================================== */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #0b0f19;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             user-select: none;
             -webkit-user-select: none;
         }
@@ -26,12 +26,11 @@
             overflow: hidden;
             position: relative;
             background-color: #11141a;
-            display: block; 
         }
 
-        /* ==========================================
-           2. PROCEDURAL WORLD MAP & GRAPHICS
-           ========================================== */
+        /* ==========================================================
+           2. MAP & SURFACE MATRICES
+           ========================================================== */
         #main-map {
             width: 5000px;
             height: 5000px;
@@ -46,14 +45,14 @@
             background-position: 0 0, 20px 20px, 0 0, 60px 60px;
         }
 
-        /* ==========================================
-           3. WILDERNESS, OBSTACLES & NATURE
-           ========================================== */
+        /* ==========================================================
+           3. OBSTACLES & NATURE DECORATIONS
+           ========================================================== */
         .border-tree {
             position: absolute;
             width: 130px;
             height: 130px;
-            background: radial-gradient(circle at 40% 40%, #366623 20%, #224515 60%, #11260a 100%);
+            background-image: radial-gradient(circle at 40% 40%, #366623 20%, #224515 60%, #11260a 100%);
             border-radius: 50%;
             box-shadow: 0 15px 25px rgba(0,0,0,0.55), inset -5px -5px 15px rgba(0,0,0,0.4);
             z-index: 12;
@@ -63,7 +62,7 @@
             position: absolute;
             width: 150px;
             height: 150px;
-            background: radial-gradient(circle at 35% 35%, #478c2b 15%, #2a5918 55%, #142e0b 100%);
+            background-image: radial-gradient(circle at 35% 35%, #478c2b 15%, #2a5918 55%, #142e0b 100%);
             border-radius: 50%;
             box-shadow: 0 22px 30px rgba(0,0,0,0.6), inset -8px -8px 20px rgba(0,0,0,0.5);
             z-index: 12;
@@ -71,549 +70,7 @@
 
         .mud-patch {
             position: absolute;
-            background: #523713;
+            background-color: #523713;
             background-image: radial-gradient(#3a250a 25%, transparent 30%);
             background-size: 24px 24px;
-            border-radius: 42% 58% 35% 65% / 45% 38% 62% 55%;
-            opacity: 0.92;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.75), 0 4px 10px rgba(0,0,0,0.15);
-            z-index: 2;
         }
-
-        .rock {
-            position: absolute;
-            background-color: #718093;
-            background-image: 
-                linear-gradient(45deg, #4b5666 25%, transparent 25%), 
-                linear-gradient(-45deg, #3d4654 25%, transparent 25%),
-                linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%);
-            background-size: 40px 40px, 40px 40px, 100% 100%;
-            border-radius: 30px;
-            border: 6px solid #434e5a;
-            box-shadow: 8px 16px 24px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(0,0,0,0.3);
-            z-index: 5;
-        }
-
-        /* MANICURED CUT BUSHES / HEDGES STYLING SHEET */
-        .cut-hedge {
-            position: absolute;
-            background-color: #1b3d1d;
-            background-image: 
-                radial-gradient(#275429 20%, transparent 25%),
-                radial-gradient(#143016 15%, transparent 20%),
-                linear-gradient(90deg, rgba(0,0,0,0.15) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.25) 100%);
-            background-size: 20px 20px, 14px 14px, 100% 100%;
-            border: 7px solid #0a1c0b;
-            border-radius: 12px;
-            box-shadow: 0 18px 32px rgba(0,0,0,0.55), inset 0 0 25px rgba(0,0,0,0.7);
-            z-index: 9;
-            box-sizing: border-box;
-        }
-
-        /* ==========================================
-           4. L-SHAPED HOUSE COMPONENT ARCHITECTURE
-           ========================================== */
-        .image-house {
-            position: absolute;
-            left: 2100px;
-            top: 2100px;
-            width: 800px;
-            height: 800px;
-            z-index: 6;
-        }
-
-        .house-drop-shadow {
-            position: absolute;
-            left: 45px;
-            top: -25px;
-            width: 580px;
-            height: 580px;
-            background: rgba(0,0,0,0.42);
-            filter: blur(12px);
-            z-index: 1;
-            pointer-events: none;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 45%, 45% 45%, 45% 100%, 0% 100%);
-        }
-
-        .house-yellow-deck {
-            position: absolute;
-            left: 40px;
-            top: 40px;
-            width: 520px;
-            height: 520px;
-            background-color: #cfc25d;
-            background-image: repeating-linear-gradient(0deg, transparent, transparent 14px, rgba(0,0,0,0.06) 14px, rgba(0,0,0,0.06) 16px);
-            border: 9px solid #141414;
-            box-sizing: border-box;
-            z-index: 2;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
-        }
-
-        .deck-fixture {
-            position: absolute;
-            width: 36px;
-            height: 48px;
-            background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
-            border: 6px solid #161616;
-            border-radius: 5px;
-            box-shadow: inset 0 4px 0 rgba(255,255,255,0.6), 0 6px 10px rgba(0,0,0,0.3);
-            z-index: 3;
-        }
-        .fx1 { left: 290px; top: 340px; }
-        .fx2 { left: 290px; top: 460px; }
-        .fx3 { left: 460px; top: 290px; }
-
-        .house-roof-body {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 500px;
-            height: 500px;
-            background-color: #b87151;
-            background-image: 
-                linear-gradient(0deg, rgba(0,0,0,0.1) 50%, transparent 50%),
-                repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,0.04) 8px, rgba(0,0,0,0.04) 10px);
-            background-size: 100% 30px, 100% 100%;
-            border: 15px solid #181818;
-            box-sizing: border-box;
-            z-index: 4;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 40%, 40% 40%, 40% 100%, 0% 100%);
-        }
-
-        .roof-ridge-line {
-            position: absolute;
-            background-color: #1c1c1c;
-            z-index: 5;
-        }
-        .ridge-long-v  { left: 185px; top: 0; width: 16px; height: 500px; }
-        .ridge-short-h { left: 185px; top: 185px; width: 315px; height: 16px; }
-
-        .ridge-diagonal {
-            position: absolute;
-            width: 280px;
-            height: 16px;
-            background-color: #1c1c1c;
-            z-index: 5;
-            transform-origin: left center;
-        }
-        .diag1 { left: 0; top: 0; transform: rotate(45deg); width: 280px; }
-        .diag2 { left: 0; top: 500px; transform: rotate(-45deg); width: 280px; }
-        .diag3 { left: 500px; top: 0; transform: rotate(135deg); width: 280px; }
-        .diag4 { left: 200px; top: 200px; transform: rotate(45deg); width: 425px; }
-
-        /* ==========================================
-           5. SWIMMING POOL HYDRAULICS
-           ========================================== */
-        .pool {
-            position: absolute;
-            left: 1400px;
-            top: 2500px;
-            width: 500px;
-            height: 350px;
-            background: radial-gradient(circle at 50% 30%, #3cd0ff 20%, #1593c2 70%, #0a5b7a 100%);
-            border: 14px solid #dcdde1;
-            border-radius: 24px;
-            box-shadow: inset 0 12px 25px rgba(0,0,0,0.45), 0 12px 24px rgba(0,0,0,0.25);
-            z-index: 3;
-            box-sizing: border-box;
-        }
-
-        .pool-mat {
-            position: absolute;
-            width: 110px;
-            height: 65px;
-            background: repeating-linear-gradient(0deg, #fbc531, #fbc531 10px, #e1b12c 10px, #e1b12c 20px);
-            border-radius: 6px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.3);
-            border: 3px solid #b38610;
-            z-index: 4;
-            box-sizing: border-box;
-        }
-        .mat1 { left: 30px; top: 140px; }
-        .mat2 { left: 190px; top: 140px; }
-        .mat3 { left: 350px; top: 140px; }
-
-        /* ==========================================
-           6. CHARACTER SYSTEM ARCHITECTURE (8 CIRCLES)
-           ========================================== */
-        .character {
-            position: absolute;
-            left: 1900px; 
-            top: 1900px;
-            width: 120px;
-            height: 120px;
-            z-index: 25;
-            will-change: transform, left, top;
-        }
-
-        .char-body {
-            position: absolute;
-            left: 30px;
-            top: 30px;
-            width: 60px;
-            height: 60px;
-            background-color: #e84118;
-            border-radius: 50%;
-            border: 4px solid #c23616;
-            z-index: 3;
-            box-sizing: border-box;
-            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
-        }
-
-        .char-head {
-            position: absolute;
-            left: 40px;
-            top: 40px;
-            width: 40px;
-            height: 40px;
-            background-color: #fbc531;
-            border-radius: 50%;
-            border: 4px solid #e1b12c;
-            z-index: 4;
-            box-sizing: border-box;
-        }
-
-        .sleeve-l1 { position: absolute; left: 4px; top: 44px; width: 24px; height: 24px; background: #e84118; border: 2px solid #c23616; border-radius: 50%; z-index: 2; box-sizing: border-box; }
-        .hand-l2   { position: absolute; left: -6px; top: 47px; width: 18px; height: 18px; background: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
-        .sleeve-r1 { position: absolute; right: 4px; top: 44px; width: 24px; height: 24px; background: #e84118; border: 2px solid #c23616; border-radius: 50%; z-index: 2; box-sizing: border-box; }
-        .hand-r2   { position: absolute; right: -6px; top: 47px; width: 18px; height: 18px; background: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
-
-        .leg-l { position: absolute; left: 32px; bottom: 12px; width: 22px; height: 22px; background: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
-        .leg-r { position: absolute; left: 66px; bottom: 12px; width: 22px; height: 22px; background: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
-
-        /* ==========================================
-           7. HEADS-UP DISPLAY (HUD) INSTRUCTIONS OVERLAY
-           ========================================== */
-        #UI-overlay {
-            position: fixed;
-            top: 24px;
-            left: 24px;
-            background: rgba(11, 15, 25, 0.92);
-            color: #f5f6fa;
-            padding: 16px 24px;
-            border-radius: 12px;
-            z-index: 200;
-            pointer-events: none;
-            border: 2px solid #fbc531;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
-    </style>
-</head>
-<body>
-
-    <div id="UI-overlay">
-        <div style="font-size: 1.2rem; font-weight: 800; color: #fbc531; margin-bottom: 6px; letter-spacing: 0.5px;">Tag Royale Core Engine</div>
-        <div style="font-size: 0.95rem; color: #dcdde1;">Safely traverse the pool using the floating yellow boards!</div>
-    </div>
-
-    <div id="viewport">
-        <div id="main-map">
-            
-            <div class="mud-patch" style="left: 1100px; top: 1350px; width: 500px; height: 380px;"></div>
-            <div class="mud-patch" style="left: 3400px; top: 2000px; width: 450px; height: 320px;"></div>
-            <div class="mud-patch" style="left: 1750px; top: 3500px; width: 600px; height: 450px;"></div>
-
-            <div id="main-pool" class="pool">
-                <div class="pool-mat mat1"></div>
-                <div class="pool-mat mat2"></div>
-                <div class="pool-mat mat3"></div>
-            </div>
-
-            <div class="cut-hedge" style="left: 3500px; top: 250px; width: 1250px; height: 130px;"></div>
-            <div class="cut-hedge" style="left: 4620px; top: 380px; width: 130px; height: 950px;"></div>
-            <div class="cut-hedge" style="left: 3850px; top: 600px; width: 450px; height: 110px;"></div>
-            <div class="cut-hedge" style="left: 3500px; top: 950px; width: 800px; height: 120px;"></div>
-
-            <div id="main-house" class="image-house">
-                <div class="house-drop-shadow"></div>
-                <div class="house-yellow-deck">
-                    <div class="deck-fixture fx1"></div>
-                    <div class="deck-fixture fx2"></div>
-                    <div class="deck-fixture fx3"></div>
-                </div>
-                <div class="house-roof-body">
-                    <div class="roof-ridge-line ridge-long-v"></div>
-                    <div class="roof-ridge-line ridge-short-h"></div>
-                    <div class="ridge-diagonal diag1"></div>
-                    <div class="ridge-diagonal diag2"></div>
-                    <div class="ridge-diagonal diag3"></div>
-                    <div class="ridge-diagonal diag4"></div>
-                </div>
-            </div>
-
-            <div class="rock" style="left: 950px; top: 1850px; width: 140px; height: 120px;"></div>
-            <div class="rock" style="left: 3150px; top: 2900px; width: 190px; height: 150px;"></div>
-            <div class="rock" style="left: 2150px; top: 1550px; width: 110px; height: 95px;"></div>
-            <div class="rock" style="left: 1350px; top: 3100px; width: 160px; height: 140px;"></div>
-
-            <div class="character">
-                <div class="char-head"></div>
-                <div class="char-body"></div>
-                <div class="sleeve-l1"></div>
-                <div class="hand-l2"></div>
-                <div class="sleeve-r1"></div>
-                <div class="hand-r2"></div>
-                <div class="leg-l"></div>
-                <div class="leg-r"></div>
-            </div>
-
-            <div id="tree-container"></div>
-
-        </div>
-    </div>
-
-    <script>
-        /* ========================================================================
-           8. JAVASCRIPT CORE GRAPHICS & COLLISION VECTOR CALCULATOR ENGINE
-           ======================================================================== */
-        const map = document.getElementById('main-map');
-        const viewport = document.getElementById('viewport');
-        const player = document.querySelector('.character');
-        const mudPatches = document.querySelectorAll('.mud-patch');
-        const treeContainer = document.getElementById('tree-container');
-
-        // Linear Motion Coordinates State
-        let playerX = 1900;
-        let playerY = 1900;
-        const playerSize = 50; 
-        const playerOffset = 35; 
-
-        let gameActive = false;
-        const NORMAL_SPEED = 8;
-        const MUD_SPEED = 3;
-        let currentSpeed = NORMAL_SPEED;
-
-        // Buffered Input Handler Registry
-        const keys = {
-            w: false, a: false, s: false, d: false,
-            ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
-        };
-        
-        let obstacles = [];
-        const mapSize = 5000;
-
-        /**
-         * Generates boundary tree containment field loops line-by-line 
-         * preventing any potential memory leak overflow while indexing coordinates
-         */
-        function populateMapEnvironment() {
-            // Build the outer wall structures
-            for (let i = 0; i < mapSize; i += 100) {
-                createTreeObstacle(i, 0, 'border-tree');
-                createTreeObstacle(i, mapSize - 130, 'border-tree'); 
-                createTreeObstacle(0, i, 'border-tree'); 
-                createTreeObstacle(mapSize - 130, i, 'border-tree');
-            }
-            
-            // Scatter non-linear foliage outside building footprints
-            for (let i = 0; i < 70; i++) {
-                let randX = Math.floor(Math.random() * (mapSize - 450)) + 220;
-                let randY = Math.floor(Math.random() * (mapSize - 450)) + 220;
-                
-                const insidePoolZone = (randX > 1200 && randX < 2100 && randY > 2300 && randY < 3050);
-                const insideHouseZone = (randX > 2000 && randX < 3000 && randY > 2000 && randY < 3000);
-                const insideHedgeZone = (randX > 3300 && randY < 1500);
-
-                if (!insidePoolZone && !insideHouseZone && !insideHedgeZone) {
-                    createTreeObstacle(randX, randY, 'map-tree');
-                }
-            }
-        }
-
-        function createTreeObstacle(x, y, className) {
-            const tree = document.createElement('div');
-            tree.className = className;
-            tree.style.left = x + 'px';
-            tree.style.top = y + 'px';
-            treeContainer.appendChild(tree);
-            
-            const radius = className === 'border-tree' ? 65 : 75;
-            obstacles.push({
-                type: 'circle',
-                x: x + radius,
-                y: y + radius,
-                radius: radius - 22
-            });
-        }
-
-        /**
-         * Allocates layout definitions and boundaries directly into the geometry matrix stack
-         */
-        function initializeObstacleMatrix() {
-            // L-SHAPE MODULAR ACCURATE HOUSE DECODER BOXES
-            // Segment Alpha: Main Left Vertical Wing
-            obstacles.push({ type: 'rect', x: 2100, y: 2100, w: 200, h: 500 });
-            // Segment Beta: Top Right Connecting Roof Wing
-            obstacles.push({ type: 'rect', x: 2300, y: 2100, w: 300, h: 200 });
-
-            // WATER TRAP FRAME BOUNDARY
-            obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350, isPoolWater: true });
-
-            // TOP RIGHT MANICURED RESISTIVE BUSH MATRIX
-            obstacles.push({ type: 'rect', x: 3500, y: 250,  w: 1250, h: 130 });
-            obstacles.push({ type: 'rect', x: 4620, y: 380,  w: 130,  h: 950 });
-            obstacles.push({ type: 'rect', x: 3850, y: 600,  w: 450,  h: 110 });
-            obstacles.push({ type: 'rect', x: 3500, y: 950,  w: 800,  h: 120 });
-
-            // SOLID GRANITE GEOMETRIES
-            document.querySelectorAll('.rock').forEach(rock => {
-                obstacles.push({
-                    type: 'rect',
-                    x: parseInt(rock.style.left),
-                    y: parseInt(rock.style.top),
-                    w: parseInt(rock.style.width),
-                    h: parseInt(rock.style.height)
-                });
-            });
-        }
-
-        // Window Event Bus listeners
-        window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
-        window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
-        
-        /**
-         * Samples coordinate parameters across the mud layout layer definitions
-         */
-        function checkMudCollision(x, y) {
-            const px = x + 60;
-            const py = y + 60;
-            let insideMud = false;
-            
-            mudPatches.forEach(patch => {
-                const mx = parseInt(patch.style.left);
-                const my = parseInt(patch.style.top);
-                const mw = parseInt(patch.style.width);
-                const mh = parseInt(patch.style.height);
-                if (px >= mx && px <= (mx + mw) && py >= my && py <= (my + mh)) {
-                    insideMud = true;
-                }
-            });
-            return insideMud;
-        }
-
-        /**
-         * Evaluates exactly if the center coordinate payload falls cleanly inside any walkboard bounding ranges
-         */
-        function checkWalkboardPlatformSafety(x, y) {
-            const px = x + playerOffset + (playerSize / 2);
-            const py = y + playerOffset + (playerSize / 2);
-            
-            // Exact floating mat vector models mapped in sequence matching visual view configurations
-            const mats = [
-                { x: 1430, y: 2640, w: 110, h: 65 },
-                { x: 1590, y: 2640, w: 110, h: 65 },
-                { x: 1750, y: 2640, w: 110, h: 65 }
-            ];
-            
-            return mats.some(m => px >= m.x && px <= (m.x + m.w) && py >= m.y && py <= (m.y + m.h));
-        }
-
-        /**
-         * Comprehensive mathematical collision vector detector processing intersection checks
-         */
-        function processEnvironmentIntersection(targetX, targetY) {
-            const px = targetX + playerOffset;
-            const py = targetY + playerOffset;
-            const pw = playerSize;
-            const ph = playerSize;
-            
-            const pCenterX = px + pw / 2;
-            const pCenterY = py + ph / 2;
-
-            // Map outer tracking bounds clamp validation
-            if (px < 130 || px + pw > 4870 || py < 130 || py + ph > 4870) {
-                return true;
-            }
-            
-            // Loop intersection checks line by line over compiled obstacle data registers
-            for (let i = 0; i < obstacles.length; i++) {
-                const obs = obstacles[i];
-                
-                if (obs.type === 'rect') {
-                    // Check if the water barrier safety bypass should trigger
-                    if (obs.isPoolWater && checkWalkboardPlatformSafety(targetX, targetY)) {
-                        continue;
-                    }
-                    
-                    const intersectX = px < obs.x + obs.w && px + pw > obs.x;
-                    const intersectY = py < obs.y + obs.h && py + ph > obs.y;
-                    
-                    if (intersectX && intersectY) {
-                        return true;
-                    }
-                } 
-                else if (obs.type === 'circle') {
-                    const distX = pCenterX - obs.x;
-                    const distY = pCenterY - obs.y;
-                    const distanceVector = Math.sqrt(distX * distX + distY * distY);
-                    
-                    if (distanceVector < (pw / 2) + obs.radius) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /**
-         * Core execution routine running over high performance requestAnimationFrame loops
-         */
-        function coreExecutionEngine() {
-            if (!gameActive) return;
-
-            // Apply friction modifiers based on step evaluations
-            if (checkMudCollision(playerX, playerY)) {
-                currentSpeed = MUD_SPEED;
-                player.style.filter = "sepia(0.6) brightness(0.75)";
-            } else {
-                currentSpeed = NORMAL_SPEED;
-                player.style.filter = "none";
-            }
-
-            let nextX = playerX;
-            let nextY = playerY;
-
-            // Sample key input streams sequentially
-            if (keys.w || keys.ArrowUp)    nextY -= currentSpeed;
-            if (keys.s || keys.ArrowDown)  nextY += currentSpeed;
-            if (keys.a || keys.ArrowLeft)  nextX -= currentSpeed;
-            if (keys.d || keys.ArrowRight) nextX += currentSpeed;
-
-            // Split axial evaluation handles sliding mechanics perfectly around acute edges
-            if (!processEnvironmentIntersection(nextX, playerY)) {
-                playerX = nextX;
-            }
-            if (!processEnvironmentIntersection(playerX, nextY)) {
-                playerY = nextY;
-            }
-
-            // Update DOM positions inside high speed layer frames
-            player.style.left = playerX + 'px';
-            player.style.top = playerY + 'px';
-
-            // Fluid camera centering arithmetic formulas
-            const internalViewportWidth = window.innerWidth;
-            const internalViewportHeight = window.innerHeight;
-            
-            viewport.scrollLeft = playerX - (internalViewportWidth / 2) + 60;
-            viewport.scrollTop = playerY - (internalViewportHeight / 2) + 60;
-
-            requestAnimationFrame(coreExecutionEngine);
-        }
-
-        /**
-         * Launch sequence bootstrapper initializing environment and starting loops instantly
-         */
-        function startEngineBootstrap() {
-            populateMapEnvironment();
-            initializeObstacleMatrix();
-            gameActive = true;
-            requestAnimationFrame(coreExecutionEngine);
-        }
-
-        // Initialize execution setup right away
-        startEngineBootstrap();
-    </script>
-</body>
-</html>
