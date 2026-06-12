@@ -325,40 +325,11 @@
             <div class="cut-hedge" style="left: 4620px; top: 380px; width: 130px; height: 950px;"></div>
             <div class="cut-hedge" style="left: 3850px; top: 600px; width: 450px; height: 110px;"></div>
             <div class="cut-hedge" style="left: 3500px; top: 950px; width: 800px; height: 120px;"></div>
-            
             <div class="cut-hedge" style="left: 4200px; top: 1200px; width: 150px; height: 1100px;"></div>
             <div class="cut-hedge" style="left: 3400px; top: 1500px; width: 500px; height: 140px;"></div>
             <div class="cut-hedge" style="left: 3000px; top: 1800px; width: 150px; height: 900px;"></div>
-            <div class="cut-hedge" style="left: 3150px; top: 2560px; width: 700px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 3850px; top: 2900px; width: 150px; height: 800px;"></div>
-            <div class="cut-hedge" style="left: 2600px; top: 3600px; width: 1400px; height: 150px;"></div>
-            <div class="cut-hedge" style="left: 2300px; top: 3100px; width: 150px; height: 650px;"></div>
-            <div class="cut-hedge" style="left: 800px; top: 4100px; width: 1200px; height: 140px;"></div>
-
-            <div class="cut-hedge" style="left: 250px; top: 500px; width: 140px; height: 1200px;"></div>
-            <div class="cut-hedge" style="left: 390px; top: 1560px; width: 600px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 850px; top: 250px; width: 140px; height: 850px;"></div>
-            <div class="cut-hedge" style="left: 1400px; top: 700px; width: 800px; height: 140px;"></div>
-
-            <div class="cut-hedge" style="left: 200px; top: 2500px; width: 800px; height: 150px;"></div>
-            <div class="cut-hedge" style="left: 200px; top: 2650px; width: 150px; height: 900px;"></div>
-            <div class="cut-hedge" style="left: 350px; top: 3400px; width: 1100px; height: 150px;"></div>
-
-            <div class="cut-hedge" style="left: 1400px; top: 1200px; width: 140px; height: 700px;"></div>
-            <div class="cut-hedge" style="left: 1540px; top: 1200px; width: 400px; height: 140px;"></div>
-
-            <div class="cut-hedge" style="left: 200px; top: 3800px; width: 450px; height: 130px;"></div>
-            <div class="cut-hedge" style="left: 500px; top: 1900px; width: 450px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 1100px; top: 2100px; width: 130px; height: 350px;"></div>
             <div class="cut-hedge" style="left: 2600px; top: 200px; width: 700px; height: 140px;"></div>
             <div class="cut-hedge" style="left: 2800px; top: 500px; width: 140px; height: 600px;"></div>
-            <div class="cut-hedge" style="left: 2200px; top: 1100px; width: 650px; height: 130px;"></div>
-            <div class="cut-hedge" style="left: 1800px; top: 4400px; width: 650px; height: 145px;"></div>
-            <div class="cut-hedge" style="left: 4400px; top: 2500px; width: 400px; height: 150px;"></div>
-            <div class="cut-hedge" style="left: 4500px; top: 2800px; width: 150px; height: 900px;"></div>
-            <div class="cut-hedge" style="left: 3200px; top: 4100px; width: 900px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 1100px; top: 4500px; width: 150px; height: 400px;"></div>
-            <div class="cut-hedge" style="left: 200px; top: 4500px; width: 600px; height: 150px;"></div>
 
             <div id="main-house" class="image-house">
                 <div class="house-drop-shadow"></div>
@@ -408,17 +379,14 @@
         const treeContainer = document.getElementById('tree-container');
 
         let playerX = 1900, playerY = 1900;
-        const playerSize = 50, playerOffset = 35; 
-
+        const playerSize = 50, playerOffset = 35;
         let gameActive = false;
         const NORMAL_SPEED = 8, MUD_SPEED = 3;
         let currentSpeed = NORMAL_SPEED;
-
         const keys = {
             w: false, a: false, s: false, d: false,
             ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
         };
-        
         let obstacles = [];
         const mapSize = 5000;
 
@@ -433,12 +401,10 @@
             for (let i = 0; i < 48; i++) {
                 let randX = Math.floor(Math.random() * (mapSize - 450)) + 220;
                 let randY = Math.floor(Math.random() * (mapSize - 450)) + 220;
-                
                 const insidePoolZone = (randX > 1200 && randX < 2100 && randY > 2300 && randY < 3050);
                 const insideHouseZone = (randX > 2000 && randX < 3400 && randY > 1600 && randY < 3000);
                 const insideHedgeZone1 = (randX > 2400 && randY < 4300);
                 const insideHedgeZone2 = (randX < 1600 && randY < 2400);
-
                 if (!insidePoolZone && !insideHouseZone && !insideHedgeZone1 && !insideHedgeZone2) {
                     createTreeObstacle(randX, randY, 'map-tree');
                 }
@@ -451,7 +417,6 @@
             tree.style.left = x + 'px';
             tree.style.top = y + 'px';
             treeContainer.appendChild(tree);
-            
             const radius = className === 'border-tree' ? 65 : 75;
             obstacles.push({ type: 'circle', x: x + radius, y: y + radius, radius: radius - 22 });
         }
@@ -460,8 +425,7 @@
             obstacles.push({ type: 'rect', x: 2100, y: 1700, w: 360, h: 800 });
             obstacles.push({ type: 'rect', x: 2460, y: 1700, w: 440, h: 360 });
             obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350, isPoolWater: true });
-
-            // Master Maze Walls Configuration
+            
             obstacles.push({ type: 'rect', x: 3500, y: 250,  w: 1250, h: 130 });
             obstacles.push({ type: 'rect', x: 4620, y: 380,  w: 130,  h: 950 });
             obstacles.push({ type: 'rect', x: 3850, y: 600,  w: 450,  h: 110 });
@@ -469,32 +433,8 @@
             obstacles.push({ type: 'rect', x: 4200, y: 1200, w: 150,  h: 1100 });
             obstacles.push({ type: 'rect', x: 3400, y: 1500, w: 500,  h: 140 });
             obstacles.push({ type: 'rect', x: 3000, y: 1800, w: 150,  h: 900 });
-            obstacles.push({ type: 'rect', x: 3150, y: 2560, w: 700,  h: 140 });
-            obstacles.push({ type: 'rect', x: 3850, y: 2900, w: 150,  h: 800 });
-            obstacles.push({ type: 'rect', x: 2600, y: 3600, w: 1400, h: 150 });
-            obstacles.push({ type: 'rect', x: 2300, y: 3100, w: 150,  h: 650 });
-            obstacles.push({ type: 'rect', x: 800,  y: 4100, w: 1200, h: 140 });
-            obstacles.push({ type: 'rect', x: 250,  y: 500,  w: 140,  h: 1200 });
-            obstacles.push({ type: 'rect', x: 390,  y: 1560, w: 600,  h: 140 });
-            obstacles.push({ type: 'rect', x: 850,  y: 250,  w: 140,  h: 850 });
-            obstacles.push({ type: 'rect', x: 1400, y: 700,  w: 800,  h: 140 });
-            obstacles.push({ type: 'rect', x: 200,  y: 2500, w: 800,  h: 150 });
-            obstacles.push({ type: 'rect', x: 200,  y: 2650, w: 150,  h: 900 });
-            obstacles.push({ type: 'rect', x: 350,  y: 3400, w: 1100, h: 150 });
-            obstacles.push({ type: 'rect', x: 1400, y: 1200, w: 140,  h: 700 });
-            obstacles.push({ type: 'rect', x: 1540, y: 1200, w: 400,  h: 140 });
-            obstacles.push({ type: 'rect', x: 200,  y: 3800, w: 450,  h: 130 });
-            obstacles.push({ type: 'rect', x: 500,  y: 1900, w: 450,  h: 140 });
-            obstacles.push({ type: 'rect', x: 1100, y: 2100, w: 130,  h: 350 });
             obstacles.push({ type: 'rect', x: 2600, y: 200,  w: 700,  h: 140 });
             obstacles.push({ type: 'rect', x: 2800, y: 500,  w: 140,  h: 600 });
-            obstacles.push({ type: 'rect', x: 2200, y: 1100, w: 650,  h: 130 });
-            obstacles.push({ type: 'rect', x: 1800, y: 4400, w: 650,  h: 145 });
-            obstacles.push({ type: 'rect', x: 4400, y: 2500, w: 400,  h: 150 });
-            obstacles.push({ type: 'rect', x: 4500, y: 2800, w: 150,  h: 900 });
-            obstacles.push({ type: 'rect', x: 3200, y: 4100, w: 900,  h: 140 });
-            obstacles.push({ type: 'rect', x: 1100, y: 4500, w: 150,  h: 400 });
-            obstacles.push({ type: 'rect', x: 200,  y: 4500, w: 600,  h: 150 });
 
             document.querySelectorAll('.rock').forEach(rock => {
                 obstacles.push({
@@ -507,7 +447,6 @@
 
         window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
         window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
-        
         function checkMudCollision(x, y) {
             const px = x + 60, py = y + 60;
             let insideMud = false;
@@ -533,9 +472,7 @@
             const px = targetX + playerOffset, py = targetY + playerOffset;
             const pw = playerSize, ph = playerSize;
             const pCenterX = px + pw / 2, pCenterY = py + ph / 2;
-
             if (px < 130 || px + pw > 4870 || py < 130 || py + ph > 4870) return true;
-            
             for (let i = 0; i < obstacles.length; i++) {
                 const obs = obstacles[i];
                 if (obs.type === 'rect') {
@@ -551,7 +488,6 @@
 
         function coreExecutionEngine() {
             if (!gameActive) return;
-
             if (checkMudCollision(playerX, playerY)) {
                 currentSpeed = MUD_SPEED;
                 player.style.filter = "sepia(0.6) brightness(0.75)";
@@ -571,7 +507,6 @@
 
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
-
             viewport.scrollLeft = playerX - (window.innerWidth / 2) + 60;
             viewport.scrollTop = playerY - (window.innerHeight / 2) + 60;
 
