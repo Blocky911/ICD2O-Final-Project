@@ -3,1103 +3,546 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Royale - Production Engine</title>
-    <style>
-        /* ==========================================================
-           1. CORE VIEWPORT AND WINDOW WINDOW ENGINE MANAGEMENT
-           ========================================================== */
-        body {
-            margin-top: 0px;
-            margin-right: 0px;
-            margin-bottom: 0px;
-            margin-left: 0px;
-            padding-top: 0px;
-            padding-right: 0px;
-            padding-bottom: 0px;
-            padding-left: 0px;
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-            overflow-y: hidden;
-            background-color: #0b0f19;
-        }
-
-        html {
-            margin-top: 0px;
-            margin-right: 0px;
-            margin-bottom: 0px;
-            margin-left: 0px;
-            padding-top: 0px;
-            padding-right: 0px;
-            padding-bottom: 0px;
-            padding-left: 0px;
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-            overflow-y: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        #viewport {
-            width: 100vw;
-            height: 100vh;
-            overflow-x: hidden;
-            overflow-y: hidden;
-            position: relative;
-            background-color: #11141a;
-            display: block; 
-        }
-
-        /* ==========================================================
-           2. WORLD GRAPHICS SURFACE MATRICES
-           ========================================================== */
-        #main-map {
-            width: 5000px;
-            height: 5000px;
-            position: relative;
-            background-color: #4c8c13;
-            background-image: 
-                radial-gradient(#597327 18%, transparent 19%),
-                radial-gradient(#33540a 15%, transparent 16%),
-                linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.02) 75%),
-                linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.02) 75%);
-            background-size: 80px 80px, 40px 40px, 120px 120px, 120px 120px;
-            background-position: 0 0, 20px 20px, 0 0, 60px 60px;
-        }
-
-        /* ==========================================================
-           3. FIELD ENVIRONMENT AND OBSTACLE TEXTURES
-           ========================================================== */
-        .border-tree {
-            position: absolute;
-            width: 130px;
-            height: 130px;
-            background-image: radial-gradient(circle at 40% 40%, #366623 20%, #224515 60%, #11260a 100%);
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            box-shadow: 0px 15px 25px rgba(0,0,0,0.55), inset -5px -5px 15px rgba(0,0,0,0.4);
-            z-index: 12;
-        }
-
-        .map-tree {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            background-image: radial-gradient(circle at 35% 35%, #478c2b 15%, #2a5918 55%, #142e0b 100%);
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            box-shadow: 0px 22px 30px rgba(0,0,0,0.6), inset -8px -8px 20px rgba(0,0,0,0.5);
-            z-index: 12;
-        }
-
-        .mud-patch {
-            position: absolute;
-            background-color: #523713;
-            background-image: radial-gradient(#3a250a 25%, transparent 30%);
-            background-size: 24px 24px;
-            border-top-left-radius: 42%;
-            border-top-right-radius: 58%;
-            border-bottom-right-radius: 35%;
-            border-bottom-left-radius: 65%;
-            opacity: 0.92;
-            box-shadow: inset 0px 0px 40px rgba(0,0,0,0.75), 0px 4px 10px rgba(0,0,0,0.15);
-            z-index: 2;
-        }
-
-        .rock {
-            position: absolute;
-            background-color: #718093;
-            background-image: 
-                linear-gradient(45deg, #4b5666 25%, transparent 25%), 
-                linear-gradient(-45deg, #3d4654 25%, transparent 25%),
-                linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%);
-            background-size: 40px 40px, 40px 40px, 100% 100%;
-            border-top-left-radius: 30px;
-            border-top-right-radius: 30px;
-            border-bottom-right-radius: 30px;
-            border-bottom-left-radius: 30px;
-            border-top-width: 6px;
-            border-right-width: 6px;
-            border-bottom-width: 6px;
-            border-left-width: 6px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #434e5a;
-            border-right-color: #434e5a;
-            border-bottom-color: #434e5a;
-            border-left-color: #434e5a;
-            box-shadow: 8px 16px 24px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(0,0,0,0.3);
-            z-index: 5;
-        }
-
-        .cut-hedge {
-            position: absolute;
-            background-color: #1b3d1d;
-            background-image: 
-                radial-gradient(#275429 20%, transparent 25%),
-                radial-gradient(#143016 15%, transparent 20%),
-                linear-gradient(90deg, rgba(0,0,0,0.15) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.25) 100%);
-            background-size: 20px 20px, 14px 14px, 100% 100%;
-            border-top-width: 7px;
-            border-right-width: 7px;
-            border-bottom-width: 7px;
-            border-left-width: 7px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #0a1c0b;
-            border-right-color: #0a1c0b;
-            border-bottom-color: #0a1c0b;
-            border-left-color: #0a1c0b;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-            border-bottom-left-radius: 12px;
-            box-shadow: 0px 18px 32px rgba(0,0,0,0.55), inset 0px 0px 25px rgba(0,0,0,0.7);
-            z-index: 9;
-            box-sizing: border-box;
-        }
-
-        /* ==========================================================
-           4. EXTENDED & ENLARGED L-SHAPED ARCHITECTURAL RESIDENCE
-           ========================================================== */
-        .image-house {
-            position: absolute;
-            left: 2100px;
-            top: 1700px;
-            width: 1200px;
-            height: 1200px;
-            z-index: 6;
-        }
-
-        .house-drop-shadow {
-            position: absolute;
-            left: 55px;
-            top: -35px;
-            width: 950px;
-            height: 950px;
-            background-color: rgba(0,0,0,0.42);
-            filter: blur(16px);
-            z-index: 1;
-            pointer-events: none;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
-        }
-
-        .house-yellow-deck {
-            position: absolute;
-            left: 50px;
-            top: 50px;
-            width: 850px;
-            height: 850px;
-            background-color: #cfc25d;
-            background-image: repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(0,0,0,0.06) 18px, rgba(0,0,0,0.06) 21px);
-            border-top-width: 11px;
-            border-right-width: 11px;
-            border-bottom-width: 11px;
-            border-left-width: 11px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #141414;
-            border-right-color: #141414;
-            border-bottom-color: #141414;
-            border-left-color: #141414;
-            box-sizing: border-box;
-            z-index: 2;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
-            box-shadow: inset 0px 0px 30px rgba(0,0,0,0.2);
-        }
-
-        .deck-fixture {
-            position: absolute;
-            width: 48px;
-            height: 64px;
-            background-image: linear-gradient(135deg, #cccccc 0%, #999999 100%);
-            border-top-width: 7px;
-            border-right-width: 7px;
-            border-bottom-width: 7px;
-            border-left-width: 7px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #161616;
-            border-right-color: #161616;
-            border-bottom-color: #161616;
-            border-left-color: #161616;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-            border-bottom-right-radius: 6px;
-            border-bottom-left-radius: 6px;
-            box-shadow: inset 0px 5px 0px rgba(255,255,255,0.6), 0px 8px 14px rgba(0,0,0,0.3);
-            z-index: 3;
-        }
-
-        .fx1 { 
-            left: 450px; 
-            top: 550px; 
-        }
-
-        .fx2 { 
-            left: 450px; 
-            top: 750px; 
-        }
-
-        .fx3 { 
-            left: 750px; 
-            top: 450px; 
-        }
-
-        .house-roof-body {
-            position: absolute;
-            left: 0px;
-            top: 0px;
-            width: 800px;
-            height: 800px;
-            background-color: #b87151;
-            background-image: 
-                linear-gradient(0deg, rgba(0,0,0,0.1) 50%, transparent 50%),
-                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.04) 10px, rgba(0,0,0,0.04) 13px);
-            background-size: 100% 40px, 100% 100%;
-            border-top-width: 20px;
-            border-right-width: 20px;
-            border-bottom-width: 20px;
-            border-left-width: 20px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #181818;
-            border-right-color: #181818;
-            border-bottom-color: #181818;
-            border-left-color: #181818;
-            box-sizing: border-box;
-            z-index: 4;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 45%, 45% 45%, 45% 100%, 0% 100%);
-        }
-
-        .roof-ridge-line {
-            position: absolute;
-            background-color: #1c1c1c;
-            z-index: 5;
-        }
-
-        .ridge-long-v { 
-            left: 340px; 
-            top: 0px; 
-            width: 22px; 
-            height: 800px; 
-        }
-
-        .ridge-short-h { 
-            left: 340px; 
-            top: 340px; 
-            width: 460px; 
-            height: 22px; 
-        }
-
-        .ridge-diagonal {
-            position: absolute;
-            width: 450px;
-            height: 22px;
-            background-color: #1c1c1c;
-            z-index: 5;
-            transform-origin: left center;
-        }
-
-        .diag1 { 
-            left: 0px; 
-            top: 0px; 
-            transform: rotate(45deg); 
-        }
-
-        .diag2 { 
-            left: 0px; 
-            top: 800px; 
-            transform: rotate(-45deg); 
-        }
-
-        .diag3 { 
-            left: 800px; 
-            top: 0px; 
-            transform: rotate(135deg); 
-        }
-
-        .diag4 { 
-            left: 350px; 
-            top: 350px; 
-            transform: rotate(45deg); 
-            width: 630px; 
-        }
-
-        /* ==========================================================
-           5. AQUATIC FLOTATION ELEMENTS
-           ========================================================== */
-        .pool {
-            position: absolute;
-            left: 1400px;
-            top: 2500px;
-            width: 500px;
-            height: 350px;
-            background-image: radial-gradient(circle at 50% 30%, #3cd0ff 20%, #1593c2 70%, #0a5b7a 100%);
-            border-top-width: 14px;
-            border-right-width: 14px;
-            border-bottom-width: 14px;
-            border-left-width: 14px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #dcdde1;
-            border-right-color: #dcdde1;
-            border-bottom-color: #dcdde1;
-            border-left-color: #dcdde1;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            border-bottom-right-radius: 24px;
-            border-bottom-left-radius: 24px;
-            box-shadow: inset 0px 12px 25px rgba(0,0,0,0.45), 0px 12px 24px rgba(0,0,0,0.25);
-            z-index: 3;
-            box-sizing: border-box;
-        }
-
-        .pool-mat {
-            position: absolute;
-            width: 110px;
-            height: 65px;
-            background-image: repeating-linear-gradient(0deg, #fbc531, #fbc531 10px, #e1b12c 10px, #e1b12c 20px);
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-            border-bottom-right-radius: 6px;
-            border-bottom-left-radius: 6px;
-            box-shadow: 0px 6px 12px rgba(0,0,0,0.4), inset 0px 2px 4px rgba(255,255,255,0.3);
-            border-top-width: 3px;
-            border-right-width: 3px;
-            border-bottom-width: 3px;
-            border-left-width: 3px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #b38610;
-            border-right-color: #b38610;
-            border-bottom-color: #b38610;
-            border-left-color: #b38610;
-            z-index: 4;
-            box-sizing: border-box;
-        }
-
-        .mat1 { 
-            left: 30px; 
-            top: 140px; 
-        }
-
-        .mat2 { 
-            left: 190px; 
-            top: 140px; 
-        }
-
-        .mat3 { 
-            left: 350px; 
-            top: 140px; 
-        }
-
-        /* ==========================================================
-           6. CHARACTER SYSTEM MATRIX RIG CONFIGURATION
-           ========================================================== */
-        .character {
-            position: absolute;
-            left: 1900px; 
-            top: 1900px;
-            width: 120px;
-            height: 120px;
-            z-index: 25;
-            will-change: transform, left, top;
-        }
-
-        .char-body {
-            position: absolute;
-            left: 30px;
-            top: 30px;
-            width: 60px;
-            height: 60px;
-            background-color: #e84118;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            border-top-width: 4px;
-            border-right-width: 4px;
-            border-bottom-width: 4px;
-            border-left-width: 4px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #c23616;
-            border-right-color: #c23616;
-            border-bottom-color: #c23616;
-            border-left-color: #c23616;
-            z-index: 3;
-            box-sizing: border-box;
-            box-shadow: 0px 6px 10px rgba(0,0,0,0.3);
-        }
-
-        .char-head {
-            position: absolute;
-            left: 40px;
-            top: 40px;
-            width: 40px;
-            height: 40px;
-            background-color: #fbc531;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            border-top-width: 4px;
-            border-right-width: 4px;
-            border-bottom-width: 4px;
-            border-left-width: 4px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #e1b12c;
-            border-right-color: #e1b12c;
-            border-bottom-color: #e1b12c;
-            border-left-color: #e1b12c;
-            z-index: 4;
-            box-sizing: border-box;
-        }
-
-        .sleeve-l1 { 
-            position: absolute; 
-            left: 4px; 
-            top: 44px; 
-            width: 24px; 
-            height: 24px; 
-            background-color: #e84118; 
-            border-top-width: 2px;
-            border-right-width: 2px;
-            border-bottom-width: 2px;
-            border-left-width: 2px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #c23616;
-            border-right-color: #c23616;
-            border-bottom-color: #c23616;
-            border-left-color: #c23616;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            z-index: 2; 
-            box-sizing: border-box; 
-        }
-
-        .hand-l2 { 
-            position: absolute; 
-            left: -6px; 
-            top: 47px; 
-            width: 18px; 
-            height: 18px; 
-            background-color: #fbc531; 
-            border-top-width: 2px;
-            border-right-width: 2px;
-            border-bottom-width: 2px;
-            border-left-width: 2px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #e1b12c;
-            border-right-color: #e1b12c;
-            border-bottom-color: #e1b12c;
-            border-left-color: #e1b12c;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            z-index: 2; 
-            box-sizing: border-box; 
-        }
-
-        .sleeve-r1 { 
-            position: absolute; 
-            right: 4px; 
-            top: 44px; 
-            width: 24px; 
-            height: 24px; 
-            background-color: #e84118; 
-            border-top-width: 2px;
-            border-right-width: 2px;
-            border-bottom-width: 2px;
-            border-left-width: 2px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #c23616;
-            border-right-color: #c23616;
-            border-bottom-color: #c23616;
-            border-left-color: #c23616;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            z-index: 2; 
-            box-sizing: border-box; 
-        }
-
-        .hand-r2 { 
-            position: absolute; 
-            right: -6px; 
-            top: 47px; 
-            width: 18px; 
-            height: 18px; 
-            background-color: #fbc531; 
-            border-top-width: 2px;
-            border-right-width: 2px;
-            border-bottom-width: 2px;
-            border-left-width: 2px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #e1b12c;
-            border-right-color: #e1b12c;
-            border-bottom-color: #e1b12c;
-            border-left-color: #e1b12c;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            z-index: 2; 
-            box-sizing: border-box; 
-        }
-
-        .leg-l { 
-            position: absolute; 
-            left: 32px; 
-            bottom: 12px; 
-            width: 22px; 
-            height: 22px; 
-            background-color: #353b48; 
-            border-top-width: 2px;
-            border-right-width: 2px;
-            border-bottom-width: 2px;
-            border-left-width: 2px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #2f3640;
-            border-right-color: #2f3640;
-            border-bottom-color: #2f3640;
-            border-left-color: #2f3640;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            z-index: 1; 
-            box-sizing: border-box; 
-        }
-
-        .leg-r { 
-            position: absolute; 
-            left: 66px; 
-            bottom: 12px; 
-            width: 22px; 
-            height: 22px; 
-            background-color: #353b48; 
-            border-top-width: 2px;
-            border-right-width: 2px;
-            border-bottom-width: 2px;
-            border-left-width: 2px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #2f3640;
-            border-right-color: #2f3640;
-            border-bottom-color: #2f3640;
-            border-left-color: #2f3640;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-            z-index: 1; 
-            box-sizing: border-box; 
-        }
-
-        /* ==========================================================
-           7. HEADS-UP DISPLAY OVERLAY ARCHITECTURE
-           ========================================================== */
-        #UI-overlay {
-            position: fixed;
-            top: 24px;
-            left: 24px;
-            background-color: rgba(11, 15, 25, 0.92);
-            color: #f5f6fa;
-            padding-top: 16px;
-            padding-right: 24px;
-            padding-bottom: 16px;
-            padding-left: 24px;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-            border-bottom-left-radius: 12px;
-            z-index: 200;
-            pointer-events: none;
-            border-top-width: 2px;
-            border-right-width: 2px;
-            border-bottom-width: 2px;
-            border-left-width: 2px;
-            border-top-style: solid;
-            border-right-style: solid;
-            border-bottom-style: solid;
-            border-left-style: solid;
-            border-top-color: #fbc531;
-            border-right-color: #fbc531;
-            border-bottom-color: #fbc531;
-            border-left-color: #fbc531;
-            box-shadow: 0px 8px 24px rgba(0,0,0,0.5);
-        }
-    </style>
+    <title>Procedural Action RPG Engine - Master Viewport Template</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="UI-overlay">
-        <div style="font-size: 1.2rem; font-weight: 800; color: #fbc531; margin-bottom: 6px; letter-spacing: 0.5px;">Tag Royale Core Engine</div>
-        <div style="font-size: 0.95rem; color: #dcdde1;">Safely traverse the pool using the floating yellow boards!</div>
-    </div>
+    <div id="menu-screen" class="menu-overlay-layer">
+        <div class="menu-branding-container">
+            <span class="game-version-tag">v2.4.0-BETA</span>
+            <h1 class="menu-title">CHRONICLES OF CYCLIA</h1>
+            <p class="menu-subtitle">Tactical Procedural Simulation Sandbox Environment</p>
+        </div>
 
-    <div id="viewport">
-        <div id="main-map">
+        <div class="menu-navigation-tabs">
+            <button class="tab-toggle-btn active-tab" data-target="difficulty-panel">Campaign</button>
+            <button class="tab-toggle-btn" data-target="settings-panel">Configuration</button>
+            <button class="tab-toggle-btn" data-target="controls-panel">Input Bindings</button>
+            <button class="tab-toggle-btn" data-target="credits-panel">Engine Metrics</button>
+        </div>
+
+        <div class="menu-panel-content-wrapper">
             
-            <div class="mud-patch" style="left: 1100px; top: 1350px; width: 500px; height: 380px;"></div>
-            <div class="mud-patch" style="left: 3400px; top: 2000px; width: 450px; height: 320px;"></div>
-            <div class="mud-patch" style="left: 1750px; top: 3500px; width: 600px; height: 450px;"></div>
-
-            <div id="main-pool" class="pool">
-                <div class="pool-mat mat1"></div>
-                <div class="pool-mat mat2"></div>
-                <div class="pool-mat mat3"></div>
-            </div>
-
-            <div class="cut-hedge" style="left: 3500px; top: 250px; width: 1250px; height: 130px;"></div>
-            <div class="cut-hedge" style="left: 4620px; top: 380px; width: 130px; height: 950px;"></div>
-            <div class="cut-hedge" style="left: 3850px; top: 600px; width: 450px; height: 110px;"></div>
-            <div class="cut-hedge" style="left: 3500px; top: 950px; width: 800px; height: 120px;"></div>
-            
-            <div class="cut-hedge" style="left: 4200px; top: 1200px; width: 150px; height: 1100px;"></div>
-            <div class="cut-hedge" style="left: 3400px; top: 1500px; width: 500px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 3000px; top: 1800px; width: 150px; height: 900px;"></div>
-            <div class="cut-hedge" style="left: 3150px; top: 2560px; width: 700px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 3850px; top: 2900px; width: 150px; height: 800px;"></div>
-            <div class="cut-hedge" style="left: 2600px; top: 3600px; width: 1400px; height: 150px;"></div>
-            <div class="cut-hedge" style="left: 2300px; top: 3100px; width: 150px; height: 650px;"></div>
-            <div class="cut-hedge" style="left: 800px; top: 4100px; width: 1200px; height: 140px;"></div>
-
-            <div class="cut-hedge" style="left: 250px; top: 500px; width: 140px; height: 1200px;"></div>
-            <div class="cut-hedge" style="left: 390px; top: 1560px; width: 600px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 850px; top: 250px; width: 140px; height: 850px;"></div>
-            <div class="cut-hedge" style="left: 1400px; top: 700px; width: 800px; height: 140px;"></div>
-
-            <div class="cut-hedge" style="left: 200px; top: 2500px; width: 800px; height: 150px;"></div>
-            <div class="cut-hedge" style="left: 200px; top: 2650px; width: 150px; height: 900px;"></div>
-            <div class="cut-hedge" style="left: 350px; top: 3400px; width: 1100px; height: 150px;"></div>
-
-            <div class="cut-hedge" style="left: 1400px; top: 1200px; width: 140px; height: 700px;"></div>
-            <div class="cut-hedge" style="left: 1540px; top: 1200px; width: 400px; height: 140px;"></div>
-
-            <div class="cut-hedge" style="left: 200px; top: 3800px; width: 450px; height: 130px;"></div>
-            <div class="cut-hedge" style="left: 500px; top: 1900px; width: 450px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 1100px; top: 2100px; width: 130px; height: 350px;"></div>
-            <div class="cut-hedge" style="left: 2600px; top: 200px; width: 700px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 2800px; top: 500px; width: 140px; height: 600px;"></div>
-            <div class="cut-hedge" style="left: 2200px; top: 1100px; width: 650px; height: 130px;"></div>
-            <div class="cut-hedge" style="left: 1800px; top: 4400px; width: 650px; height: 145px;"></div>
-            <div class="cut-hedge" style="left: 4400px; top: 2500px; width: 400px; height: 150px;"></div>
-            <div class="cut-hedge" style="left: 4500px; top: 2800px; width: 150px; height: 900px;"></div>
-            <div class="cut-hedge" style="left: 3200px; top: 4100px; width: 900px; height: 140px;"></div>
-            <div class="cut-hedge" style="left: 1100px; top: 4500px; width: 150px; height: 400px;"></div>
-            <div class="cut-hedge" style="left: 200px; top: 4500px; width: 600px; height: 150px;"></div>
-
-            <div id="main-house" class="image-house">
-                <div class="house-drop-shadow"></div>
-                <div class="house-yellow-deck">
-                    <div class="deck-fixture fx1"></div>
-                    <div class="deck-fixture fx2"></div>
-                    <div class="deck-fixture fx3"></div>
-                </div>
-                <div class="house-roof-body">
-                    <div class="roof-ridge-line ridge-long-v"></div>
-                    <div class="roof-ridge-line ridge-short-h"></div>
-                    <div class="ridge-diagonal diag1"></div>
-                    <div class="ridge-diagonal diag2"></div>
-                    <div class="ridge-diagonal diag3"></div>
-                    <div class="ridge-diagonal diag4"></div>
+            <div id="difficulty-panel" class="menu-sub-panel active-panel">
+                <h2 class="panel-section-heading">Initialize Simulation Parameters</h2>
+                <div class="btn-container hierarchical-layout">
+                    <button class="difficulty-btn easy" data-level="easy">
+                        <span class="btn-main-text">TRAINEE MODALITY</span>
+                        <span class="btn-sub-text">Reduced damage taken, automated targeting calibration.</span>
+                    </button>
+                    <button class="difficulty-btn medium" data-level="medium">
+                        <span class="btn-main-text">OPERATIVE CONTEXT</span>
+                        <span class="btn-sub-text">Standard resource management parameters, default scaling logic.</span>
+                    </button>
+                    <button class="difficulty-btn hard" data-level="hard">
+                        <span class="btn-main-text">HARDCORE ALGORITHM</span>
+                        <span class="btn-sub-text">Permanent damage scaling metrics, high entity aggression modifiers.</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="rock" style="left: 950px; top: 1850px; width: 140px; height: 120px;"></div>
-            <div class="rock" style="left: 1750px; top: 1100px; width: 190px; height: 150px;"></div>
-            <div class="rock" style="left: 2150px; top: 1350px; width: 110px; height: 95px;"></div>
-            <div class="rock" style="left: 1350px; top: 3100px; width: 160px; height: 140px;"></div>
-
-            <div class="character">
-                <div class="char-head"></div>
-                <div class="char-body"></div>
-                <div class="sleeve-l1"></div>
-                <div class="hand-l2"></div>
-                <div class="sleeve-r1"></div>
-                <div class="hand-r2"></div>
-                <div class="leg-l"></div>
-                <div class="leg-r"></div>
+            <div id="settings-panel" class="menu-sub-panel hidden-panel">
+                <h2 class="panel-section-heading">Audio-Visual Graphics Calibration</h2>
+                <div class="settings-form-grid">
+                    <div class="settings-option-row">
+                        <label class="setting-label-element">Display Quality Resolution</label>
+                        <select class="setting-input-dropdown">
+                            <option value="ultra">Ultra Configuration (Sub-Sampling On)</option>
+                            <option value="high" selected>High Matrix Mapping</option>
+                            <option value="medium">Performance Optimization Mode</option>
+                        </select>
+                    </div>
+                    <div class="settings-option-row">
+                        <label class="setting-label-element">Particle Density Cap</label>
+                        <input type="range" class="setting-slider-input" min="0" max="100" value="85">
+                    </div>
+                    <div class="settings-option-row">
+                        <label class="setting-label-element">Master Audio Deck Vol</label>
+                        <input type="range" class="setting-slider-input" min="0" max="100" value="70">
+                    </div>
+                    <div class="settings-option-row">
+                        <label class="setting-label-element">Environmental Dynamic Shadows</label>
+                        <input type="checkbox" class="setting-checkbox-toggle" checked>
+                    </div>
+                </div>
             </div>
 
-            <div id="tree-container"></div>
+            <div id="controls-panel" class="menu-sub-panel hidden-panel">
+                <h2 class="panel-section-heading">Mapping Interface Register</h2>
+                <div class="controls-mapping-table">
+                    <div class="control-key-row"><span class="action-desc">Locomotion Vector North</span><kbd class="key-cap-node">W / Up Arrow</kbd></div>
+                    <div class="control-key-row"><span class="action-desc">Locomotion Vector West</span><kbd class="key-cap-node">A / Left Arrow</kbd></div>
+                    <div class="control-key-row"><span class="action-desc">Locomotion Vector South</span><kbd class="key-cap-node">S / Down Arrow</kbd></div>
+                    <div class="control-key-row"><span class="action-desc">Locomotion Vector East</span><kbd class="key-cap-node">D / Right Arrow</kbd></div>
+                    <div class="control-key-row"><span class="action-desc">Primary Weapon Discharge (Slash)</span><kbd class="key-cap-node">Spacebar / Left Click</kbd></div>
+                    <div class="control-key-row"><span class="action-desc">Stamina Sprint Surge Boost</span><kbd class="key-cap-node">Left Shift Key</kbd></div>
+                    <div class="control-key-row"><span class="action-desc">Tactical Inventory Menu Toggle</span><kbd class="key-cap-node">I / Escape Key</kbd></div>
+                </div>
+            </div>
+
+            <div id="credits-panel" class="menu-sub-panel hidden-panel">
+                <h2 class="panel-section-heading">Hardware Allocator Pipeline</h2>
+                <div class="metrics-display-log">
+                    <p class="log-entry-item">> Core Logic Pipeline: WebGL2 Framework Canvas Layer Initialized</p>
+                    <p class="log-entry-item">> Aspect Frame Buffer Allocation: 16:9 Fixed Matrix Camera Setup</p>
+                    <p class="log-entry-item">> Spatial Partitioning Protocol: Dynamic Quad-Tree Grid Engine Active</p>
+                    <p class="log-entry-item">> Thread Array Load Balancing: Active Procedural Assembly Worker Hooks Enabled</p>
+                </div>
+            </div>
 
         </div>
     </div>
 
-    <script>
-        /* ========================================================================
-           8. JAVASCRIPT HARDENED CORE RUNTIME VECTOR COLLISION COMPUTATION ENGINE
-           ======================================================================== */
-        const map = document.getElementById('main-map');
-        const viewport = document.getElementById('viewport');
-        const player = document.querySelector('.character');
-        const mudPatches = document.querySelectorAll('.mud-patch');
-        const treeContainer = document.getElementById('tree-container');
+    <div id="gameover-screen" class="menu-overlay-layer hidden">
+        <div class="failure-decor-box-element"></div>
+        <h1 class="menu-title terminal-flash-effect">CRITICAL FAILURE</h1>
+        <p class="menu-subtitle">Your biological vital signs have flatlined. Simulation sequence suspended.</p>
+        <div class="analytics-report-row">
+            <div class="report-block-node"><span class="label">Time Elapsed</span><span class="value" id="fail-time-metric">00:00</span></div>
+            <div class="report-block-node"><span class="label">Foes Terminated</span><span class="value" id="fail-kills-metric">0</span></div>
+            <div class="report-block-node"><span class="label">Wealth Retained</span><span class="value" id="fail-gold-metric">0 G</span></div>
+        </div>
+        <div class="btn-container">
+            <button class="menu-action-btn retry-btn">RELOAD SIMULATION MECHANICS</button>
+            <button class="menu-action-btn quit-btn">ABORT PIPELINE TO MAIN SHELL</button>
+        </div>
+    </div>
 
-        // Linear Runtime Engine Vector Space Coordinates
-        let playerX = 1900;
-        let playerY = 1900;
-        const playerSize = 50; 
-        const playerOffset = 35; 
+    <div id="victory-screen" class="menu-overlay-layer hidden">
+        <div class="victory-shimmer-backdrop"></div>
+        <h1 class="menu-title glory-glow-effect">SECTOR SANITIZED</h1>
+        <p class="menu-subtitle">All primary objective metrics validated. Area threat profile cleared successfully.</p>
+        <div class="analytics-report-row">
+            <div class="report-block-node"><span class="label">Performance Assessment Rating</span><span class="value gold-rank-text">S-TIER OUTCOME</span></div>
+            <div class="report-block-node"><span class="label">Bonus Exp Awarded</span><span class="value" id="vic-xp-metric">+500 XP</span></div>
+        </div>
+        <div class="btn-container">
+            <button class="menu-action-btn next-btn">INITIALIZE ADJACENT MATRIX GATEWAY</button>
+            <button class="menu-action-btn share-btn">SAVE SECURE DATA FRAME RUNTIME</button>
+        </div>
+    </div>
 
-        // Velocity Tracking Configuration Profiles
-        let gameActive = false;
-        const NORMAL_SPEED = 8;
-        const MUD_SPEED = 3;
-        let currentSpeed = NORMAL_SPEED;
+    <div id="pause-screen" class="menu-overlay-layer hidden">
+        <h1 class="menu-title">EXECUTION FROZEN</h1>
+        <p class="menu-subtitle">Tactical operations diagnostic frame buffer active.</p>
+        <div class="btn-container vertical-stacking-layout">
+            <button class="menu-action-btn resume-btn">UNFREEZE ENGINE FLOW STATE</button>
+            <button class="menu-action-btn hotkey-binds-btn">REMAP RUNTIME INTERFACE INPUTS</button>
+            <button class="menu-action-btn abort-run-btn">TERMINATE PERSISTENT WORLD COMPRESSION</button>
+        </div>
+    </div>
 
-        // Buffered Real-Time Keyboard Input Register Map
-        const keys = {
-            w: false,
-            a: false,
-            s: false,
-            d: false,
-            ArrowUp: false,
-            ArrowDown: false,
-            ArrowLeft: false,
-            ArrowRight: false
-        };
+
+    <div id="viewport">
         
-        // Matrix Registry Arrays
-        let obstacles = [];
-        const mapSize = 5000;
-
-        /**
-         * Generates border obstacles and distributed structural environmental sprites
-         */
-        function populateMapEnvironment() {
-            // Instantiates solid outer running perimeter arrays
-            for (let i = 0; i < mapSize; i += 100) {
-                createTreeObstacle(i, 0, 'border-tree');
-                createTreeObstacle(i, mapSize - 130, 'border-tree'); 
-                createTreeObstacle(0, i, 'border-tree'); 
-                createTreeObstacle(mapSize - 130, i, 'border-tree');
-            }
+        <div id="ambient-light"></div>
+        <div class="weather-rain"></div>
+        <div class="weather-fog"></div>
+        <div class="vignette-shadow-overlay"></div>
+        <div class="chromatic-aberration-filter-box"></div>
+        
+        <div id="UI-overlay">
             
-            // Randomly samples clear coordinate sectors for decoration placement
-            for (let i = 0; i < 95; i++) {
-                let randX = Math.floor(Math.random() * (mapSize - 450)) + 220;
-                let randY = Math.floor(Math.random() * (mapSize - 450)) + 220;
-                
-                // Exclude coordinates colliding with heavy built structures
-                const insidePoolZone = (randX > 1200 && randX < 2100 && randY > 2300 && randY < 3050);
-                const insideHouseZone = (randX > 2000 && randX < 3400 && randY > 1600 && randY < 3000);
-                
-                // Verify against isolated hedge lanes
-                const insideHedgeZone1 = (randX > 2400 && randY < 4300);
-                const insideHedgeZone2 = (randX < 1600 && randY < 2400);
-                const insideHedgeZone3 = (randX < 1600 && randY > 2400 && randY < 4900);
+            <div class="hud-top-row">
+                <div class="hud-metric-card core-score-card">
+                    <span class="metric-card-label">ACCUMULATED VALUE</span>
+                    <div class="score-board" id="score-val">00000</div>
+                </div>
+                <div class="hud-metric-card core-timer-card">
+                    <span class="metric-card-label">SYSTEM RUNTIME CLOCK</span>
+                    <div class="timer-board" id="timer-val">00:00:00</div>
+                </div>
+                <div class="hud-metric-card core-wallet-card">
+                    <span class="metric-card-label">ECONOMIC LIQUID ASSETS</span>
+                    <div class="currency-board"><span class="coin-icon-hud"></span><span id="gold-val">0</span> <span class="gold-denom-tag">Gold</span></div>
+                </div>
+            </div>
 
-                if (!insidePoolZone && !insideHouseZone && !insideHedgeZone1 && !insideHedgeZone2 && !insideHedgeZone3) {
-                    createTreeObstacle(randX, randY, 'map-tree');
+            <div class="hud-vitals-column-panel">
+                
+                <div class="stat-container red-metric" id="hud-hp-tracker-node">
+                    <div class="stat-label-row">
+                        <div class="icon-label-group">
+                            <span class="stat-icon-bullet vital-hp-bullet"></span>
+                            <span class="stat-label">VITALITY RESOURCE INDEX</span>
+                        </div>
+                        <span class="stat-numerical-value" id="hp-text">100 / 100</span>
+                    </div>
+                    <div class="bar-bg spatial-bevel-shadow">
+                        <div class="bar-fill-hp" id="hp-bar" style="width: 100%;">
+                            <div class="bar-shimmer-highlight"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-container blue-metric" id="hud-energy-tracker-node">
+                    <div class="stat-label-row">
+                        <div class="icon-label-group">
+                            <span class="stat-icon-bullet vital-energy-bullet"></span>
+                            <span class="stat-label">STAMINA OUTPUT THRESHOLD</span>
+                        </div>
+                        <span class="stat-numerical-value" id="energy-text">80 / 100</span>
+                    </div>
+                    <div class="bar-bg spatial-bevel-shadow">
+                        <div class="bar-fill-energy" id="energy-bar" style="width: 80%;">
+                            <div class="bar-shimmer-highlight"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-container purple-metric" id="hud-xp-tracker-node">
+                    <div class="stat-label-row">
+                        <div class="icon-label-group">
+                            <span class="stat-icon-bullet vital-xp-bullet"></span>
+                            <span class="stat-label">LEVEL 1 PROGRESSION MATRIX</span>
+                        </div>
+                        <span class="stat-numerical-value" id="xp-text">0% Allocated</span>
+                    </div>
+                    <div class="bar-bg mini-bar spatial-bevel-shadow">
+                        <div class="bar-fill-xp" id="xp-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="hud-bottom-inventory-dock">
+                <div class="inventory-hotbar-container">
+                    <div class="hotbar-slot active-item" data-slot="1" id="slot-node-1">
+                        <span class="slot-num">1</span>
+                        <div class="slotted-item-icon weapon-iron-blade"></div>
+                        <div class="slotted-item-tooltip">Iron Armament (Active)</div>
+                    </div>
+                    <div class="hotbar-slot" data-slot="2" id="slot-node-2">
+                        <span class="slot-num">2</span>
+                        <div class="slotted-item-icon consumable-potion-hp"></div>
+                        <div class="slotted-item-count-badge">x5</div>
+                        <div class="slotted-item-tooltip">Vitality Restorative Potion</div>
+                    </div>
+                    <div class="hotbar-slot" data-slot="3" id="slot-node-3">
+                        <span class="slot-num">3</span>
+                        <div class="slotted-item-icon consumable-potion-stamina"></div>
+                        <div class="slotted-item-count-badge">x2</div>
+                        <div class="slotted-item-tooltip">Energy Surge Injection</div>
+                    </div>
+                    <div class="hotbar-slot" data-slot="4" id="slot-node-4">
+                        <span class="slot-num">4</span>
+                        <div class="slotted-item-icon structural-barrier-wall"></div>
+                        <div class="slotted-item-count-badge">x12</div>
+                        <div class="slotted-item-tooltip">Deployable Log Palisade</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hud-minimap-radar-container">
+                <div class="radar-compass-border-ring">
+                    <div class="radar-dynamic-viewport-window">
+                        <div class="radar-blip blip-player-self"></div>
+                        <div class="radar-blip blip-objective-hq"></div>
+                        <div class="radar-blip blip-hostile-threat" style="top: 30px; left: 85px;"></div>
+                        <div class="radar-blip blip-hostile-threat" style="top: 110px; left: 45px;"></div>
+                    </div>
+                </div>
+                <div class="radar-coordinate-readout-text">X: 2000.45 || Y: 1900.12</div>
+            </div>
+
+            <div id="game-notification-feed-layer">
+                <div class="notification-banner-item objective-alert">
+                    <span class="banner-accent-line"></span>
+                    <p class="banner-body-text">CRITICAL OBJECTIVE: Clear Sector Hostiles & Secure Structural Stronghold Compound.</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div id="main-map">
+            
+            <div class="map-tree foliage-clump-alpha" style="left: 450px; top: 320px;"></div>
+            <div class="map-tree foliage-clump-beta" style="left: 800px; top: 600px;"></div>
+            <div class="map-tree foliage-clump-gamma" style="left: 920px; top: 550px;"></div>
+            <div class="map-tree foliage-clump-delta" style="left: 1400px; top: 220px;"></div>
+            <div class="map-tree foliage-clump-epsilon" style="left: 2150px; top: 480px;"></div>
+            <div class="map-tree foliage-clump-alpha" style="left: 2800px; top: 150px;"></div>
+
+            <div class="map-tree foliage-clump-beta" style="left: 4100px; top: 850px;"></div>
+            <div class="map-tree foliage-clump-gamma" style="left: 4250px; top: 920px;"></div>
+            <div class="map-tree foliage-clump-delta" style="left: 4600px; top: 1500px;"></div>
+            <div class="map-tree foliage-clump-epsilon" style="left: 4800px; top: 2200px;"></div>
+            <div class="map-tree foliage-clump-alpha" style="left: 4300px; top: 2950px;"></div>
+
+            <div class="map-tree foliage-clump-beta" style="left: 4200px; top: 3500px;"></div>
+            <div class="map-tree foliage-clump-gamma" style="left: 3850px; top: 4100px;"></div>
+            <div class="map-tree foliage-clump-delta" style="left: 3100px; top: 4650px;"></div>
+            <div class="map-tree foliage-clump-epsilon" style="left: 2450px; top: 4300px;"></div>
+            <div class="map-tree foliage-clump-alpha" style="left: 1720px; top: 4700px;"></div>
+            <div class="map-tree foliage-clump-beta" style="left: 1100px; top: 4200px;"></div>
+
+            <div class="map-tree foliage-clump-gamma" style="left: 350px; top: 3800px;"></div>
+            <div class="map-tree foliage-clump-delta" style="left: 500px; top: 2900px;"></div>
+            <div class="map-tree foliage-clump-epsilon" style="left: 220px; top: 2150px;"></div>
+            <div class="map-tree foliage-clump-alpha" style="left: 650px; top: 1600px;"></div>
+            <div class="map-tree foliage-clump-beta" style="left: 150px; top: 950px;"></div>
+
+            <div class="map-tree foliage-clump-gamma" style="left: 1200px; top: 1800px;"></div>
+            <div class="map-tree foliage-clump-delta" style="left: 3100px; top: 900px;"></div>
+            <div class="map-tree foliage-clump-epsilon" style="left: 3600px; top: 2400px;"></div>
+            <div class="map-tree foliage-clump-alpha" style="left: 1550px; top: 3300px;"></div>
+
+            <div class="map-tree tree-near-house" style="left: 2500px; top: 1500px;"></div>
+
+
+            <div class="mud-patch terrain-patch-1" style="left: 1200px; top: 800px; width: 340px; height: 210px;"></div>
+            <div class="mud-patch terrain-patch-2" style="left: 3200px; top: 2800px; width: 410px; height: 260px;"></div>
+            <div class="mud-patch terrain-patch-3" style="left: 450px; top: 1400px; width: 280px; height: 190px;"></div>
+            <div class="mud-patch terrain-patch-4" style="left: 2300px; top: 4100px; width: 520px; height: 310px;"></div>
+            <div class="mud-patch terrain-patch-5" style="left: 3900px; top: 1200px; width: 310px; height: 240px;"></div>
+            <div class="mud-patch terrain-patch-6" style="left: 1500px; top: 2900px; width: 450px; height: 280px;"></div>
+            <div class="mud-patch terrain-patch-7" style="left: 2700px; top: 650px; width: 390px; height: 220px;"></div>
+
+
+            <div class="rock boulder-large" style="left: 600px; top: 140px; width: 95px; height: 85px;"></div>
+            <div class="rock boulder-medium" style="left: 1800px; top: 2200px; width: 125px; height: 105px;"></div>
+            <div class="rock boulder-small" style="left: 2900px; top: 1900px; width: 75px; height: 65px;"></div>
+            <div class="rock boulder-ridge" style="left: 1100px; top: 3400px; width: 210px; height: 95px;"></div>
+            <div class="rock boulder-medium" style="left: 3500px; top: 600px; width: 110px; height: 90px;"></div>
+            <div class="rock boulder-large" style="left: 2100px; top: 3700px; width: 140px; height: 130px;"></div>
+            <div class="rock boulder-small" style="left: 4400px; top: 2500px; width: 80px; height: 70px;"></div>
+            <div class="rock boulder-ridge" style="left: 1300px; top: 1100px; width: 180px; height: 85px;"></div>
+            <div class="rock boulder-large" style="left: 3000px; top: 4400px; width: 150px; height: 120px;"></div>
+            <div class="rock boulder-medium" style="left: 750px; top: 2500px; width: 115px; height: 100px;"></div>
+
+
+            <div class="wooden-crate prop-break-alpha" style="left: 1050px; top: 700px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-beta" style="left: 2100px; top: 2550px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-gamma" style="left: 1350px; top: 2650px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-delta" style="left: 1650px; top: 850px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-alpha" style="left: 3300px; top: 1200px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-beta" style="left: 2800px; top: 1850px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-gamma" style="left: 1950px; top: 3200px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-delta" style="left: 900px; top: 3100px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-alpha" style="left: 4000px; top: 2700px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate prop-break-beta" style="left: 2450px; top: 950px; width: 50px; height: 50px;"></div>
+            
+            <div class="wooden-crate destroyed" style="left: 2160px; top: 2550px; width: 50px; height: 50px;"></div>
+            <div class="wooden-crate destroyed" style="left: 1050px; top: 760px; width: 50px; height: 50px;"></div>
+
+
+            <div class="coin pickup-item-1" style="left: 950px; top: 650px;"></div>
+            <div class="coin pickup-item-2" style="left: 1450px; top: 2450px;"></div>
+            <div class="coin pickup-item-3" style="left: 2100px; top: 2100px;"></div>
+            <div class="coin pickup-item-4" style="left: 3300px; top: 1050px;"></div>
+            <div class="coin pickup-item-5" style="left: 1150px; top: 3550px;"></div>
+            <div class="coin pickup-item-6" style="left: 2850px; top: 2000px;"></div>
+            <div class="coin pickup-item-7" style="left: 1850px; top: 900px;"></div>
+            <div class="coin pickup-item-8" style="left: 3650px; top: 2300px;"></div>
+            <div class="coin pickup-item-9" style="left: 1300px; top: 2700px;"></div>
+            <div class="coin pickup-item-10" style="left: 2200px; top: 3150px;"></div>
+            <div class="coin pickup-item-11" style="left: 800px; top: 1500px;"></div>
+            <div class="coin pickup-item-12" style="left: 4100px; top: 1650px;"></div>
+
+            <div class="treasure-chest lid-closed-state" id="chest-alpha" style="left: 2250px; top: 2550px;"></div>
+            <div class="treasure-chest lid-closed-state" id="chest-beta" style="left: 900px; top: 1200px;"></div>
+            <div class="treasure-chest lid-closed-state" id="chest-gamma" style="left: 3800px; top: 3400px;"></div>
+            <div class="treasure-chest opened" id="chest-delta-spoiled" style="left: 1600px; top: 750px;"></div>
+
+
+            <div class="house-container main-base-hq">
+                <div class="house-roof structural-shingle-layer"></div>
+                <div class="house-base structural-masonry-layer"></div>
+            </div>
+
+            <div class="pool recreational-water-zone">
+                <div class="pool-mat mat1 surface-buoyancy-node"></div>
+                <div class="pool-mat mat2 surface-buoyancy-node"></div>
+                <div class="pool-mat mat3 surface-buoyancy-node"></div>
+            </div>
+
+
+            <div class="enemy scout-tier patrol-route-alpha" style="left: 1600px; top: 1200px;">
+                <div class="enemy-body standard-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy scout-tier patrol-route-beta" style="left: 2800px; top: 2600px;">
+                <div class="enemy-body standard-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy scout-tier patrol-route-gamma" style="left: 1100px; top: 900px;">
+                <div class="enemy-body standard-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy scout-tier patrol-route-delta" style="left: 3400px; top: 3100px;">
+                <div class="enemy-body standard-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy scout-tier patrol-route-epsilon" style="left: 1950px; top: 700px;">
+                <div class="enemy-body standard-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy scout-tier patrol-route-alpha" style="left: 1150px; top: 2300px;">
+                <div class="enemy-body standard-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy scout-tier patrol-route-beta" style="left: 3000px; top: 1100px;">
+                <div class="enemy-body standard-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy scout-tier patrol-route-gamma" style="left: 2600px; top: 3600px;">
+                <div class="enemy-body standard-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+
+            <div class="enemy brute-tier defensive-node-1" style="left: 1300px; top: 1500px;">
+                <div class="enemy-body armored-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy brute-tier defensive-node-2" style="left: 3300px; top: 2200px;">
+                <div class="enemy-body armored-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="enemy brute-tier defensive-node-3" style="left: 2100px; top: 4300px;">
+                <div class="enemy-body armored-chassis"></div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" style="width: 100%;"></div></div>
+            </div>
+
+            <div class="enemy boss-unit supreme-commander-tier" style="left: 3500px; top: 1500px;">
+                <div class="enemy-body heavy-armored-chassis"></div>
+                <div class="boss-title-tag">WORLD RAID GUARDIAN: MALAKOR-9</div>
+                <div class="enemy-health-bar-container"><div class="enemy-hp-fill" id="boss-hp-bar-metric" style="width: 100%;"></div></div>
+            </div>
+
+
+            <div class="character player-entity-root walking face-left" id="player-avatar">
+                
+                <div class="char-body torso-joint-center"></div>
+                
+                <div class="char-head skull-joint-top">
+                    <div class="player-facing-direction-eyes"></div>
+                </div>
+                
+                <div class="sleeve-l1 upper-arm-joint-left"></div>
+                <div class="hand-l2 lower-hand-joint-left"></div>
+                
+                <div class="sleeve-r1 upper-arm-joint-right"></div>
+                <div class="hand-r2 lower-hand-joint-right"></div>
+                
+                <div class="leg-l lower-foot-joint-left"></div>
+                <div class="leg-r lower-foot-joint-right"></div>
+                
+                <div class="weapon-slash-arc-effect"></div>
+                <div class="player-shadow-projection-ellipse"></div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        /**
+         * Master Engine Core Module
+         * Tracks application structures, scene loops, configuration files, and state updates.
+         */
+        const EngineConfiguration = {
+            version: "2.4.0-BETA",
+            canvasDimensions: { width: 5000, height: 5000 },
+            refreshInterval: 16.67, // Target 60 FPS update frames
+            tickRate: 20 // Fixed physical ticker update latency
+        };
+
+        class GameStateManager {
+            constructor() {
+                this.score = 0;
+                this.timer = 0;
+                this.gold = 0;
+                this.playerHealth = 100;
+                this.playerEnergy = 80;
+                this.playerXp = 0;
+                this.currentDifficulty = 'medium';
+                this.isPaused = false;
+                this.simulationActive = false;
+            }
+
+            setDifficulty(level) {
+                this.currentDifficulty = level;
+                console.log(`[Engine state] Difficulty level changed to: ${level}`);
+            }
+
+            incrementScore(points) {
+                this.score += points;
+                this.updateHudElement('score-val', String(this.score).padStart(5, '0'));
+            }
+
+            modifyGold(amount) {
+                this.gold += amount;
+                this.updateHudElement('gold-val', this.gold);
+            }
+
+            applyDamage(amount) {
+                this.playerHealth = Math.max(0, this.playerHealth - amount);
+                this.updateHudElement('hp-text', `${this.playerHealth} / 100`);
+                const hpBar = document.getElementById('hp-bar');
+                if(hpBar) hpBar.style.width = `${this.playerHealth}%`;
+                
+                if (this.playerHealth <= 0) {
+                    this.triggerFailureSequence();
                 }
             }
+
+            updateHudElement(id, value) {
+                const element = document.getElementById(id);
+                if (element) element.textContent = value;
+            }
+
+            triggerFailureSequence() {
+                this.simulationActive = false;
+                console.warn("[Engine state] Critical player signature dropped. Displaying failure overlay.");
+                const screen = document.getElementById('gameover-screen');
+                if (screen) screen.classList.remove('hidden');
+            }
         }
 
-        /**
-         * Generates visual components and pushes structural models to analytical loop buffers
-         */
-        function createTreeObstacle(x, y, className) {
-            const tree = document.createElement('div');
-            tree.className = className;
-            tree.style.left = x + 'px';
-            tree.style.top = y + 'px';
-            treeContainer.appendChild(tree);
+        // Initialize state engine instance pipeline loop
+        const GlobalStateInstance = new GameStateManager();
+
+        // Register DOM Menu tab navigation interaction listeners natively
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("[Engine pipeline] Initializing DOM node binding handlers...");
             
-            const radius = className === 'border-tree' ? 65 : 75;
-            obstacles.push({
-                type: 'circle',
-                x: x + radius,
-                y: y + radius,
-                radius: radius - 22
-            });
-        }
-
-        /**
-         * Loads exact structural box specifications directly into execution tracking registers
-         */
-        function initializeObstacleMatrix() {
-            // LARGER L-SHAPED HOUSE COMPOSITE RECT COORDS (1200x1200px Main Footprint)
-            // Section Alpha: Left Tower Base Main Segment Block
-            obstacles.push({ type: 'rect', x: 2100, y: 1700, w: 360, h: 800 });
-            // Section Beta: Top Right Linear Corridor Wing Box
-            obstacles.push({ type: 'rect', x: 2460, y: 1700, w: 440, h: 360 });
-
-            // HYDRAULIC TRAP SPECIFICATIONS
-            obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350, isPoolWater: true });
-
-            // MASTER MAZE ARCHITECTURE SPECIFICATION REGISTRY entries
-            // Northern Flank
-            obstacles.push({ type: 'rect', x: 3500, y: 250,  w: 1250, h: 130 });
-            obstacles.push({ type: 'rect', x: 4620, y: 380,  w: 130,  h: 950 });
-            obstacles.push({ type: 'rect', x: 3850, y: 600,  w: 450,  h: 110 });
-            obstacles.push({ type: 'rect', x: 3500, y: 950,  w: 800,  h: 120 });
-
-            // Eastern & Southern Flank Extensions
-            obstacles.push({ type: 'rect', x: 4200, y: 1200, w: 150,  h: 1100 });
-            obstacles.push({ type: 'rect', x: 3400, y: 1500, w: 500,  h: 140 });
-            obstacles.push({ type: 'rect', x: 3000, y: 1800, w: 150,  h: 900 });
-            obstacles.push({ type: 'rect', x: 3150, y: 2560, w: 700,  h: 140 });
-            obstacles.push({ type: 'rect', x: 3850, y: 2900, w: 150,  h: 800 });
-            obstacles.push({ type: 'rect', x: 2600, y: 3600, w: 1400, h: 150 });
-            obstacles.push({ type: 'rect', x: 2300, y: 3100, w: 150,  h: 650 });
-            obstacles.push({ type: 'rect', x: 800,  y: 4100, w: 1200, h: 140 });
-
-            // Western Perimeter Formations
-            obstacles.push({ type: 'rect', x: 250,  y: 500,  w: 140,  h: 1200 });
-            obstacles.push({ type: 'rect', x: 390,  y: 1560, w: 600,  h: 140 });
-            obstacles.push({ type: 'rect', x: 850,  y: 250,  w: 140,  h: 850 });
-            obstacles.push({ type: 'rect', x: 1400, y: 700,  w: 800,  h: 140 });
-
-            // Southern Complex Extensions
-            obstacles.push({ type: 'rect', x: 200,  y: 2500, w: 800,  h: 150 });
-            obstacles.push({ type: 'rect', x: 200,  y: 2650, w: 150,  h: 900 });
-            obstacles.push({ type: 'rect', x: 350,  y: 3400, w: 1100, h: 150 });
-
-            // Center Ground Complex Entries
-            obstacles.push({ type: 'rect', x: 1400, y: 1200, w: 140,  h: 700 });
-            obstacles.push({ type: 'rect', x: 1540, y: 1200, w: 400,  h: 140 });
-
-            // Dense Grid Infill Expansion Allocations
-            obstacles.push({ type: 'rect', x: 200,  y: 3800, w: 450,  h: 130 });
-            obstacles.push({ type: 'rect', x: 500,  y: 1900, w: 450,  h: 140 });
-            obstacles.push({ type: 'rect', x: 1100, y: 2100, w: 130,  h: 350 });
-            obstacles.push({ type: 'rect', x: 2600, y: 200,  w: 700,  h: 140 });
-            obstacles.push({ type: 'rect', x: 2800, y: 500,  w: 140,  h: 600 });
-            obstacles.push({ type: 'rect', x: 2200, y: 1100, w: 650,  h: 130 });
-            obstacles.push({ type: 'rect', x: 1800, y: 4400, w: 650,  h: 145 });
-            obstacles.push({ type: 'rect', x: 4400, y: 2500, w: 400,  h: 150 });
-            obstacles.push({ type: 'rect', x: 4500, y: 2800, w: 150,  h: 900 });
-            obstacles.push({ type: 'rect', x: 3200, y: 4100, w: 900,  h: 140 });
-            obstacles.push({ type: 'rect', x: 1100, y: 4500, w: 150,  h: 400 });
-            obstacles.push({ type: 'rect', x: 200,  y: 4500, w: 600,  h: 150 });
-
-            // SOLID GRANITE STRUCTURAL BOX ENTRIES
-            document.querySelectorAll('.rock').forEach(rock => {
-                obstacles.push({
-                    type: 'rect',
-                    x: parseInt(rock.style.left),
-                    y: parseInt(rock.style.top),
-                    w: parseInt(rock.style.width),
-                    h: parseInt(rock.style.height)
+            const tabs = document.querySelectorAll('.tab-toggle-btn');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    tabs.forEach(t => t.classList.remove('active-tab'));
+                    tab.classList.add('active-tab');
+                    
+                    const targetPanelId = tab.getAttribute('data-target');
+                    const panels = document.querySelectorAll('.menu-sub-panel');
+                    panels.forEach(panel => {
+                        if(panel.id === targetPanelId) {
+                            panel.classList.add('active-panel');
+                            panel.classList.remove('hidden-panel');
+                        } else {
+                            panel.classList.remove('active-panel');
+                            panel.classList.add('hidden-panel');
+                        }
+                    });
                 });
             });
-        }
 
-        // Window Event Mapping Registers
-        window.addEventListener('keydown', (e) => { 
-            if (e.key in keys) {
-                keys[e.key] = true; 
-            }
-        });
-
-        window.addEventListener('keyup', (e) => { 
-            if (e.key in keys) {
-                keys[e.key] = false; 
-            }
-        });
-        
-        /**
-         * Validates absolute coordinate models against terrain objects for speed modulation
-         */
-        function checkMudCollision(x, y) {
-            const px = x + 60;
-            const py = y + 60;
-            let insideMud = false;
-            
-            mudPatches.forEach(patch => {
-                const mx = parseInt(patch.style.left);
-                const my = parseInt(patch.style.top);
-                const mw = parseInt(patch.style.width);
-                const mh = parseInt(patch.style.height);
-                
-                if (px >= mx && px <= (mx + mw) && py >= my && py <= (my + mh)) {
-                    insideMud = true;
-                }
+            // Difficulty Confirmation System Action Hook bindings
+            const diffButtons = document.querySelectorAll('.difficulty-btn');
+            diffButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const selectedLevel = btn.getAttribute('data-level');
+                    GlobalStateInstance.setDifficulty(selectedLevel);
+                    
+                    // Collapse interface layer stack structures
+                    document.getElementById('menu-screen').classList.add('hidden');
+                    document.getElementById('viewport').style.display = 'block';
+                    GlobalStateInstance.simulationActive = true;
+                    console.log("[Engine pipeline] World Map Viewport layer visibility unlatched.");
+                });
             });
-            return insideMud;
-        }
-
-        /**
-         * Tracks precise movement matrix inside swimming pool boundary sets
-         */
-        function checkWalkboardPlatformSafety(x, y) {
-            const px = x + playerOffset + (playerSize / 2);
-            const py = y + playerOffset + (playerSize / 2);
-            
-            const mats = [
-                { x: 1430, y: 2640, w: 110, h: 65 },
-                { x: 1590, y: 2640, w: 110, h: 65 },
-                { x: 1750, y: 2640, w: 110, h: 65 }
-            ];
-            
-            return mats.some(m => px >= m.x && px <= (m.x + m.w) && py >= m.y && py <= (m.y + m.h));
-        }
-
-        /**
-         * Resolves vector intersections across geometric primitive lists
-         */
-        function processEnvironmentIntersection(targetX, targetY) {
-            const px = targetX + playerOffset;
-            const py = targetY + playerOffset;
-            const pw = playerSize;
-            const ph = playerSize;
-            
-            const pCenterX = px + pw / 2;
-            const pCenterY = py + ph / 2;
-
-            // Enforce outer world running dimensions
-            if (px < 130 || px + pw > 4870 || py < 130 || py + ph > 4870) {
-                return true;
-            }
-            
-            // Loop through master obstacle data matrix registers
-            for (let i = 0; i < obstacles.length; i++) {
-                const obs = obstacles[i];
-                
-                if (obs.type === 'rect') {
-                    if (obs.isPoolWater && checkWalkboardPlatformSafety(targetX, targetY)) {
-                        continue;
-                    }
-                    
-                    const intersectX = px < obs.x + obs.w && px + pw > obs.x;
-                    const intersectY = py < obs.y + obs.h && py + ph > obs.y;
-                    
-                    if (intersectX && intersectY) {
-                        return true;
-                    }
-                } 
-                else if (obs.type === 'circle') {
-                    const distX = pCenterX - obs.x;
-                    const distY = pCenterY - obs.y;
-                    const distanceVector = Math.sqrt(distX * distX + distY * distY);
-                    
-                    if (distanceVector < (pw / 2) + obs.radius) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /**
-         * Core high-precision animation loop for processing positional vectors and view tracking
-         */
-        function coreExecutionEngine() {
-            if (!gameActive) return;
-
-            // Process systemic background slowdown fields
-            if (checkMudCollision(playerX, playerY)) {
-                currentSpeed = MUD_SPEED;
-                player.style.filter = "sepia(0.6) brightness(0.75)";
-            } else {
-                currentSpeed = NORMAL_SPEED;
-                player.style.filter = "none";
-            }
-
-            let nextX = playerX;
-            let nextY = playerY;
-
-            // Query active running input registers
-            if (keys.w || keys.ArrowUp) {
-                nextY -= currentSpeed;
-            }
-            if (keys.s || keys.ArrowDown) {
-                nextY += currentSpeed;
-            }
-            if (keys.a || keys.ArrowLeft) {
-                nextX -= currentSpeed;
-            }
-            if (keys.d || keys.ArrowRight) {
-                nextX += currentSpeed;
-            }
-
-            // Separated Axis Theorem Vector Checks
-            if (!processEnvironmentIntersection(nextX, playerY)) {
-                playerX = nextX;
-            }
-            if (!processEnvironmentIntersection(playerX, nextY)) {
-                playerY = nextY;
-            }
-
-            // Synchronize interface nodes to screen space coordinates
-            player.style.left = playerX + 'px';
-            player.style.top = playerY + 'px';
-
-            const internalViewportWidth = window.innerWidth;
-            const internalViewportHeight = window.innerHeight;
-            
-            // Dynamic lens target calculation formulas
-            viewport.scrollLeft = playerX - (internalViewportWidth / 2) + 60;
-            viewport.scrollTop = playerY - (internalViewportHeight / 2) + 60;
-
-            requestAnimationFrame(coreExecutionEngine);
-        }
-
-        /**
-         * Global engine initialization pipeline sequencing
-         */
-        function startEngineBootstrap() {
-            populateMapEnvironment();
-            initializeObstacleMatrix();
-            gameActive = true;
-            requestAnimationFrame(coreExecutionEngine);
-        }
-
-        // Fire bootstrap loops
-        startEngineBootstrap();
+        });
     </script>
 </body>
 </html>
