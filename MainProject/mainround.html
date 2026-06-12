@@ -1,199 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King of the Yard - Map Prototype</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #1a1a1a;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-        }
+<div id="gameContainer">
+    <div id="map">
 
-        #menu {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            background: #2a2a2a;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
+        <!-- House -->
+        <div class="house">
+            <div class="roof"></div>
+        </div>
 
-        h1 {
-            margin: 0 0 10px 0;
-            color: #ffcc00;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+        <!-- Pool -->
+        <div class="pool">
+            <div class="mat mat1"></div>
+            <div class="mat mat2"></div>
+            <div class="mat mat3"></div>
+        </div>
 
-        .btn {
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
-            width: 150px;
-        }
+        <!-- Mud -->
+        <div class="mud mud1"></div>
+        <div class="mud mud2"></div>
 
-        .btn:hover {
-            background: #45a049;
-            transform: scale(1.05);
-        }
+        <!-- Spikes -->
+        <div class="spike spike1"></div>
+        <div class="spike spike2"></div>
 
-        #game-container {
-            display: none;
-            position: relative;
-            width: 90vw;
-            height: 85vh;
-            border: 4px solid #333;
-            border-radius: 8px;
-            overflow: auto; /* Makes the view window scrollable */
-            background: #222;
-        }
+        <!-- Rocks -->
+        <div class="rock rock1"></div>
+        <div class="rock rock2"></div>
 
-        canvas {
-            display: block;
-            background: #557a2b; /* Fallback grass color */
-        }
+        <!-- Player -->
+        <div id="player">
+            <div class="head"></div>
+            <div class="body"></div>
 
-        #ui-overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-family: monospace;
-            pointer-events: none;
-        }
-    </style>
-</head>
-<body>
+            <div class="arm arm1"></div>
+            <div class="arm arm2"></div>
+            <div class="arm arm3"></div>
+            <div class="arm arm4"></div>
 
-    <div id="menu">
-        <h1>King of the Yard</h1>
-        <p>Select Difficulty to Generate Map</p>
-        <button class="btn" onclick="startGame('easy')">EASY</button>
-        <button class="btn" onclick="startGame('medium')" style="background:#ff9800;">MEDIUM</button>
-        <button class="btn" onclick="startGame('hard')" style="background:#f44336;">HARD</button>
+            <div class="leg leg1"></div>
+            <div class="leg leg2"></div>
+        </div>
+
     </div>
-
-    <div id="game-container" id="scroll-wrapper">
-        <div id="ui-overlay">Controls: WASD / Arrow Keys to Move</div>
-        <canvas id="gameCanvas"></canvas>
-    </div>
-
-    <script>
-        const menu = document.getElementById('menu');
-        const container = document.getElementById('game-container');
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Map Size (Large & Scrollable)
-        const MAP_WIDTH = 2500;
-        const MAP_HEIGHT = 2000;
-
-        // Game State
-        let gameLoopId;
-        const keys = {};
-
-        // Player configuration based on your circle design
-        const player = {
-            x: 300,
-            y: 400,
-            radius: 20,
-            baseSpeed: 4,
-            speed: 4,
-            color: '#e0a96d'
-        };
-
-        // Environment Entities
-        const environment = {
-            houses: [],
-            pools: [],
-            poolMats: [],
-            mudPatches: [],
-            rocks: [],
-            trees: [],
-            spikes: []
-        };
-
-        // Event Listeners for Movement
-        window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
-        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
-
-        function startGame(difficulty) {
-            menu.style.display = 'none';
-            container.style.display = 'block';
-
-            // Set canvas internal resolution dimensions
-            canvas.width = MAP_WIDTH;
-            canvas.height = MAP_HEIGHT;
-
-            generateMapLayout(difficulty);
-            
-            // Center camera on player initially
-            container.scrollLeft = player.x - container.clientWidth / 2;
-            container.scrollTop = player.y - container.clientHeight / 2;
-
-            // Start loop
-            if(gameLoopId) cancelAnimationFrame(gameLoopId);
-            gameLoopId = requestAnimationFrame(gameLoop);
-        }
-
-        function generateMapLayout(difficulty) {
-            // 1. Long L-Shaped House based on your structural image
-            environment.houses = [
-                { x: 150, y: 150, width: 160, height: 450 }, // Vertical segment
-                { x: 150, y: 150, width: 400, height: 160 }  // Horizontal segment
-            ];
-
-            // 2. Pool next to the house shortcut
-            environment.pools = [
-                { x: 600, y: 200, width: 250, height: 150 }
-            ];
-            // Walkable mats inside the pool
-            environment.poolMats = [
-                { x: 650, y: 200, width: 50, height: 150 },
-                { x: 750, y: 200, width: 50, height: 150 }
-            ];
-
-            // 3. Mud Patches (Slow zones)
-            environment.mudPatches = [
-                { x: 800, y: 600, r: 90 },
-                { x: 1400, y: 300, r: 120 },
-                { x: 400, y: 1200, r: 100 }
-            ];
-
-            // 4. Trap Spikes (Damage/Obstacle)
-            environment.spikes = [
-                { x: 1200, y: 800, radius: 20 },
-                { x: 1600, y: 900, radius: 20 },
-                { x: 1800, y: 400, radius: 20 }
-            ];
-
-            // Additional layout generation logic may go here.
-        }
-
-        function gameLoop() {
-            // Keep the animation frame running while the scene is active.
-            gameLoopId = requestAnimationFrame(gameLoop);
-        }
-    </script>
-</body>
-</html>
+</div>
