@@ -282,30 +282,9 @@
         .hand-r2 { position: absolute; right: -6px; top: 47px; width: 18px; height: 18px; background-color: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
         .leg-l { position: absolute; left: 32px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
         .leg-r { position: absolute; left: 66px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
-
-        /* ==========================================================
-           7. HUD FLOATING OVERLAY PANEL
-           ========================================================== */
-        #UI-overlay {
-            position: fixed;
-            top: 24px;
-            left: 24px;
-            background-color: rgba(11, 15, 25, 0.92);
-            color: #f5f6fa;
-            padding: 16px 24px;
-            border-radius: 12px;
-            z-index: 200;
-            pointer-events: none;
-            border: 2px solid #fbc531;
-            box-shadow: 0px 8px 24px rgba(0,0,0,0.5);
-        }
     </style>
 </head>
 <body>
-
-    <div id="UI-overlay">
-        <div style="font-size: 0.95rem; color: #dcdde1; font-weight: 500;">Safely cross the pool using the floating yellow platforms!</div>
-    </div>
 
     <div id="viewport">
         <div id="main-map">
@@ -398,8 +377,8 @@
                 createTreeObstacle(mapSize - 130, i, 'border-tree');
             }
             
-            // INCREASED INTERIOR TREES TO 350 FOR A RICH ENVIRONMENT
-            for (let i = 0; i < 350; i++) {
+            // CLEANED DOWN TO A BALANCED 120 TREES
+            for (let i = 0; i < 120; i++) {
                 let randX = Math.floor(Math.random() * (mapSize - 450)) + 220;
                 let randY = Math.floor(Math.random() * (mapSize - 450)) + 220;
 

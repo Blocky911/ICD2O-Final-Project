@@ -39,7 +39,7 @@ body, html {
 }
 
 /* ==========================================================
-   3. OBSTACLES & NATURE DECORATIONS (TREES)
+   3. OBSTACLES & NATURE DECORATIONS
    ========================================================== */
 .border-tree {
     position: absolute;
@@ -59,13 +59,6 @@ body, html {
     border-radius: 50%;
     box-shadow: 0 22px 30px rgba(0,0,0,0.6), inset -8px -8px 20px rgba(0,0,0,0.5);
     z-index: 12;
-    transform-origin: bottom center;
-    animation: treeSway 4s ease-in-out infinite alternate; /* Dynamic swaying movement */
-}
-
-@keyframes treeSway {
-    0% { transform: skewX(-1.5deg) scale(1); }
-    100% { transform: skewX(1.5deg) scale(1.02); }
 }
 
 .mud-patch {
@@ -284,7 +277,7 @@ body, html {
 .leg-r { position: absolute; left: 66px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
 
 /* ==========================================================
-   7. HUD FLOATING OVERLAY PANEL (TITLE HEADER REMOVED)
+   7. HUD FLOATING OVERLAY PANEL (CLEANED REGION)
    ========================================================== */
 #UI-overlay {
     position: fixed;
