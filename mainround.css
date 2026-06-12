@@ -78,4 +78,67 @@ body, html {
     height: 100vh;
     overflow: hidden; 
     position: relative;
+    display: none;
+}
+
+/* ==========================================
+   2. MAIN MAP & PROCEDURAL TEXTURES
+   ========================================== */
+#main-map {
+    width: 5000px;
+    height: 5000px;
+    position: relative;
+    /* Grass Texture Design using layered CSS gradients */
+    background-color: #458b00;
+    background-image: 
+        radial-gradient(#556b2f 15%, transparent 16%),
+        radial-gradient(#3a5f0b 15%, transparent 16%);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+    transition: transform 0.1s ease-out;
+}
+
+/* Day/Night Environmental Overlay */
+#ambient-light {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 20, 40, 0.35);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 90;
+}
+
+/* Particle Weather System: Animated Rain Overlay */
+.weather-rain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.1) 40px, rgba(255,255,255,0.1) 70px);
+    background-size: 150px 150px;
+    animation: rainFall 0.8s linear infinite;
+    pointer-events: none;
+    z-index: 95;
+    opacity: 0.6;
+}
+
+@keyframes rainFall {
+    0% { background-position: 0px 0px; }
+    100% { background-position: 150px 600px; }
+}
+
+/* ==========================================
+   3. ENVIRONMENT & OBSTACLES (CLEANED UP)
+   ========================================== */
+
+/* General map trees with subtle atmospheric movement */
+.map-tree {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, #3b7a24 50%, #224715 100%);
 }
