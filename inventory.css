@@ -1,5 +1,6 @@
-/* ── Inventory screen styling layout ── */
-
+/* ==========================================================================
+   1. GLOBAL FALLBACK CONFIGURATION & RETRO THEME SETUP
+   ========================================================================== */
 :root {
   --font-display: 'Bebas Neue', sans-serif;
   --font-body: 'DM Sans', sans-serif;
@@ -8,208 +9,275 @@
   --text: #ffffff;
   --text-muted: #8a8a8a;
   --gold: #d4af37;
+  --gold-dim: #aa8c2c;
 }
 
 body {
   font-family: var(--font-body);
   background-color: #0c0c0c;
   color: var(--text);
-  margin: 0;
 }
 
-/* Page title centered outside the bounding window frame */
-.inventory-main-title {
-  text-align: center;
-  font-family: var(--font-body);
-  font-size: 2.2rem;
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  color: var(--text);
-  margin: 0 0 1.5rem 0;
-}
-
+/* ==========================================================================
+   2. MAIN CONTAINERS & STRUCTURAL LAYOUT
+   ========================================================================== */
 .inventory-outer {
   position: relative;
   z-index: 2;
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 3rem 2rem;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-/* Main inner bounding window container box from mockup */
+.inventory-main-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 0.12em;
+  color: #fff;
+  margin: 0;
+  text-transform: uppercase;
+}
+
 .inventory-container {
+  background: var(--surface);
   border: 1px solid var(--border);
-  background: #0d0d0d;
-  padding: 2.5rem;
-  box-sizing: border-box;
+  border-radius: 4px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-/* ── Top Header Control Items ── */
+/* Navbar Header Navigation */
 .inv-nav {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 3.5rem;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
 }
 
 .inv-nav-btn {
-  font-family: var(--font-body);
-  font-size: 1.1rem;
-  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
   text-decoration: none;
-  border: 1px solid var(--text);
-  padding: 0.25rem 3rem;
-  background: transparent;
-  text-transform: lowercase;
-  transition: background 0.15s, color 0.15s;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  padding: 0.35rem 1.2rem;
+  border-radius: 2px;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .inv-nav-btn:hover {
-  background: var(--text);
-  color: #000;
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* ── Split Window Columns ── */
 .inv-content {
-  display: grid;
-  grid-template-columns: 1.25fr 0.75fr;
-  gap: 3.5rem;
-  align-items: start;
+  display: flex;
+  gap: 2rem;
+  align-items: stretch;
 }
 
-/* ── Left Grid and Custom Bar Accent System ── */
+/* ==========================================================================
+   3. INVENTORY GRID & SLOTS ARCHITECTURE
+   ========================================================================== */
 .inv-grid-wrapper {
+  flex: 1;
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .inv-grid {
+  flex: 1;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
-  flex-grow: 1;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
 }
 
-/* Grid matrix cell items */
-.inv-slot {
-  aspect-ratio: 1 / 1;
-  border: 1px solid var(--text);
+/* Webkit Scrollbars matching retro theme constraints */
+.inv-grid::-webkit-scrollbar {
+  width: 4px;
+}
+.inv-grid::-webkit-scrollbar-track {
   background: transparent;
+}
+.inv-grid::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+.inv-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dim);
+}
+
+/* Slots */
+.inv-slot {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  aspect-ratio: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
+  padding: 0.5rem;
+  gap: 0.5rem;
   cursor: pointer;
-  box-sizing: border-box;
-  padding: 0.25rem;
-  transition: background 0.1s;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
 }
 
-.inv-slot:not(.empty):hover {
-  background: rgba(255, 255, 255, 0.08);
+.inv-slot:hover:not(.empty) {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Selected Active cell highlighted ring */
 .inv-slot.active {
-  outline: 2px solid var(--text);
-  outline-offset: -1px;
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.05);
 }
 
 .inv-slot.empty {
-  border-color: rgba(255, 255, 255, 0.2);
   cursor: default;
+  opacity: 0.4;
+  background: rgba(0, 0, 0, 0.15);
 }
 
-/* Icon / Emoji placement graphics inside grids */
-.slot-art {
-  font-size: 1.5rem;
-}
-
-/* Text is hidden inside structural tiles to follow layout mockup reference cleanly */
 .slot-name {
-  display: none;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  font-weight: 500;
+  pointer-events: none;
 }
 
-/* Structural Accent Rail Line from wireframe mockup sketch */
+.inv-slot.active .slot-name {
+  color: var(--gold);
+}
+
+/* Decorative Accent Track Bar Elements */
 .inv-scroll-accent {
-  width: 14px;
-  border: 1px solid var(--text);
+  width: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2px;
   position: relative;
-  flex-shrink: 0;
 }
 
 .accent-thumb {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
   height: 25%;
-  background: var(--text);
+  background: var(--border);
+  border-radius: 2px;
 }
 
-/* ── Right Column Inspect Modules ── */
+/* ==========================================================================
+   4. RIGHT SIDEBAR INSPECT PANEL
+   ========================================================================== */
 .inv-inspect {
+  width: 280px;
+  border-left: 1px solid var(--border);
+  padding-left: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: 100%;
 }
 
-/* Top item preview block matrix container */
 .inspect-visual-box {
   width: 100%;
-  aspect-ratio: 1.45 / 1;
-  border: 1px solid var(--text);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  aspect-ratio: 4 / 3;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: transparent;
+  gap: 1rem;
   position: relative;
 }
 
-.inspect-art-display {
-  font-size: 4rem;
-  margin-bottom: 0.5rem;
+/* Blueprint Line Decorations */
+.inspect-visual-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)),
+    linear-gradient(to top left, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px));
+  opacity: 0.25;
+  pointer-events: none;
 }
 
 .inspect-title-tag {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: 1.2rem;
-  color: var(--text);
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-transform: uppercase;
 }
 
-/* Bottom summary info textbox block template */
 .inspect-desc-box {
-  border: 1px solid var(--text);
-  min-height: 120px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
   padding: 1rem;
-  box-sizing: border-box;
-  background: transparent;
 }
 
 .desc-text {
   margin: 0;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   line-height: 1.5;
-  color: var(--text);
+  color: var(--text-muted);
 }
 
-/* Responsive adjustment splits */
-@media (max-width: 850px) {
-  .inv-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .inv-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
+/* ==========================================================================
+   5. SPRITESHEET POSITIONING NAVIGATION (images/item_spritesheet.png)
+   ========================================================================== */
+.sprite-art {
+  width: 48px;
+  height: 48px;
+  background-image: url('images/item_spritesheet.png');
+  background-repeat: no-repeat;
+  background-size: 144px 144px; /* Uniform 3x3 layout canvas map coordinate layout */
+  
+  /* Retain pixel perfection without blurry rendering filters */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
 }
 
-@media (max-width: 500px) {
-  .inv-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+/* Standard Mini Grid Slices */
+.sprite-art.bar        { background-position: 0px 0px; }
+.sprite-art.tomato     { background-position: -48px 0px; }
+.sprite-art.bear       { background-position: -96px 0px; }
+.sprite-art.fart-bomb  { background-position: -96px -48px; }
+.sprite-art.potion     { background-position: 0px -96px; }
+
+/* Enlarged Inspector Panels Slices (96px x 96px display size) */
+.sprite-inspect {
+  width: 96px;
+  height: 96px;
+  background-image: url('images/item_spritesheet.png');
+  background-repeat: no-repeat;
+  background-size: 288px 288px; /* Double standard bounding scale coordinates */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
+
+.sprite-inspect.bar        { background-position: 0px 0px; }
+.sprite-inspect.tomato     { background-position: -96px 0px; }
+.sprite-inspect.bear       { background-position: -192px 0px; }
+.sprite-inspect.fart-bomb  { background-position: -192px -96px; }
+.sprite-inspect.potion     { background-position: 0px -192px; }
