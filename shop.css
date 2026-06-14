@@ -180,6 +180,17 @@ body {
   z-index: 1;
 }
 
+/* New Pixel Art Class styling to integrate your Piskel sheets cleanly */
+.pixel-art {
+  max-width: 64px;
+  max-height: 64px;
+  z-index: 1;
+  
+  /* CRITICAL FOR PIXEL ART: Keeps edges sharp and crisp when resizing */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 /* Small info button styling */
 .info-btn {
   position: absolute;
