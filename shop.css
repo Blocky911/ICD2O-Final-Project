@@ -1,114 +1,143 @@
-/* ── Shop page extension using your custom variables ── */
+/* ── Global Reset & Layout Configuration (No styles.css required) ── */
+* {
+  box-sizing: border-box;
+}
 
-/* Global Fallbacks inside this file to prevent default Arial bugs */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0c0c0c; /* Fallback dark theme background */
+  overflow-x: hidden;
+}
+
+/* Base style fallbacks inside this file to prevent default browser bugs */
 :root {
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
-  --border: rgba(255, 255, 255, 0.15);
-  --surface: rgba(20, 20, 20, 0.8);
-  --text: #ffffff;
-  --text-muted: #8a8a8a;
-  --gold: #d4af37;
-  --gold-dim: #aa8c2c;
+  --font-display: 'Bebas Neue', sans-serif; /* cite: 52 */
+  --font-body: 'DM Sans', sans-serif; /* cite: 53 */
+  --border: rgba(255, 255, 255, 0.15); /* cite: 53 */
+  --surface: rgba(20, 20, 20, 0.8); /* cite: 53 */
+  --text: #ffffff; /* cite: 53 */
+  --text-muted: #8a8a8a; /* cite: 53 */
+  --gold: #d4af37; /* cite: 53 */
+  --gold-dim: #aa8c2c; /* cite: 54 */
 }
 
 body {
-  font-family: var(--font-body);
-  background-color: #0c0c0c;
-  color: var(--text);
-  margin: 0;
+  font-family: var(--font-body); /* cite: 54 */
+  color: var(--text); /* cite: 54 */
 }
 
-.shop-container {
-  position: relative;
-  z-index: 2;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 2rem 4rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
+/* Background effects container if present in your HTML structure */
+.scanlines, .bg-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
 }
+
+.bg-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Shop Container Layout ── */
+.shop-container {
+  position: relative; /* cite: 54 */
+  z-index: 2; /* cite: 54 */
+  max-width: 1100px; /* cite: 55 */
+  margin: 0 auto; /* cite: 55 */
+  padding: 2rem 2rem 4rem; /* cite: 55 */
+  display: flex; /* cite: 55 */
+  flex-direction: column; /* cite: 55 */
+  gap: 2.5rem; /* cite: 55 */
+} /* cite: 56 */
 
 /* ── Shop Custom Navbar Elements ── */
 .shop-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 1rem;
+  display: flex; /* cite: 56 */
+  align-items: center; /* cite: 56 */
+  justify-content: space-between; /* cite: 56 */
+  border-bottom: 1px solid var(--border); /* cite: 56 */
+  padding-bottom: 1rem; /* cite: 57 */
 }
 
 .back-btn {
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  letter-spacing: 0.15em;
-  color: var(--text-muted);
-  text-decoration: none;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 0.3rem 0.8rem;
-  transition: color 0.15s, border-color 0.15s;
-  white-space: nowrap;
+  font-family: var(--font-display); /* cite: 57 */
+  font-size: 0.85rem; /* cite: 57 */
+  letter-spacing: 0.15em; /* cite: 57 */
+  color: var(--text-muted); /* cite: 57 */
+  text-decoration: none; /* cite: 57 */
+  border: 1px solid var(--border); /* cite: 57 */
+  border-radius: 2px; /* cite: 58 */
+  padding: 0.3rem 0.8rem; /* cite: 58 */
+  transition: color 0.15s, border-color 0.15s; /* cite: 58 */
+  white-space: nowrap; /* cite: 58 */
 }
 
 .back-btn:hover {
-  color: var(--text);
-  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text); /* cite: 58 */
+  border-color: rgba(255, 255, 255, 0.25); /* cite: 59 */
 }
 
 .shop-title {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  letter-spacing: 0.12em;
-  color: var(--gold);
-  margin: 0;
-}
+  font-family: var(--font-display); /* cite: 59 */
+  font-size: 1.6rem; /* cite: 59 */
+  letter-spacing: 0.12em; /* cite: 59 */
+  color: var(--gold); /* cite: 59 */
+  margin: 0; /* cite: 59 */
+} /* cite: 60 */
 
 .currency-box {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  letter-spacing: 0.08em;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 0.3rem 1rem;
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-family: var(--font-display); /* cite: 60 */
+  font-size: 1rem; /* cite: 60 */
+  letter-spacing: 0.08em; /* cite: 60 */
+  color: var(--text); /* cite: 60 */
+  border: 1px solid var(--border); /* cite: 60 */
+  border-radius: 2px; /* cite: 60 */
+  padding: 0.3rem 1rem; /* cite: 60 */
+  background: var(--surface); /* cite: 61 */
+  display: flex; /* cite: 61 */
+  align-items: center; /* cite: 61 */
+  gap: 0.5rem; /* cite: 61 */
 }
 
 /* ── Layout Framework ── */
 .shop-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
+  display: flex; /* cite: 61 */
+  flex-direction: column; /* cite: 61 */
+  gap: 3rem; /* cite: 62 */
 }
 
 .shop-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  display: flex; /* cite: 62 */
+  flex-direction: column; /* cite: 62 */
+  gap: 1.25rem; /* cite: 62 */
 }
 
 .section-heading {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  letter-spacing: 0.1em;
-  color: var(--text);
-  border-left: 2px solid var(--gold);
-  padding-left: 0.75rem;
-  margin: 0;
-}
+  font-family: var(--font-display); /* cite: 62 */
+  font-size: 1.2rem; /* cite: 62 */
+  letter-spacing: 0.1em; /* cite: 62 */
+  color: var(--text); /* cite: 63 */
+  border-left: 2px solid var(--gold); /* cite: 63 */
+  padding-left: 0.75rem; /* cite: 63 */
+  margin: 0; /* cite: 63 */
+} /* cite: 64 */
 
 /* ── Horizontal Scrolling Card Deck ── */
 .item-grid {
-  display: flex;
-  gap: 1.5rem;
-  overflow-x: auto;
-  padding-bottom: 1rem;
-  scroll-behavior: smooth;
+  display: flex; /* cite: 64 */
+  gap: 1.5rem; /* cite: 64 */
+  overflow-x: auto; /* cite: 64 */
+  padding-bottom: 1rem; /* cite: 64 */
+  scroll-behavior: smooth; /* cite: 65 */
 }
 
 /* Scrollbar customizations */
@@ -119,170 +148,170 @@ body {
   background: transparent;
 }
 .item-grid::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
+  background: var(--border); /* cite: 65 */
+  border-radius: 2px; /* cite: 66 */
 }
 .item-grid::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-dim);
+  background: var(--gold-dim); /* cite: 66 */
 }
 
 /* ── Custom Item Cards ── */
 .item-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  min-width: 220px;
-  max-width: 220px;
-  display: flex;
-  flex-direction: column;
-  transition: border-color 0.15s, transform 0.15s;
-}
+  background: var(--surface); /* cite: 66 */
+  border: 1px solid var(--border); /* cite: 66 */
+  border-radius: 2px; /* cite: 67 */
+  min-width: 220px; /* cite: 67 */
+  max-width: 220px; /* cite: 67 */
+  display: flex; /* cite: 67 */
+  flex-direction: column; /* cite: 67 */
+  transition: border-color 0.15s, transform 0.15s; /* cite: 67 */
+} /* cite: 68 */
 
 .item-card:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.3); /* cite: 68 */
+  transform: translateY(-2px); /* cite: 68 */
 }
 
 .card-header {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  letter-spacing: 0.06em;
-  color: var(--text);
-  padding: 0.75rem;
-  text-align: center;
-  border-bottom: 1px solid var(--border);
+  font-family: var(--font-display); /* cite: 68 */
+  font-size: 1rem; /* cite: 68 */
+  letter-spacing: 0.06em; /* cite: 68 */
+  color: var(--text); /* cite: 69 */
+  padding: 0.75rem; /* cite: 69 */
+  text-align: center; /* cite: 69 */
+  border-bottom: 1px solid var(--border); /* cite: 69 */
 }
 
 .card-visual {
-  width: 100%;
-  aspect-ratio: 16 / 11;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background: rgba(0, 0, 0, 0.3);
-}
+  width: 100%; /* cite: 69 */
+  aspect-ratio: 16 / 11; /* cite: 69 */
+  display: flex; /* cite: 70 */
+  align-items: center; /* cite: 70 */
+  justify-content: center; /* cite: 70 */
+  position: relative; /* cite: 70 */
+  background: rgba(0, 0, 0, 0.3); /* cite: 70 */
+} /* cite: 71 */
 
 /* Wireframe cross styling lines */
 .card-visual::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: 
-    linear-gradient(to top right, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)),
-    linear-gradient(to top left, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px));
-  opacity: 0.4;
-  pointer-events: none;
+  content: ""; /* cite: 71 */
+  position: absolute; /* cite: 71 */
+  inset: 0; /* cite: 71 */
+  background: /* cite: 72 */
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)), /* cite: 72 */
+    linear-gradient(to top left, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)); /* cite: 72 */
+  opacity: 0.4; /* cite: 73 */
+  pointer-events: none; /* cite: 73 */
 }
 
 .placeholder-art {
-  font-size: 2.2rem;
-  z-index: 1;
+  font-size: 2.2rem; /* cite: 73 */
+  z-index: 1; /* cite: 73 */
+} /* cite: 74 */
+
+/* Small info button styling */
+.info-btn {
+  position: absolute; /* cite: 74 */
+  bottom: 0.5rem; /* cite: 74 */
+  left: 0.5rem; /* cite: 74 */
+  width: 1.25rem; /* cite: 74 */
+  height: 1.25rem; /* cite: 74 */
+  font-family: var(--font-display); /* cite: 74 */
+  font-size: 0.7rem; /* cite: 75 */
+  background: var(--surface); /* cite: 75 */
+  color: var(--text-muted); /* cite: 75 */
+  border: 1px solid var(--border); /* cite: 75 */
+  border-radius: 2px; /* cite: 75 */
+  cursor: pointer; /* cite: 75 */
+  z-index: 2; /* cite: 75 */
+  display: flex; /* cite: 75 */
+  align-items: center; /* cite: 75 */
+  justify-content: center; /* cite: 76 */
 }
 
-/* ── Spritesheet Processing Logic ── */
+.info-btn:hover {
+  color: var(--text); /* cite: 76 */
+  border-color: rgba(255, 255, 255, 0.4); /* cite: 76 */
+}
+
+.card-stats {
+  font-family: var(--font-body); /* cite: 76 */
+  font-size: 0.75rem; /* cite: 76 */
+  font-weight: 500; /* cite: 77 */
+  color: var(--text-muted); /* cite: 77 */
+  text-align: center; /* cite: 77 */
+  padding: 0.6rem; /* cite: 77 */
+  border-top: 1px solid var(--border); /* cite: 77 */
+  background: rgba(0, 0, 0, 0.1); /* cite: 77 */
+} /* cite: 78 */
+
+/* ── Buy Action Buttons ── */
+.buy-btn {
+  font-family: var(--font-display); /* cite: 78 */
+  font-size: 0.9rem; /* cite: 78 */
+  letter-spacing: 0.08em; /* cite: 78 */
+  background: transparent; /* cite: 78 */
+  color: var(--gold); /* cite: 78 */
+  border: 1px solid var(--border); /* cite: 79 */
+  border-radius: 2px; /* cite: 79 */
+  padding: 0.5rem; /* cite: 79 */
+  margin: 0.75rem; /* cite: 79 */
+  cursor: pointer; /* cite: 79 */
+  transition: color 0.15s, background 0.15s, border-color 0.15s; /* cite: 79 */
+} /* cite: 80 */
+
+.buy-btn:hover {
+  background: rgba(255, 209, 36, 0.1); /* cite: 80 */
+  border-color: var(--gold); /* cite: 80 */
+  color: #fff; /* cite: 80 */
+} /* cite: 81 */
+
+/* Owned/Equipped state buttons */
+.item-card.owned {
+  border-color: rgba(212, 175, 55, 0.3); /* cite: 81 */
+}
+
+.buy-btn.equipped {
+  font-family: var(--font-display); /* cite: 81 */
+  background: rgba(255, 255, 255, 0.03); /* cite: 82 */
+  color: var(--text-muted); /* cite: 82 */
+  border-color: var(--border); /* cite: 82 */
+  cursor: default; /* cite: 82 */
+  pointer-events: none; /* cite: 82 */
+}
+
+/* ── Unseparated Spritesheet Navigation Processing Logic ── */
 .sprite-art {
-  width: 64px;
-  height: 64px;
+  width: 45px;                 /* Display bounding box size inside shop window */
+  height: 45px;
   z-index: 1;
   background-image: url('Tag Royal item accesories.png');
   background-repeat: no-repeat;
+  background-size: 135px auto; /* Forces sheet canvas sizing to math properly */
   
-  /* Keeps the pixel edges razor sharp */
+  /* CRITICAL PIXEL ART PRESERVATION: Prevents blurred engine stretching */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
 
-/* Slicing coordinates out of your shared Piskel image grid */
-/* Row 1 */
+/* Slicing standard horizontal/vertical step coordinates out of your drawing grid */
+/* Row 1 Assets */
 .sprite-art.bar {
   background-position: 0px 0px;
 }
 .sprite-art.tomato {
-  background-position: -64px 0px;
+  background-position: -45px 0px;
 }
 .sprite-art.bear {
-  background-position: -128px 0px; /* Red Gummy Bear */
+  background-position: -90px 0px; /* Red Gummy Bear */
 }
 
-/* Row 2 */
+/* Row 2 Assets */
 .sprite-art.fart-bomb {
-  background-position: -128px -64px; /* Green Skull Sack */
+  background-position: -90px -45px; /* Green Poison Skull Sack */
 }
 
-/* Row 3 */
+/* Row 3 Assets */
 .sprite-art.potion {
-  background-position: 0px -128px; /* Pink Potion Flask */
-}
-
-
-/* Small info button styling */
-.info-btn {
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  font-family: var(--font-display);
-  font-size: 0.7rem;
-  background: var(--surface);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  cursor: pointer;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.info-btn:hover {
-  color: var(--text);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.card-stats {
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-align: center;
-  padding: 0.6rem;
-  border-top: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.1);
-}
-
-/* ── Buy Action Buttons ── */
-.buy-btn {
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  letter-spacing: 0.08em;
-  background: transparent;
-  color: var(--gold);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 0.5rem;
-  margin: 0.75rem;
-  cursor: pointer;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
-}
-
-.buy-btn:hover {
-  background: rgba(255, 209, 36, 0.1);
-  border-color: var(--gold);
-  color: #fff;
-}
-
-/* Owned/Equipped state buttons */
-.item-card.owned {
-  border-color: rgba(212, 175, 55, 0.3);
-}
-
-.buy-btn.equipped {
-  font-family: var(--font-display);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text-muted);
-  border-color: var(--border);
-  cursor: default;
-  pointer-events: none;
+  background-position: 0px -90px; /* Glowing Magenta Bottle Flask */
 }

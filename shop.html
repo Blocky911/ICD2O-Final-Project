@@ -7,12 +7,323 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css"> 
-  <link rel="stylesheet" href="shop.css">
+  
+  <style>
+    /* ── Global Reset & Layout Configuration (No external dependencies) ── */
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0c0c0c;
+      overflow-x: hidden;
+    }
+
+    /* ── Embedded variables from shop.css ── */
+    :root {
+      --font-display: 'Bebas Neue', sans-serif; /* cite: uploaded:Store CSS.txt */
+      --font-body: 'DM Sans', sans-serif; /* cite: uploaded:Store CSS.txt */
+      --border: rgba(255, 255, 255, 0.15); /* cite: uploaded:Store CSS.txt */
+      --surface: rgba(20, 20, 20, 0.8); /* cite: uploaded:Store CSS.txt */
+      --text: #ffffff; /* cite: uploaded:Store CSS.txt */
+      --text-muted: #8a8a8a; /* cite: uploaded:Store CSS.txt */
+      --gold: #d4af37; /* cite: uploaded:Store CSS.txt */
+      --gold-dim: #aa8c2c; /* cite: uploaded:Store CSS.txt */
+    }
+
+    body {
+      font-family: var(--font-body); /* cite: uploaded:Store CSS.txt */
+      color: var(--text); /* cite: uploaded:Store CSS.txt */
+    }
+
+    /* Modern fallback background visual effects if missing from styles.css */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ── Shop Structural Container Layout ── */
+    .shop-container {
+      position: relative; /* cite: uploaded:Store CSS.txt */
+      z-index: 2; /* cite: uploaded:Store CSS.txt */
+      max-width: 1100px; /* cite: uploaded:Store CSS.txt */
+      margin: 0 auto; /* cite: uploaded:Store CSS.txt */
+      padding: 2rem 2rem 4rem; /* cite: uploaded:Store CSS.txt */
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      flex-direction: column; /* cite: uploaded:Store CSS.txt */
+      gap: 2.5rem; /* cite: uploaded:Store CSS.txt */
+    }
+
+    /* ── Custom Shop Navigation Elements ── */
+    .shop-nav {
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      align-items: center; /* cite: uploaded:Store CSS.txt */
+      justify-content: space-between; /* cite: uploaded:Store CSS.txt */
+      border-bottom: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
+      padding-bottom: 1rem; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .back-btn {
+      font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
+      font-size: 0.85rem; /* cite: uploaded:Store CSS.txt */
+      letter-spacing: 0.15em; /* cite: uploaded:Store CSS.txt */
+      color: var(--text-muted); /* cite: uploaded:Store CSS.txt */
+      text-decoration: none; /* cite: uploaded:Store CSS.txt */
+      border: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
+      border-radius: 2px; /* cite: uploaded:Store CSS.txt */
+      padding: 0.3rem 0.8rem; /* cite: uploaded:Store CSS.txt */
+      transition: color 0.15s, border-color 0.15s; /* cite: uploaded:Store CSS.txt */
+      white-space: nowrap; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .back-btn:hover {
+      color: var(--text); /* cite: uploaded:Store CSS.txt */
+      border-color: rgba(255, 255, 255, 0.25); /* cite: uploaded:Store CSS.txt */
+    }
+
+    .shop-title {
+      font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
+      font-size: 1.6rem; /* cite: uploaded:Store CSS.txt */
+      letter-spacing: 0.12em; /* cite: uploaded:Store CSS.txt */
+      color: var(--gold); /* cite: uploaded:Store CSS.txt */
+      margin: 0; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .currency-box {
+      font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
+      font-size: 1rem; /* cite: uploaded:Store CSS.txt */
+      letter-spacing: 0.08em; /* cite: uploaded:Store CSS.txt */
+      color: var(--text); /* cite: uploaded:Store CSS.txt */
+      border: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
+      border-radius: 2px; /* cite: uploaded:Store CSS.txt */
+      padding: 0.3rem 1rem; /* cite: uploaded:Store CSS.txt */
+      background: var(--surface); /* cite: uploaded:Store CSS.txt */
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      align-items: center; /* cite: uploaded:Store CSS.txt */
+      gap: 0.5rem; /* cite: uploaded:Store CSS.txt */
+    }
+
+    /* ── Main Scrolling Content Layout ── */
+    .shop-layout {
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      flex-direction: column; /* cite: uploaded:Store CSS.txt */
+      gap: 3rem; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .shop-section {
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      flex-direction: column; /* cite: uploaded:Store CSS.txt */
+      gap: 1.25rem; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .section-heading {
+      font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
+      font-size: 1.2rem; /* cite: uploaded:Store CSS.txt */
+      letter-spacing: 0.1em; /* cite: uploaded:Store CSS.txt */
+      color: var(--text); /* cite: uploaded:Store CSS.txt */
+      border-left: 2px solid var(--gold); /* cite: uploaded:Store CSS.txt */
+      padding-left: 0.75rem; /* cite: uploaded:Store CSS.txt */
+      margin: 0; /* cite: uploaded:Store CSS.txt */
+    }
+
+    /* ── Horizontal Scrolling Card Deck ── */
+    .item-grid {
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      gap: 1.5rem; /* cite: uploaded:Store CSS.txt */
+      overflow-x: auto; /* cite: uploaded:Store CSS.txt */
+      padding-bottom: 1rem; /* cite: uploaded:Store CSS.txt */
+      scroll-behavior: smooth; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .item-grid::-webkit-scrollbar {
+      height: 4px;
+    }
+    .item-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .item-grid::-webkit-scrollbar-thumb {
+      background: var(--border); /* cite: uploaded:Store CSS.txt */
+      border-radius: 2px; /* cite: uploaded:Store CSS.txt */
+    }
+    .item-grid::-webkit-scrollbar-thumb:hover {
+      background: var(--gold-dim); /* cite: uploaded:Store CSS.txt */
+    }
+
+    /* ── Custom Item Cards ── */
+    .item-card {
+      background: var(--surface); /* cite: uploaded:Store CSS.txt */
+      border: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
+      border-radius: 2px; /* cite: uploaded:Store CSS.txt */
+      min-width: 220px; /* cite: uploaded:Store CSS.txt */
+      max-width: 220px; /* cite: uploaded:Store CSS.txt */
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      flex-direction: column; /* cite: uploaded:Store CSS.txt */
+      transition: border-color 0.15s, transform 0.15s; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .item-card:hover {
+      border-color: rgba(255, 255, 255, 0.3); /* cite: uploaded:Store CSS.txt */
+      transform: translateY(-2px); /* cite: uploaded:Store CSS.txt */
+    }
+
+    .card-header {
+      font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
+      font-size: 1rem; /* cite: uploaded:Store CSS.txt */
+      letter-spacing: 0.06em; /* cite: uploaded:Store CSS.txt */
+      color: var(--text); /* cite: uploaded:Store CSS.txt */
+      padding: 0.75rem; /* cite: uploaded:Store CSS.txt */
+      text-align: center; /* cite: uploaded:Store CSS.txt */
+      border-bottom: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
+    }
+
+    .card-visual {
+      width: 100%; /* cite: uploaded:Store CSS.txt */
+      aspect-ratio: 16 / 11; /* cite: uploaded:Store CSS.txt */
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      align-items: center; /* cite: uploaded:Store CSS.txt */
+      justify-content: center; /* cite: uploaded:Store CSS.txt */
+      position: relative; /* cite: uploaded:Store CSS.txt */
+      background: rgba(0, 0, 0, 0.3); /* cite: uploaded:Store CSS.txt */
+    }
+
+    .card-visual::before {
+      content: ""; /* cite: uploaded:Store CSS.txt */
+      position: absolute; /* cite: uploaded:Store CSS.txt */
+      inset: 0; /* cite: uploaded:Store CSS.txt */
+      background: /* cite: uploaded:Store CSS.txt */
+        linear-gradient(to top right, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)), /* cite: uploaded:Store CSS.txt */
+        linear-gradient(to top left, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)); /* cite: uploaded:Store CSS.txt */
+      opacity: 0.4; /* cite: uploaded:Store CSS.txt */
+      pointer-events: none; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .placeholder-art {
+      font-size: 2.2rem; /* cite: uploaded:Store CSS.txt */
+      z-index: 1; /* cite: uploaded:Store CSS.txt */
+    }
+
+    /* ── Spritesheet Cropping Processing Logic ── */
+    .sprite-art {
+      width: 45px;                 /* Displays the exact bounding asset viewport size */
+      height: 45px;
+      z-index: 1;
+      background-image: url('Tag Royal item accesories.png');
+      background-repeat: no-repeat;
+      background-size: 135px auto; /* Dynamically rescales steps based on standard grid maps */
+      
+      /* CRITICAL PIXEL ART PRESERVATION: Prevents blurred engine stretching */
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* Slicing matrix position offsets cleanly out of your combined Piskel asset image */
+    /* Row 1 */
+    .sprite-art.bar {
+      background-position: 0px 0px;
+    }
+    .sprite-art.tomato {
+      background-position: -45px 0px;
+    }
+    .sprite-art.bear {
+      background-position: -90px 0px; /* Red Gummy Bear */
+    }
+
+    /* Row 2 */
+    .sprite-art.fart-bomb {
+      background-position: -90px -45px; /* Poison Gas Skull Flask Sack */
+    }
+
+    /* Row 3 */
+    .sprite-art.potion {
+      background-position: 0px -90px; /* Magenta Health Potion Bottle */
+    }
+
+    /* ── Inside Components ── */
+    .info-btn {
+      position: absolute; /* cite: uploaded:Store CSS.txt */
+      bottom: 0.5rem; /* cite: uploaded:Store CSS.txt */
+      left: 0.5rem; /* cite: uploaded:Store CSS.txt */
+      width: 1.25rem; /* cite: uploaded:Store CSS.txt */
+      height: 1.25rem; /* cite: uploaded:Store CSS.txt */
+      font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
+      font-size: 0.7rem; /* cite: uploaded:Store CSS.txt */
+      background: var(--surface); /* cite: uploaded:Store CSS.txt */
+      color: var(--text-muted); /* cite: uploaded:Store CSS.txt */
+      border: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
+      border-radius: 2px; /* cite: uploaded:Store CSS.txt */
+      cursor: pointer; /* cite: uploaded:Store CSS.txt */
+      z-index: 2; /* cite: uploaded:Store CSS.txt */
+      display: flex; /* cite: uploaded:Store CSS.txt */
+      align-items: center; /* cite: uploaded:Store CSS.txt */
+      justify-content: center; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .info-btn:hover {
+      color: var(--text); /* cite: uploaded:Store CSS.txt */
+      border-color: rgba(255, 255, 255, 0.4); /* cite: uploaded:Store CSS.txt */
+    }
+
+    .card-stats {
+      font-family: var(--font-body); /* cite: uploaded:Store CSS.txt */
+      font-size: 0.75rem; /* cite: uploaded:Store CSS.txt */
+      font-weight: 500; /* cite: uploaded:Store CSS.txt */
+      color: var(--text-muted); /* cite: uploaded:Store CSS.txt */
+      text-align: center; /* cite: uploaded:Store CSS.txt */
+      padding: 0.6rem; /* cite: uploaded:Store CSS.txt */
+      border-top: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
+      background: rgba(0, 0, 0, 0.1); /* cite: uploaded:Store CSS.txt */
+    }
+
+    /* ── Action Control Triggers ── */
+    .buy-btn {
+      font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
+      font-size: 0.9rem; /* cite: uploaded:Store CSS.txt */
+      letter-spacing: 0.08em; /* cite: uploaded:Store CSS.txt */
+      background: transparent; /* cite: uploaded:Store CSS.txt */
+      color: var(--gold); /* cite: uploaded:Store CSS.txt */
+      border: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
+      border-radius: 2px; /* cite: uploaded:Store CSS.txt */
+      padding: 0.5rem; /* cite: uploaded:Store CSS.txt */
+      margin: 0.75rem; /* cite: uploaded:Store CSS.txt */
+      cursor: pointer; /* cite: uploaded:Store CSS.txt */
+      transition: color 0.15s, background 0.15s, border-color 0.15s; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .buy-btn:hover {
+      background: rgba(255, 209, 36, 0.1); /* cite: uploaded:Store CSS.txt */
+      border-color: var(--gold); /* cite: uploaded:Store CSS.txt */
+      color: #fff; /* cite: uploaded:Store CSS.txt */
+    }
+
+    .item-card.owned {
+      border-color: rgba(212, 175, 55, 0.3); /* cite: uploaded:Store CSS.txt */
+    }
+
+    .buy-btn.equipped {
+      font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
+      background: rgba(255, 255, 255, 0.03); /* cite: uploaded:Store CSS.txt */
+      color: var(--text-muted); /* cite: uploaded:Store CSS.txt */
+      border-color: var(--border); /* cite: uploaded:Store CSS.txt */
+      cursor: default; /* cite: uploaded:Store CSS.txt */
+      pointer-events: none; /* cite: uploaded:Store CSS.txt */
+    }
+  </style>
 </head>
 <body>
 
-  <div class="scanlines"></div>
   <div class="bg-grid"></div>
 
   <div class="shop-container">
