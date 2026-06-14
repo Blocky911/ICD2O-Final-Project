@@ -294,189 +294,31 @@ body, html {
 }
 
 /* ==========================================================
-   8. INDEX MENU MANAGEMENT & DYNAMIC THEMATIC BUTTONS
+   8. TARGETED MENU BUTTON COLOR OUTLINES
    ========================================================== */
-:root {
-  --theme-font-display: 'Bebas Neue', sans-serif;
-  --theme-font-body: 'DM Sans', sans-serif;
-  --theme-border: rgba(255, 255, 255, 0.12);
-  --theme-surface: rgba(14, 18, 28, 0.85);
-  
-  /* Menu Colors */
-  --color-inventory: #ff4757;
-  --color-tutorial: #ffa502;
-  --color-settings: #2ed573;
+/* Inventory — Clean Red Border Outline & Glow */
+.btn-inventory {
+  border: 2px solid #ff4757 !important;
 }
-
-.container {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 100vh;
-  gap: 2rem;
-  padding: 1rem;
-  box-sizing: border-box;
-}
-
-/* Ambient Visual Effects Fallbacks */
-.bg-grid {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-.scanlines {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  pointer-events: none;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
-  background-size: 100% 4px;
-}
-
-/* Hero Typography Structures */
-.hero {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.crown-banner {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: rgba(251, 197, 49, 0.1);
-  border: 1px solid rgba(251, 197, 49, 0.25);
-  padding: 0.25rem 1rem;
-  border-radius: 4px;
-}
-
-.tagline {
-  font-family: var(--theme-font-body);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  color: #fbc531;
-}
-
-.game-title {
-  font-family: var(--theme-font-display);
-  font-size: 5rem;
-  line-height: 0.85;
-  letter-spacing: 0.05em;
-  color: #ffffff;
-  margin: 0.5rem 0;
-  text-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
-}
-
-.hero-sub {
-  font-family: var(--theme-font-body);
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  color: #a4b0be;
-  margin: 0;
-}
-
-/* Central Button Stack */
-.actions {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 320px;
-  gap: 0.75rem;
-}
-
-.btn {
-  width: 100%;
-  padding: 0;
-  border-radius: 6px;
-  cursor: pointer;
-  box-sizing: border-box;
-  transition: transform 0.15s, background-color 0.15s, border-color 0.15s;
-}
-
-.btn a {
-  display: block;
-  width: 100%;
-  padding: 0.85rem 1rem;
-  font-family: var(--theme-font-display);
-  font-size: 1.2rem;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  box-sizing: border-box;
-}
-
-.btn:active {
-  transform: scale(0.98);
-}
-
-/* Core Buttons Base Classes */
-.btn-primary {
-  background: #fbc531;
-  border: 2px solid #e1b12c;
-}
-.btn-primary a { color: #0b0f19; }
-.btn-primary:hover {
-  background: #fecf44;
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  background: var(--theme-surface);
-  border: 2px solid var(--theme-border);
-}
-.btn-secondary a { color: #ffffff; }
-.btn-secondary:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-1px);
-}
-
-.btn-ghost {
-  background: rgba(255, 255, 255, 0.02);
-  border: 2px solid var(--theme-border);
-}
-.btn-ghost a {
-  transition: color 0.15s;
-}
-
-/* Targeted Colored Topics Logic Rules */
-/* INVENTORY - Red Theme */
-.btn-inventory a { color: rgba(255, 255, 255, 0.8); }
 .btn-inventory:hover {
-  background: rgba(255, 71, 87, 0.08);
-  border-color: var(--color-inventory);
-  box-shadow: 0 0 12px rgba(255, 71, 87, 0.25);
-  transform: translateY(-1px);
+  background-color: rgba(255, 71, 87, 0.1) !important;
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.35);
 }
-.btn-inventory:hover a { color: var(--color-inventory); }
 
-/* HOW TO PLAY - Yellow Theme */
-.btn-tutorial a { color: rgba(255, 255, 255, 0.8); }
+/* How to Play — Clean Yellow Border Outline & Glow */
+.btn-tutorial {
+  border: 2px solid #ffa502 !important;
+}
 .btn-tutorial:hover {
-  background: rgba(255, 165, 2, 0.08);
-  border-color: var(--color-tutorial);
-  box-shadow: 0 0 12px rgba(255, 165, 2, 0.25);
-  transform: translateY(-1px);
+  background-color: rgba(255, 165, 2, 0.1) !important;
+  box-shadow: 0 0 10px rgba(255, 165, 2, 0.35);
 }
-.btn-tutorial:hover a { color: var(--color-tutorial); }
 
-/* SETTINGS - Green Theme */
-.btn-settings a { color: rgba(255, 255, 255, 0.8); }
-.btn-settings:hover {
-  background: rgba(46, 213, 115, 0.08);
-  border-color: var(--color-settings);
-  box-shadow: 0 0 12px rgba(46, 213, 115, 0.25);
-  transform: translateY(-1px);
+/* Settings — Clean Green Border Outline & Glow */
+.btn-settings {
+  border: 2px solid #2ed573 !important;
 }
-.btn-settings:hover a { color: var(--color-settings); }
+.btn-settings:hover {
+  background-color: rgba(46, 213, 115, 0.1) !important;
+  box-shadow: 0 0 10px rgba(46, 213, 115, 0.35);
+}
