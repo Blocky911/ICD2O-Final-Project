@@ -180,16 +180,41 @@ body {
   z-index: 1;
 }
 
-/* New Pixel Art Class styling to integrate your Piskel sheets cleanly */
-.pixel-art {
-  max-width: 64px;
-  max-height: 64px;
+/* ── Spritesheet Processing Logic ── */
+.sprite-art {
+  width: 64px;
+  height: 64px;
   z-index: 1;
+  background-image: url('Tag Royal item accesories.png');
+  background-repeat: no-repeat;
   
-  /* CRITICAL FOR PIXEL ART: Keeps edges sharp and crisp when resizing */
+  /* Keeps the pixel edges razor sharp */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
+
+/* Slicing coordinates out of your shared Piskel image grid */
+/* Row 1 */
+.sprite-art.bar {
+  background-position: 0px 0px;
+}
+.sprite-art.tomato {
+  background-position: -64px 0px;
+}
+.sprite-art.bear {
+  background-position: -128px 0px; /* Red Gummy Bear */
+}
+
+/* Row 2 */
+.sprite-art.fart-bomb {
+  background-position: -128px -64px; /* Green Skull Sack */
+}
+
+/* Row 3 */
+.sprite-art.potion {
+  background-position: 0px -128px; /* Pink Potion Flask */
+}
+
 
 /* Small info button styling */
 .info-btn {
