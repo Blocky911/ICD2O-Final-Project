@@ -1,310 +1,40 @@
-/* ==========================================================
-   1. CORE VIEWPORT AND LAYOUT MANAGEMENT
-   ========================================================== */
+/* ==========================================================================
+   1. CORE VARIABLES, VIEWPORT & GLOBAL LAYOUT MANAGEMENT
+   ========================================================================== */
+:root {
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --border: rgba(255, 255, 255, 0.15);
+  --surface: rgba(20, 20, 20, 0.8);
+  --text: #ffffff;
+  --text-dim: #57606f;
+  --text-muted: #8a8a8a;
+  --gold: #d4af37;
+  --gold-dim: #aa8c2c;
+}
+
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    background-color: #060608;
-    font-family: 'DM Sans', sans-serif;
-    user-select: none;
-    -webkit-user-select: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background-color: #060608;
+  font-family: var(--font-body);
+  user-select: none;
+  -webkit-user-select: none;
+  color: var(--text);
 }
 
 #viewport {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    position: relative;
-    background-color: #11141a;
-}
-
-/* ==========================================================
-   2. MAP & SURFACE MATRICES
-   ========================================================== */
-#main-map {
-    width: 5000px;
-    height: 5000px;
-    position: relative;
-    background-color: #4c8c13;
-    background-image: 
-        radial-gradient(#597327 18%, transparent 19%),
-        radial-gradient(#33540a 15%, transparent 16%),
-        linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.02) 75%),
-        linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.02) 75%);
-    background-size: 80px 80px, 40px 40px, 120px 120px, 120px 120px;
-    background-position: 0 0, 20px 20px, 0 0, 60px 60px;
-}
-
-/* ==========================================================
-   3. OBSTACLES & NATURE DECORATIONS
-   ========================================================== */
-.border-tree {
-    position: absolute;
-    width: 130px;
-    height: 130px;
-    background-image: radial-gradient(circle at 40% 40%, #366623 20%, #224515 60%, #11260a 100%);
-    border-radius: 50%;
-    box-shadow: 0 15px 25px rgba(0,0,0,0.55), inset -5px -5px 15px rgba(0,0,0,0.4);
-    z-index: 12;
-}
-
-.map-tree {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    background-image: radial-gradient(circle at 35% 35%, #478c2b 15%, #2a5918 55%, #142e0b 100%);
-    border-radius: 50%;
-    box-shadow: 0 22px 30px rgba(0,0,0,0.6), inset -8px -8px 20px rgba(0,0,0,0.5);
-    z-index: 12;
-}
-
-.mud-patch {
-    position: absolute;
-    background-color: #523713;
-    background-image: radial-gradient(#3a250a 25%, transparent 30%);
-    background-size: 24px 24px;
-    border-radius: 42% 58% 35% 65%;
-    opacity: 0.92;
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.75), 0 4px 10px rgba(0,0,0,0.15);
-    z-index: 2;
-}
-
-.rock {
-    position: absolute;
-    background-color: #718093;
-    background-image: 
-        linear-gradient(45deg, #4b5666 25%, transparent 25%), 
-        linear-gradient(-45deg, #3d4654 25%, transparent 25%),
-        linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%);
-    background-size: 40px 40px, 40px 40px, 100% 100%;
-    border-radius: 30px;
-    border: 6px solid #434e5a;
-    box-shadow: 8px 16px 24px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(0,0,0,0.3);
-    z-index: 5;
-}
-
-.cut-hedge {
-    position: absolute;
-    background-color: #1b3d1d;
-    background-image: 
-        radial-gradient(#275429 20%, transparent 25%),
-        radial-gradient(#143016 15%, transparent 20%),
-        linear-gradient(90deg, rgba(0,0,0,0.15) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.25) 100%);
-    background-size: 20px 20px, 14px 14px, 100% 100%;
-    border: 7px solid #0a1c0b;
-    border-radius: 12px;
-    box-shadow: 0 18px 32px rgba(0,0,0,0.55), inset 0 0 25px rgba(0,0,0,0.7);
-    z-index: 9;
-    box-sizing: border-box;
-}
-
-/* ==========================================================
-   4. L-SHAPED HOUSE COMPONENT ARCHITECTURE
-   ========================================================== */
-.image-house {
-    position: absolute;
-    left: 2100px;
-    top: 1700px;
-    width: 1200px;
-    height: 1200px;
-    z-index: 6;
-}
-
-.house-drop-shadow {
-    position: absolute;
-    left: 55px;
-    top: -35px;
-    width: 950px;
-    height: 950px;
-    background-color: rgba(0,0,0,0.42);
-    filter: blur(16px);
-    z-index: 1;
-    pointer-events: none;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
-}
-
-.house-yellow-deck {
-    position: absolute;
-    left: 50px;
-    top: 50px;
-    width: 850px;
-    height: 850px;
-    background-color: #cfc25d;
-    background-image: repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(0,0,0,0.06) 18px, rgba(0,0,0,0.06) 21px);
-    border: 11px solid #141414;
-    box-sizing: border-box;
-    z-index: 2;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
-}
-
-.deck-fixture {
-    position: absolute;
-    width: 48px;
-    height: 64px;
-    background-image: linear-gradient(135deg, #cccccc 0%, #999999 100%);
-    border: 7px solid #161616;
-    border-radius: 6px;
-    box-shadow: inset 0 5px 0 rgba(255,255,255,0.6), 0 8px 14px rgba(0,0,0,0.3);
-    z-index: 3;
-}
-
-.fx1 { left: 450px; top: 550px; }
-.fx2 { left: 450px; top: 750px; }
-.fx3 { left: 750px; top: 450px; }
-
-.house-roof-body {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 800px;
-    height: 800px;
-    background-color: #b87151;
-    background-image: 
-        linear-gradient(0deg, rgba(0,0,0,0.1) 50%, transparent 50%),
-        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.04) 10px, rgba(0,0,0,0.04) 13px);
-    background-size: 100% 40px, 100% 100%;
-    border: 20px solid #181818;
-    box-sizing: border-box;
-    z-index: 4;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 45%, 45% 45%, 45% 100%, 0% 100%);
-}
-
-.roof-ridge-line {
-    position: absolute;
-    background-color: #1c1c1c;
-    z-index: 5;
-}
-
-.ridge-long-v { left: 340px; top: 0; width: 22px; height: 800px; }
-.ridge-short-h { left: 340px; top: 340px; width: 460px; height: 22px; }
-
-.ridge-diagonal {
-    position: absolute;
-    width: 450px;
-    height: 22px;
-    background-color: #1c1c1c;
-    z-index: 5;
-    transform-origin: left center;
-}
-
-.diag1 { left: 0; top: 0; transform: rotate(45deg); }
-.diag2 { left: 0; top: 800px; transform: rotate(-45deg); }
-.diag3 { left: 800px; top: 0; transform: rotate(135deg); }
-.diag4 { left: 350px; top: 350px; transform: rotate(45deg); width: 630px; }
-
-/* ==========================================================
-   5. SWIMMING POOL LAYERS & FLOATS
-   ========================================================== */
-.pool {
-    position: absolute;
-    left: 1400px;
-    top: 2500px;
-    width: 500px;
-    height: 350px;
-    background-image: radial-gradient(circle at 50% 30%, #3cd0ff 20%, #1593c2 70%, #0a5b7a 100%);
-    border: 14px solid #dcdde1;
-    border-radius: 24px;
-    box-shadow: inset 0 12px 25px rgba(0,0,0,0.45), 0 12px 24px rgba(0,0,0,0.25);
-    z-index: 3;
-    box-sizing: border-box;
-}
-
-.pool-mat {
-    position: absolute;
-    width: 110px;
-    height: 65px;
-    background-image: repeating-linear-gradient(0deg, #fbc531, #fbc531 10px, #e1b12c 10px, #e1b12c 20px);
-    border-radius: 6px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.3);
-    border: 3px solid #b38610;
-    z-index: 4;
-    box-sizing: border-box;
-}
-
-.mat1 { left: 30px; top: 140px; }
-.mat2 { left: 190px; top: 140px; }
-.mat3 { left: 350px; top: 140px; }
-
-/* ==========================================================
-   6. CHARACTER MODEL MATRIX CONFIGURATION
-   ========================================================== */
-.character {
-    position: absolute;
-    left: 1900px; 
-    top: 1900px;
-    width: 120px;
-    height: 120px;
-    z-index: 25;
-    will-change: transform, left, top;
-}
-
-.char-body {
-    position: absolute;
-    left: 30px;
-    top: 30px;
-    width: 60px;
-    height: 60px;
-    background-color: #e84118;
-    border-radius: 50%;
-    border: 4px solid #c23616;
-    z-index: 3;
-    box-sizing: border-box;
-    box-shadow: 0 6px 10px rgba(0,0,0,0.3);
-}
-
-.char-head {
-    position: absolute;
-    left: 40px;
-    top: 40px;
-    width: 40px;
-    height: 40px;
-    background-color: #fbc531;
-    border-radius: 50%;
-    border: 4px solid #e1b12c;
-    z-index: 4;
-    box-sizing: border-box;
-}
-
-.sleeve-l1 { position: absolute; left: 4px; top: 44px; width: 24px; height: 24px; background-color: #e84118; border: 2px solid #c23616; border-radius: 50%; z-index: 2; box-sizing: border-box; }
-.hand-l2 { position: absolute; left: -6px; top: 47px; width: 18px; height: 18px; background-color: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
-.sleeve-r1 { position: absolute; right: 4px; top: 44px; width: 24px; height: 24px; background-color: #e84118; border: 2px solid #c23616; border-radius: 50%; z-index: 2; box-sizing: border-box; }
-.hand-r2 { position: absolute; right: -6px; top: 47px; width: 18px; height: 18px; background-color: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
-.leg-l { position: absolute; left: 32px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
-.leg-r { position: absolute; left: 66px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
-
-/* ==========================================================
-   7. HUD FLOATING OVERLAY PANEL & LANDING CANVAS BACKBONES
-   ========================================================== */
-#UI-overlay {
-    position: fixed;
-    top: 24px;
-    left: 24px;
-    background-color: rgba(11, 15, 25, 0.92);
-    color: #f5f6fa;
-    padding: 16px 24px;
-    border-radius: 12px;
-    z-index: 200;
-    pointer-events: none;
-    border: 2px solid #fbc531;
-    box-shadow: 0px 8px 24px rgba(0,0,0,0.5);
-}
-
-/* Original Retro Interface Canvas Alignments */
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   position: relative;
-  z-index: 5;
-  padding: 2rem;
+  background-color: #11141a;
 }
 
+/* Fallback ambient grid overlay */
 .bg-grid {
   position: fixed;
   inset: 0;
@@ -316,6 +46,7 @@ body, html {
   pointer-events: none;
 }
 
+/* Scanline screen texture layout */
 .scanlines {
   position: fixed;
   inset: 0;
@@ -325,7 +56,287 @@ body, html {
   pointer-events: none;
 }
 
-/* Hero UI Core Typography Layouts */
+
+/* ==========================================================================
+   2. MAP, SURFACE MATRICES & OBSTACLES (IN-GAME)
+   ========================================================================== */
+#main-map {
+  width: 5000px;
+  height: 5000px;
+  position: relative;
+  background-color: #4c8c13;
+  background-image: 
+    radial-gradient(#597327 18%, transparent 19%),
+    radial-gradient(#33540a 15%, transparent 16%),
+    linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.02) 75%),
+    linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.02) 75%);
+  background-size: 80px 80px, 40px 40px, 120px 120px, 120px 120px;
+  background-position: 0 0, 20px 20px, 0 0, 60px 60px;
+}
+
+.border-tree {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  background-image: radial-gradient(circle at 40% 40%, #366623 20%, #224515 60%, #11260a 100%);
+  border-radius: 50%;
+  box-shadow: 0 15px 25px rgba(0,0,0,0.55), inset -5px -5px 15px rgba(0,0,0,0.4);
+  z-index: 12;
+}
+
+.map-tree {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background-image: radial-gradient(circle at 35% 35%, #478c2b 15%, #2a5918 55%, #142e0b 100%);
+  border-radius: 50%;
+  box-shadow: 0 22px 30px rgba(0,0,0,0.6), inset -8px -8px 20px rgba(0,0,0,0.5);
+  z-index: 12;
+}
+
+.mud-patch {
+  position: absolute;
+  background-color: #523713;
+  background-image: radial-gradient(#3a250a 25%, transparent 30%);
+  background-size: 24px 24px;
+  border-radius: 42% 58% 35% 65%;
+  opacity: 0.92;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.75), 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 2;
+}
+
+.rock {
+  position: absolute;
+  background-color: #718093;
+  background-image: 
+    linear-gradient(45deg, #4b5666 25%, transparent 25%), 
+    linear-gradient(-45deg, #3d4654 25%, transparent 25%),
+    linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%);
+  background-size: 40px 40px, 40px 40px, 100% 100%;
+  border-radius: 30px;
+  border: 6px solid #434e5a;
+  box-shadow: 8px 16px 24px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(0,0,0,0.3);
+  z-index: 5;
+}
+
+.cut-hedge {
+  position: absolute;
+  background-color: #1b3d1d;
+  background-image: 
+    radial-gradient(#275429 20%, transparent 25%),
+    radial-gradient(#143016 15%, transparent 20%),
+    linear-gradient(90deg, rgba(0,0,0,0.15) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.25) 100%);
+  background-size: 20px 20px, 14px 14px, 100% 100%;
+  border: 7px solid #0a1c0b;
+  border-radius: 12px;
+  box-shadow: 0 18px 32px rgba(0,0,0,0.55), inset 0 0 25px rgba(0,0,0,0.7);
+  z-index: 9;
+  box-sizing: border-box;
+}
+
+
+/* ==========================================================================
+   3. HOUSE ARCHITECTURE & SWIMMING POOL LAYERS
+   ========================================================================== */
+.image-house {
+  position: absolute;
+  left: 2100px;
+  top: 1700px;
+  width: 1200px;
+  height: 1200px;
+  z-index: 6;
+}
+
+.house-drop-shadow {
+  position: absolute;
+  left: 55px;
+  top: -35px;
+  width: 950px;
+  height: 950px;
+  background-color: rgba(0,0,0,0.42);
+  filter: blur(16px);
+  z-index: 1;
+  pointer-events: none;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
+}
+
+.house-yellow-deck {
+  position: absolute;
+  left: 50px;
+  top: 50px;
+  width: 850px;
+  height: 850px;
+  background-color: #cfc25d;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(0,0,0,0.06) 18px, rgba(0,0,0,0.06) 21px);
+  border: 11px solid #141414;
+  box-sizing: border-box;
+  z-index: 2;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
+}
+
+.deck-fixture {
+  position: absolute;
+  width: 48px;
+  height: 64px;
+  background-image: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+  border: 7px solid #161616;
+  border-radius: 6px;
+  box-shadow: inset 0 5px 0 rgba(255,255,255,0.6), 0 8px 14px rgba(0,0,0,0.3);
+  z-index: 3;
+}
+
+.fx1 { left: 450px; top: 550px; }
+.fx2 { left: 450px; top: 750px; }
+.fx3 { left: 750px; top: 450px; }
+
+.house-roof-body {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 800px;
+  background-color: #b87151;
+  background-image: 
+    linear-gradient(0deg, rgba(0,0,0,0.1) 50%, transparent 50%),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.04) 10px, rgba(0,0,0,0.04) 13px);
+  background-size: 100% 40px, 100% 100%;
+  border: 20px solid #181818;
+  box-sizing: border-box;
+  z-index: 4;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 45%, 45% 45%, 45% 100%, 0% 100%);
+}
+
+.roof-ridge-line {
+  position: absolute;
+  background-color: #1c1c1c;
+  z-index: 5;
+}
+
+.ridge-long-v { left: 340px; top: 0; width: 22px; height: 800px; }
+.ridge-short-h { left: 340px; top: 340px; width: 460px; height: 22px; }
+
+.ridge-diagonal {
+  position: absolute;
+  width: 450px;
+  height: 22px;
+  background-color: #1c1c1c;
+  z-index: 5;
+  transform-origin: left center;
+}
+
+.diag1 { left: 0; top: 0; transform: rotate(45deg); }
+.diag2 { left: 0; top: 800px; transform: rotate(-45deg); }
+.diag3 { left: 800px; top: 0; transform: rotate(135deg); }
+.diag4 { left: 350px; top: 350px; transform: rotate(45deg); width: 630px; }
+
+.pool {
+  position: absolute;
+  left: 1400px;
+  top: 2500px;
+  width: 500px;
+  height: 350px;
+  background-image: radial-gradient(circle at 50% 30%, #3cd0ff 20%, #1593c2 70%, #0a5b7a 100%);
+  border: 14px solid #dcdde1;
+  border-radius: 24px;
+  box-shadow: inset 0 12px 25px rgba(0,0,0,0.45), 0 12px 24px rgba(0,0,0,0.25);
+  z-index: 3;
+  box-sizing: border-box;
+}
+
+.pool-mat {
+  position: absolute;
+  width: 110px;
+  height: 65px;
+  background-image: repeating-linear-gradient(0deg, #fbc531, #fbc531 10px, #e1b12c 10px, #e1b12c 20px);
+  border-radius: 6px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.3);
+  border: 3px solid #b38610;
+  z-index: 4;
+  box-sizing: border-box;
+}
+
+.mat1 { left: 30px; top: 140px; }
+.mat2 { left: 190px; top: 140px; }
+.mat3 { left: 350px; top: 140px; }
+
+
+/* ==========================================================================
+   4. CHARACTER MODEL MATRIX CONFIGURATION
+   ========================================================================== */
+.character {
+  position: absolute;
+  left: 1900px; 
+  top: 1900px;
+  width: 120px;
+  height: 120px;
+  z-index: 25;
+  will-change: transform, left, top;
+}
+
+.char-body {
+  position: absolute;
+  left: 30px;
+  top: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #e84118;
+  border-radius: 50%;
+  border: 4px solid #c23616;
+  z-index: 3;
+  box-sizing: border-box;
+  box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+}
+
+.char-head {
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  width: 40px;
+  height: 40px;
+  background-color: #fbc531;
+  border-radius: 50%;
+  border: 4px solid #e1b12c;
+  z-index: 4;
+  box-sizing: border-box;
+}
+
+.sleeve-l1 { position: absolute; left: 4px; top: 44px; width: 24px; height: 24px; background-color: #e84118; border: 2px solid #c23616; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+.hand-l2 { position: absolute; left: -6px; top: 47px; width: 18px; height: 18px; background-color: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+.sleeve-r1 { position: absolute; right: 4px; top: 44px; width: 24px; height: 24px; background-color: #e84118; border: 2px solid #c23616; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+.hand-r2 { position: absolute; right: -6px; top: 47px; width: 18px; height: 18px; background-color: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+.leg-l { position: absolute; left: 32px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
+.leg-r { position: absolute; left: 66px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
+
+
+/* ==========================================================================
+   5. HUD OVERLAYS & RETRO HERO MAIN MENU INTERFACE
+   ========================================================================== */
+#UI-overlay {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  background-color: rgba(11, 15, 25, 0.92);
+  color: #f5f6fa;
+  padding: 16px 24px;
+  border-radius: 12px;
+  z-index: 200;
+  pointer-events: none;
+  border: 2px solid #fbc531;
+  box-shadow: 0px 8px 24px rgba(0,0,0,0.5);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  z-index: 5;
+  padding: 2rem;
+}
+
 .hero {
   text-align: center;
   margin-bottom: 2.2rem;
@@ -349,7 +360,7 @@ body, html {
 }
 
 .game-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 7.5rem;
   line-height: 0.85;
   margin: 1.2rem 0 0.6rem 0;
@@ -362,11 +373,11 @@ body, html {
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.15em;
-  color: #57606f;
+  color: var(--text-dim);
   margin: 0;
 }
 
-/* Central Main Action Form Buttons Matrix */
+/* Central Main Action Menu Buttons Setup */
 .actions {
   display: flex;
   flex-direction: column;
@@ -386,14 +397,13 @@ body, html {
 .btn a {
   display: block;
   padding: 0.8rem 1rem;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.35rem;
   letter-spacing: 0.08em;
   text-decoration: none;
   text-align: center;
 }
 
-/* PLAY NOW - Original Full Solid Accent Styling */
 .btn-primary {
   background: #ffd32a;
   border: 1px solid #ffd32a;
@@ -405,7 +415,6 @@ body, html {
   background: #ffdf4d;
 }
 
-/* SHOP - Original Cyan/Teal Thematic Outline Styling */
 .btn-secondary {
   border: 1px solid #2bcbba;
 }
@@ -416,16 +425,10 @@ body, html {
   background: rgba(43, 203, 186, 0.08);
 }
 
-/* Ghost base setup */
 .btn-ghost {
   background: transparent;
 }
 
-/* ==========================================================
-   8. TARGETED ACCENT MODIFICATIONS FOR REMAINING SECTIONS
-   ========================================================== */
-
-/* INVENTORY — Precise Red Custom Outline & Text Styling */
 .btn-inventory {
   border: 1px solid #ff4757 !important;
 }
@@ -437,7 +440,6 @@ body, html {
   box-shadow: 0 0 8px rgba(255, 71, 87, 0.3);
 }
 
-/* HOW TO PLAY — Precise Yellow Custom Outline & Text Styling */
 .btn-tutorial {
   border: 1px solid #ffa502 !important;
 }
@@ -449,7 +451,6 @@ body, html {
   box-shadow: 0 0 8px rgba(255, 165, 2, 0.3);
 }
 
-/* SETTINGS — Precise Green Custom Outline & Text Styling */
 .btn-settings {
   border: 1px solid #2ed573 !important;
 }
@@ -459,4 +460,939 @@ body, html {
 .btn-settings:hover {
   background-color: rgba(46, 213, 115, 0.08) !important;
   box-shadow: 0 0 8px rgba(46, 213, 115, 0.3);
+}
+
+
+/* ==========================================================================
+   6. COMMON UI BLOCKS (SHARED NAVIGATION ELEMENTS)
+   ========================================================================== */
+.back-btn {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.3rem 0.8rem;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.back-btn:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.25);
+}
+
+
+/* ==========================================================================
+   7. SHOP PANELS & SYSTEM COMPONENT STYLES
+   ========================================================================== */
+.shop-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.shop-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.shop-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section-heading {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  border-left: 2px solid var(--gold);
+  padding-left: 0.75rem;
+  margin: 0;
+}
+
+.shop-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.shop-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  margin: 0;
+}
+
+.currency-box {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.3rem 1rem;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Horizontal Rolling Deck Scrollbars */
+.item-grid {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-behavior: smooth;
+}
+
+.item-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.item-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.item-grid::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.item-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dim);
+}
+
+/* Item Card Architecture */
+.item-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  min-width: 220px;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.item-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  padding: 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-visual {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Blueprint structural line decoration crosses */
+.card-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)),
+    linear-gradient(to top left, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px));
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.placeholder-art {
+  font-size: 2.2rem;
+  z-index: 1;
+}
+
+.card-stats {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0.6rem;
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.info-btn {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-btn:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.buy-btn {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.5rem;
+  margin: 0.75rem;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.buy-btn:hover {
+  background: rgba(255, 209, 36, 0.1);
+  border-color: var(--gold);
+  color: #fff;
+}
+
+.item-card.owned {
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.buy-btn.equipped {
+  font-family: var(--font-display);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  border-color: var(--border);
+  cursor: default;
+  pointer-events: none;
+}
+
+
+/* ==========================================================================
+   8. TUTORIAL RULES & STEP COMPONENT PANEL LAYOUTS
+   ========================================================================== */
+.tut-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.tut-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.tut-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+}
+
+.tut-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.tut-steps {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tut-step {
+  display: flex;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tut-step:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.tut-step:first-child {
+  padding-top: 0;
+}
+
+.step-num {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  color: var(--gold-dim);
+  flex-shrink: 0;
+  width: 1.8rem;
+  padding-top: 1px;
+}
+
+.step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.step-heading {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.step-text {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.tut-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.tut-next-btn {
+  align-self: flex-end;
+  width: auto;
+  padding: 0.4rem 1.2rem;
+  font-size: 0.85rem;
+}
+
+.tut-image-wrap {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  position: relative;
+  background: var(--surface);
+}
+
+.tut-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tut-image-placeholder {
+  display: none;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: absolute;
+  inset: 0;
+}
+
+.placeholder-label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+
+.placeholder-sub {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+
+/* ==========================================================================
+   9. SETTINGS DASHBOARD & CONTROL MATRICES
+   ========================================================================== */
+.settings-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.settings-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.settings-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.settings-group {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.group-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: var(--gold-dim);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.25rem;
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.row-label {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.row-control {
+  display: flex;
+  align-items: center;
+  min-width: 180px;
+  justify-content: flex-end;
+}
+
+/* Range Sliders */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: var(--gold);
+}
+
+/* Square Retrosheet Toggles */
+.checkbox-container {
+  display: block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+  border: 1px solid var(--text-muted);
+  border-radius: 2px;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  border-color: var(--text);
+}
+
+.checkmark:after {
+  content: "X";
+  position: absolute;
+  display: none;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--text);
+  left: 5px;
+  top: 0px;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Cycle Elements Selector */
+.cycle-selector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cycle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.2rem;
+  transition: color 0.1s;
+}
+
+.cycle-btn:hover {
+  color: var(--gold);
+}
+
+.cycle-value {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  min-width: 110px;
+  text-align: center;
+}
+
+.settings-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: flex-end;
+}
+
+.coin-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+
+.coin-add-btn {
+  background: transparent;
+  border: 1px solid var(--text-muted);
+  color: var(--text-muted);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding-bottom: 2px;
+}
+
+.coin-add-btn:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.action-box {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.menu-btn {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  padding: 0.5rem 1.8rem;
+  background: transparent;
+  border: 1px solid var(--text-muted);
+  border-radius: 20px; /* Pill shaped */
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.btn-accept:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold);
+}
+
+.btn-cancel:hover {
+  border-color: #ff4a4a;
+  background: rgba(255, 74, 74, 0.1);
+  color: #ff4a4a;
+}
+
+
+/* ==========================================================================
+   10. INVENTORY STORAGE VAULT GRID & INSPECTION SIDEBAR
+   ========================================================================== */
+.inventory-outer {
+  position: relative;
+  z-index: 2;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inventory-main-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 0.12em;
+  color: #fff;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.inventory-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inv-nav {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.inv-nav-btn {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  padding: 0.35rem 1.2rem;
+  border-radius: 2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.inv-nav-btn:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.inv-content {
+  display: flex;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.inv-grid-wrapper {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+}
+
+.inv-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.inv-grid::-webkit-scrollbar {
+  width: 4px;
+}
+.inv-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.inv-grid::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+.inv-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dim);
+}
+
+/* Vault Grid Inventory Slots */
+.inv-slot {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.inv-slot:hover:not(.empty) {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.inv-slot.active {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.inv-slot.empty {
+  cursor: default;
+  opacity: 0.4;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.slot-name {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.inv-slot.active .slot-name {
+  color: var(--gold);
+}
+
+/* Vertical Decorative Accent Frame Track Rails */
+.inv-scroll-accent {
+  width: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2px;
+  position: relative;
+}
+
+.accent-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* Sidebar Inspector Panel Components */
+.inv-inspect {
+  width: 280px;
+  border-left: 1px solid var(--border);
+  padding-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inspect-visual-box {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.inspect-visual-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)),
+    linear-gradient(to top left, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px));
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.inspect-title-tag {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.inspect-desc-box {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1rem;
+}
+
+.desc-text {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+
+/* ==========================================================================
+   11. SPRITESHEET POSITIONING MAP SYSTEM (UNIFIED COGNIZANCE)
+   ========================================================================== */
+.sprite-art {
+  width: 48px;
+  height: 48px;
+  background-repeat: no-repeat;
+  background-size: 144px 144px; /* Uniform 3x3 layout coordinate grid bounding scale */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Shop vs Inventory asset source fallback handler path binding */
+.shop-container .sprite-art {
+  background-image: url('Tag Royal item accesories.png');
+}
+.inventory-outer .sprite-art {
+  background-image: url('images/item_spritesheet.png');
+}
+
+/* Standard Mini Core Asset Sheet Coordinates */
+.sprite-art.bar        { background-position: 0px 0px; }
+.sprite-art.tomato     { background-position: -48px 0px; }
+.sprite-art.bear       { background-position: -96px 0px; }
+.sprite-art.fart-bomb  { background-position: -96px -48px; }
+.sprite-art.potion     { background-position: 0px -96px; }
+
+/* Enlarged Inspector Panels Slices (96px display size) */
+.sprite-inspect {
+  width: 96px;
+  height: 96px;
+  background-image: url('images/item_spritesheet.png');
+  background-repeat: no-repeat;
+  background-size: 288px 288px; /* Doubled scale map matrix configuration */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.sprite-inspect.bar        { background-position: 0px 0px; }
+.sprite-inspect.tomato     { background-position: -96px 0px; }
+.sprite-inspect.bear       { background-position: -192px 0px; }
+.sprite-inspect.fart-bomb  { background-position: -192px -96px; }
+.sprite-inspect.potion     { background-position: 0px -192px; }
+
+
+/* ==========================================================================
+   12. RESPONSIVE MEDIA BREAKPOINTS
+   ========================================================================== */
+@media (max-width: 750px) {
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+  .settings-visual {
+    align-items: center;
+    width: 100%;
+  }
+  .action-box {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 700px) {
+  .tut-layout {
+    grid-template-columns: 1fr;
+  }
+  .tut-visual {
+    align-items: flex-start;
+  }
 }
