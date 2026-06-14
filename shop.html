@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   
   <style>
-    /* ── Global Reset & Layout Configuration (No external dependencies) ── */
+    /* ── Global Reset & Setup (Self-Contained fallback layout) ── */
     * {
       box-sizing: border-box;
     }
@@ -23,7 +23,6 @@
       overflow-x: hidden;
     }
 
-    /* ── Embedded variables from shop.css ── */
     :root {
       --font-display: 'Bebas Neue', sans-serif; /* cite: uploaded:Store CSS.txt */
       --font-body: 'DM Sans', sans-serif; /* cite: uploaded:Store CSS.txt */
@@ -40,7 +39,7 @@
       color: var(--text); /* cite: uploaded:Store CSS.txt */
     }
 
-    /* Modern fallback background visual effects if missing from styles.css */
+    /* Ambient Background Mesh */
     .bg-grid {
       position: fixed;
       top: 0;
@@ -55,7 +54,7 @@
       background-size: 40px 40px;
     }
 
-    /* ── Shop Structural Container Layout ── */
+    /* ── Shop Container Layout ── */
     .shop-container {
       position: relative; /* cite: uploaded:Store CSS.txt */
       z-index: 2; /* cite: uploaded:Store CSS.txt */
@@ -67,7 +66,7 @@
       gap: 2.5rem; /* cite: uploaded:Store CSS.txt */
     }
 
-    /* ── Custom Shop Navigation Elements ── */
+    /* ── Shop Navigation Header ── */
     .shop-nav {
       display: flex; /* cite: uploaded:Store CSS.txt */
       align-items: center; /* cite: uploaded:Store CSS.txt */
@@ -116,7 +115,7 @@
       gap: 0.5rem; /* cite: uploaded:Store CSS.txt */
     }
 
-    /* ── Main Scrolling Content Layout ── */
+    /* ── Scrolling View Deck Framework ── */
     .shop-layout {
       display: flex; /* cite: uploaded:Store CSS.txt */
       flex-direction: column; /* cite: uploaded:Store CSS.txt */
@@ -139,7 +138,6 @@
       margin: 0; /* cite: uploaded:Store CSS.txt */
     }
 
-    /* ── Horizontal Scrolling Card Deck ── */
     .item-grid {
       display: flex; /* cite: uploaded:Store CSS.txt */
       gap: 1.5rem; /* cite: uploaded:Store CSS.txt */
@@ -162,7 +160,7 @@
       background: var(--gold-dim); /* cite: uploaded:Store CSS.txt */
     }
 
-    /* ── Custom Item Cards ── */
+    /* ── Item Deck Cards ── */
     .item-card {
       background: var(--surface); /* cite: uploaded:Store CSS.txt */
       border: 1px solid var(--border); /* cite: uploaded:Store CSS.txt */
@@ -215,43 +213,44 @@
       z-index: 1; /* cite: uploaded:Store CSS.txt */
     }
 
-    /* ── Spritesheet Cropping Processing Logic ── */
+    /* ── SPRITESHEET POSITIONING LOGIC ── */
     .sprite-art {
-      width: 45px;                 /* Displays the exact bounding asset viewport size */
-      height: 45px;
+      width: 48px;                 /* Outer bounds display frame */
+      height: 48px;
       z-index: 1;
       background-image: url('Tag Royal item accesories.png');
       background-repeat: no-repeat;
-      background-size: 135px auto; /* Dynamically rescales steps based on standard grid maps */
       
-      /* CRITICAL PIXEL ART PRESERVATION: Prevents blurred engine stretching */
+      /* Based on your original 3x3 layout (approx. 144px overall grid width) */
+      background-size: 144px 144px; 
+      
+      /* Keeps pixel edges raw and sharp without antialiasing blur */
       image-rendering: pixelated;
       image-rendering: crisp-edges;
     }
 
-    /* Slicing matrix position offsets cleanly out of your combined Piskel asset image */
-    /* Row 1 */
+    /* Row 1 Slices */
     .sprite-art.bar {
-      background-position: 0px 0px;
+      background-position: 0px 0px;       /* 1st column, 1st row (Energy Bar) */
     }
     .sprite-art.tomato {
-      background-position: -45px 0px;
+      background-position: -48px 0px;     /* 2nd column, 1st row (Rotten Tomato) */
     }
     .sprite-art.bear {
-      background-position: -90px 0px; /* Red Gummy Bear */
+      background-position: -96px 0px;     /* 3rd column, 1st row (Red Gummy Bear) */
     }
 
-    /* Row 2 */
+    /* Row 2 Slices */
     .sprite-art.fart-bomb {
-      background-position: -90px -45px; /* Poison Gas Skull Flask Sack */
+      background-position: -96px -48px;   /* 3rd column, 2nd row (Green Poison Skull sack) */
     }
 
-    /* Row 3 */
+    /* Row 3 Slices */
     .sprite-art.potion {
-      background-position: 0px -90px; /* Magenta Health Potion Bottle */
+      background-position: 0px -96px;     /* 1st column, 3rd row (Magenta Flask Potion) */
     }
 
-    /* ── Inside Components ── */
+    /* ── Miscellaneous Info Buttons ── */
     .info-btn {
       position: absolute; /* cite: uploaded:Store CSS.txt */
       bottom: 0.5rem; /* cite: uploaded:Store CSS.txt */
@@ -287,7 +286,7 @@
       background: rgba(0, 0, 0, 0.1); /* cite: uploaded:Store CSS.txt */
     }
 
-    /* ── Action Control Triggers ── */
+    /* ── Purchase Interactions ── */
     .buy-btn {
       font-family: var(--font-display); /* cite: uploaded:Store CSS.txt */
       font-size: 0.9rem; /* cite: uploaded:Store CSS.txt */
@@ -333,9 +332,7 @@
       <h1 class="shop-title">SHOP</h1>
       <div class="currency-display">
         <div class="currency-box">
-          <span class="coin-icon">🪙</span>
-          <span id="player-coins">100</span>
-        </div>
+          <span class="coin-icon">🪙</span> <span id="player-coins">100</span> </div>
       </div>
     </header>
 
@@ -346,54 +343,34 @@
         <div class="item-grid">
           
           <div class="item-card">
-            <div class="card-header">Energy Bar</div>
-            <div class="card-visual">
+            <div class="card-header">Energy Bar</div> <div class="card-visual">
               <div class="sprite-art bar"></div>
-              <button class="info-btn" title="Provides a quick burst of speed!">i</button>
-            </div>
-            <div class="card-stats">Speed Boost</div>
-            <button class="buy-btn" onclick="buyItem('energy_bar', 2)">🪙 2</button>
-          </div>
+              <button class="info-btn" title="Provides a quick burst of speed!">i</button> </div>
+            <div class="card-stats">Speed Boost</div> <button class="buy-btn" onclick="buyItem('energy_bar', 2)">🪙 2</button> </div>
 
           <div class="item-card">
-            <div class="card-header">Rotten Tomatoes</div>
-            <div class="card-visual">
+            <div class="card-header">Rotten Tomatoes</div> <div class="card-visual">
               <div class="sprite-art tomato"></div>
-              <button class="info-btn" title="Slow down the runner bot!">i</button>
-            </div>
-            <div class="card-stats">Slowing Projectile</div>
-            <button class="buy-btn" onclick="buyItem('tomatoes', 3)">🪙 3</button>
-          </div>
+              <button class="info-btn" title="Slow down the runner bot!">i</button> </div>
+            <div class="card-stats">Slowing Projectile</div> <button class="buy-btn" onclick="buyItem('tomatoes', 3)">🪙 3</button> </div>
 
           <div class="item-card">
-            <div class="card-header">Gummy Bears</div>
-            <div class="card-visual">
+            <div class="card-header">Gummy Bears</div> <div class="card-visual">
               <div class="sprite-art bear"></div>
-              <button class="info-btn" title="Tasty treat that keeps you running.">i</button>
-            </div>
-            <div class="card-stats">Stamina Restore</div>
-            <button class="buy-btn" onclick="buyItem('gummy_bears', 5)">🪙 5</button>
-          </div>
+              <button class="info-btn" title="Tasty treat that keeps you running.">i</button> </div>
+            <div class="card-stats">Stamina Restore</div> <button class="buy-btn" onclick="buyItem('gummy_bears', 5)">🪙 5</button> </div>
 
           <div class="item-card">
-            <div class="card-header">Fart Bomb</div>
-            <div class="card-visual">
+            <div class="card-header">Fart Bomb</div> <div class="card-visual">
               <div class="sprite-art fart-bomb"></div>
-              <button class="info-btn" title="Blasts your opponent back!">i</button>
-            </div>
-            <div class="card-stats">Area Knockback</div>
-            <button class="buy-btn" onclick="buyItem('fart_bomb', 18)">🪙 18</button>
-          </div>
+              <button class="info-btn" title="Blasts your opponent back!">i</button> </div>
+            <div class="card-stats">Area Knockback</div> <button class="buy-btn" onclick="buyItem('fart_bomb', 18)">🪙 18</button> </div>
 
           <div class="item-card">
-            <div class="card-header">Untagable Potion</div>
-            <div class="card-visual">
+            <div class="card-header">Untagable Potion</div> <div class="card-visual">
               <div class="sprite-art potion"></div>
-              <button class="info-btn" title="Makes you completely immune to tags!">i</button>
-            </div>
-            <div class="card-stats">Invincibility</div>
-            <button class="buy-btn" onclick="buyItem('potion', 10)">🪙 10</button>
-          </div>
+              <button class="info-btn" title="Makes you completely immune to tags!">i</button> </div>
+            <div class="card-stats">Invincibility</div> <button class="buy-btn" onclick="buyItem('potion', 10)">🪙 10</button> </div>
 
         </div>
       </section>
@@ -403,40 +380,24 @@
         <div class="item-grid">
           
           <div class="item-card owned">
-            <div class="card-header">Default Red</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🔴</div>
-            </div>
-            <div class="card-stats">Base Character</div>
-            <button class="buy-btn equipped">EQUIPPED</button>
-          </div>
+            <div class="card-header">Default Red</div> <div class="card-visual">
+              <div class="placeholder-art">🔴</div> </div>
+            <div class="card-stats">Base Character</div> <button class="buy-btn equipped">EQUIPPED</button> </div>
 
           <div class="item-card">
-            <div class="card-header">Nugget</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🍗</div>
-            </div>
-            <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">🪙 15</button>
-          </div>
+            <div class="card-header">Nugget</div> <div class="card-visual">
+              <div class="placeholder-art">🍗</div> </div>
+            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">🪙 15</button> </div>
 
           <div class="item-card">
-            <div class="card-header">George the Monkey</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🐒</div>
-            </div>
-            <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('skin_george', 25)">🪙 25</button>
-          </div>
+            <div class="card-header">George the Monkey</div> <div class="card-visual">
+              <div class="placeholder-art">🐒</div> </div>
+            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('skin_george', 25)">🪙 25</button> </div>
 
           <div class="item-card">
-            <div class="card-header">John Pork</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🐷</div>
-            </div>
-            <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('skin_john', 50)">🪙 50</button>
-          </div>
+            <div class="card-header">John Pork</div> <div class="card-visual">
+              <div class="placeholder-art">🐷</div> </div>
+            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('skin_john', 50)">🪙 50</button> </div>
 
         </div>
       </section>
@@ -446,40 +407,24 @@
         <div class="item-grid">
           
           <div class="item-card owned">
-            <div class="card-header">Default Blue</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🔵</div>
-            </div>
-            <div class="card-stats">Base Enemy</div>
-            <button class="buy-btn equipped">EQUIPPED</button>
-          </div>
+            <div class="card-header">Default Blue</div> <div class="card-visual">
+              <div class="placeholder-art">🔵</div> </div>
+            <div class="card-stats">Base Enemy</div> <button class="buy-btn equipped">EQUIPPED</button> </div>
 
           <div class="item-card">
-            <div class="card-header">Food Stealer</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🦝</div>
-            </div>
-            <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">🪙 15</button>
-          </div>
+            <div class="card-header">Food Stealer</div> <div class="card-visual">
+              <div class="placeholder-art">🦝</div> </div>
+            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">🪙 15</button> </div>
 
           <div class="item-card">
-            <div class="card-header">Mr. McRae</div>
-            <div class="card-visual">
-              <div class="placeholder-art">👨‍🏫</div>
-            </div>
-            <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">🪙 30</button>
-          </div>
+            <div class="card-header">Mr. McRae</div> <div class="card-visual">
+              <div class="placeholder-art">👨‍🏫</div> </div>
+            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">🪙 30</button> </div>
 
           <div class="item-card">
-            <div class="card-header">Evil Nugget</div>
-            <div class="card-visual">
-              <div class="placeholder-art">😈</div>
-            </div>
-            <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('bot_evil', 45)">🪙 45</button>
-          </div>
+            <div class="card-header">Evil Nugget</div> <div class="card-visual">
+              <div class="placeholder-art">😈</div> </div>
+            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('bot_evil', 45)">🪙 45</button> </div>
 
         </div>
       </section>
@@ -489,7 +434,7 @@
 
   <script>
     function buyItem(id, price) {
-      console.log("Clicked to buy:", id, "for", price, "coins.");
+      console.log("Clicked to buy:", id, "for", price, "coins."); /* cite: uploaded:Store HTML.txt */
     }
   </script>
 </body>

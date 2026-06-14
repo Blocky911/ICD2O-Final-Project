@@ -1,36 +1,26 @@
-/* ── Global Reset & Layout Configuration (No styles.css required) ── */
-* {
-  box-sizing: border-box;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #0c0c0c; /* Fallback dark theme background */
-  overflow-x: hidden;
-}
-
-/* Base style fallbacks inside this file to prevent default browser bugs */
+/* ==========================================================================
+   1. GLOBAL CONFIGURATION & CUSTOM RETRO THEME
+   ========================================================================== */
 :root {
-  --font-display: 'Bebas Neue', sans-serif; /* cite: 52 */
-  --font-body: 'DM Sans', sans-serif; /* cite: 53 */
-  --border: rgba(255, 255, 255, 0.15); /* cite: 53 */
-  --surface: rgba(20, 20, 20, 0.8); /* cite: 53 */
-  --text: #ffffff; /* cite: 53 */
-  --text-muted: #8a8a8a; /* cite: 53 */
-  --gold: #d4af37; /* cite: 53 */
-  --gold-dim: #aa8c2c; /* cite: 54 */
+  --font-display: 'Bebas Neue', sans-serif; /* cite: 21 */
+  --font-body: 'DM Sans', sans-serif; /* cite: 22 */
+  --border: rgba(255, 255, 255, 0.15); /* cite: 22 */
+  --surface: rgba(20, 20, 20, 0.8); /* cite: 22 */
+  --text: #ffffff; /* cite: 22 */
+  --text-muted: #8a8a8a; /* cite: 22 */
+  --gold: #d4af37; /* cite: 22 */
+  --gold-dim: #aa8c2c; /* cite: 23 */
 }
 
 body {
-  font-family: var(--font-body); /* cite: 54 */
-  color: var(--text); /* cite: 54 */
+  font-family: var(--font-body); /* cite: 23 */
+  background-color: #0c0c0c; /* cite: 23 */
+  color: var(--text); /* cite: 23 */
+  margin: 0; /* cite: 23 */
 }
 
-/* Background effects container if present in your HTML structure */
-.scanlines, .bg-grid {
+/* Fallback ambient grid overlay */
+.bg-grid {
   position: fixed;
   top: 0;
   left: 0;
@@ -38,280 +28,317 @@ body {
   height: 100%;
   z-index: 1;
   pointer-events: none;
-}
-
-.bg-grid {
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
-/* ── Shop Container Layout ── */
+/* Scanline screen texture layout */
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.06),
+    rgba(0, 255, 0, 0.02),
+    rgba(0, 0, 255, 0.06)
+  );
+  background-size: 100% 4px, 6px 100%;
+}
+
+
+/* ==========================================================================
+   2. MAIN CONTAINERS & STRUCTURAL GRID INTERFACE
+   ========================================================================== */
 .shop-container {
-  position: relative; /* cite: 54 */
-  z-index: 2; /* cite: 54 */
-  max-width: 1100px; /* cite: 55 */
-  margin: 0 auto; /* cite: 55 */
-  padding: 2rem 2rem 4rem; /* cite: 55 */
-  display: flex; /* cite: 55 */
-  flex-direction: column; /* cite: 55 */
-  gap: 2.5rem; /* cite: 55 */
-} /* cite: 56 */
-
-/* ── Shop Custom Navbar Elements ── */
-.shop-nav {
-  display: flex; /* cite: 56 */
-  align-items: center; /* cite: 56 */
-  justify-content: space-between; /* cite: 56 */
-  border-bottom: 1px solid var(--border); /* cite: 56 */
-  padding-bottom: 1rem; /* cite: 57 */
+  position: relative; /* cite: 23 */
+  z-index: 2; /* cite: 23 */
+  max-width: 1100px; /* cite: 24 */
+  margin: 0 auto; /* cite: 24 */
+  padding: 2rem 2rem 4rem; /* cite: 24 */
+  display: flex; /* cite: 24 */
+  flex-direction: column; /* cite: 24 */
+  gap: 2.5rem; /* cite: 24 */
 }
 
-.back-btn {
-  font-family: var(--font-display); /* cite: 57 */
-  font-size: 0.85rem; /* cite: 57 */
-  letter-spacing: 0.15em; /* cite: 57 */
-  color: var(--text-muted); /* cite: 57 */
-  text-decoration: none; /* cite: 57 */
-  border: 1px solid var(--border); /* cite: 57 */
-  border-radius: 2px; /* cite: 58 */
-  padding: 0.3rem 0.8rem; /* cite: 58 */
-  transition: color 0.15s, border-color 0.15s; /* cite: 58 */
-  white-space: nowrap; /* cite: 58 */
-}
-
-.back-btn:hover {
-  color: var(--text); /* cite: 58 */
-  border-color: rgba(255, 255, 255, 0.25); /* cite: 59 */
-}
-
-.shop-title {
-  font-family: var(--font-display); /* cite: 59 */
-  font-size: 1.6rem; /* cite: 59 */
-  letter-spacing: 0.12em; /* cite: 59 */
-  color: var(--gold); /* cite: 59 */
-  margin: 0; /* cite: 59 */
-} /* cite: 60 */
-
-.currency-box {
-  font-family: var(--font-display); /* cite: 60 */
-  font-size: 1rem; /* cite: 60 */
-  letter-spacing: 0.08em; /* cite: 60 */
-  color: var(--text); /* cite: 60 */
-  border: 1px solid var(--border); /* cite: 60 */
-  border-radius: 2px; /* cite: 60 */
-  padding: 0.3rem 1rem; /* cite: 60 */
-  background: var(--surface); /* cite: 61 */
-  display: flex; /* cite: 61 */
-  align-items: center; /* cite: 61 */
-  gap: 0.5rem; /* cite: 61 */
-}
-
-/* ── Layout Framework ── */
 .shop-layout {
-  display: flex; /* cite: 61 */
-  flex-direction: column; /* cite: 61 */
-  gap: 3rem; /* cite: 62 */
+  display: flex; /* cite: 30 */
+  flex-direction: column; /* cite: 30 */
+  gap: 3rem; /* cite: 31 */
 }
 
 .shop-section {
-  display: flex; /* cite: 62 */
-  flex-direction: column; /* cite: 62 */
-  gap: 1.25rem; /* cite: 62 */
+  display: flex; /* cite: 31 */
+  flex-direction: column; /* cite: 31 */
+  gap: 1.25rem; /* cite: 31 */
 }
 
 .section-heading {
-  font-family: var(--font-display); /* cite: 62 */
-  font-size: 1.2rem; /* cite: 62 */
-  letter-spacing: 0.1em; /* cite: 62 */
-  color: var(--text); /* cite: 63 */
-  border-left: 2px solid var(--gold); /* cite: 63 */
-  padding-left: 0.75rem; /* cite: 63 */
-  margin: 0; /* cite: 63 */
-} /* cite: 64 */
-
-/* ── Horizontal Scrolling Card Deck ── */
-.item-grid {
-  display: flex; /* cite: 64 */
-  gap: 1.5rem; /* cite: 64 */
-  overflow-x: auto; /* cite: 64 */
-  padding-bottom: 1rem; /* cite: 64 */
-  scroll-behavior: smooth; /* cite: 65 */
+  font-family: var(--font-display); /* cite: 31 */
+  font-size: 1.2rem; /* cite: 31 */
+  letter-spacing: 0.1em; /* cite: 31 */
+  color: var(--text); /* cite: 32 */
+  border-left: 2px solid var(--gold); /* cite: 32 */
+  padding-left: 0.75rem; /* cite: 32 */
+  margin: 0; /* cite: 33 */
 }
 
-/* Scrollbar customizations */
+
+/* ==========================================================================
+   3. SHOP CUSTOM NAVIGATION BAR ELEMENTS
+   ========================================================================== */
+.shop-nav {
+  display: flex; /* cite: 25 */
+  align-items: center; /* cite: 25 */
+  justify-content: space-between; /* cite: 25 */
+  border-bottom: 1px solid var(--border); /* cite: 25 */
+  padding-bottom: 1rem; /* cite: 26 */
+}
+
+.back-btn {
+  font-family: var(--font-display); /* cite: 26 */
+  font-size: 0.85rem; /* cite: 26 */
+  letter-spacing: 0.15em; /* cite: 26 */
+  color: var(--text-muted); /* cite: 26 */
+  text-decoration: none; /* cite: 26 */
+  border: 1px solid var(--border); /* cite: 26 */
+  border-radius: 2px; /* cite: 27 */
+  padding: 0.3rem 0.8rem; /* cite: 27 */
+  transition: color 0.15s, border-color 0.15s; /* cite: 27 */
+  white-space: nowrap; /* cite: 27 */
+}
+
+.back-btn:hover {
+  color: var(--text); /* cite: 27 */
+  border-color: rgba(255, 255, 255, 0.25); /* cite: 28 */
+}
+
+.shop-title {
+  font-family: var(--font-display); /* cite: 28 */
+  font-size: 1.6rem; /* cite: 28 */
+  letter-spacing: 0.12em; /* cite: 28 */
+  color: var(--gold); /* cite: 28 */
+  margin: 0; /* cite: 29 */
+}
+
+.currency-box {
+  font-family: var(--font-display); /* cite: 29 */
+  font-size: 1rem; /* cite: 29 */
+  letter-spacing: 0.08em; /* cite: 29 */
+  color: var(--text); /* cite: 29 */
+  border: 1px solid var(--border); /* cite: 29 */
+  border-radius: 2px; /* cite: 29 */
+  padding: 0.3rem 1rem; /* cite: 29 */
+  background: var(--surface); /* cite: 30 */
+  display: flex; /* cite: 30 */
+  align-items: center; /* cite: 30 */
+  gap: 0.5rem; /* cite: 30 */
+}
+
+
+/* ==========================================================================
+   4. HORIZONTAL ROLLING DECK SCROLLBARS
+   ========================================================================== */
+.item-grid {
+  display: flex; /* cite: 33 */
+  gap: 1.5rem; /* cite: 33 */
+  overflow-x: auto; /* cite: 33 */
+  padding-bottom: 1rem; /* cite: 34 */
+  scroll-behavior: smooth; /* cite: 34 */
+}
+
 .item-grid::-webkit-scrollbar {
   height: 4px;
 }
+
 .item-grid::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .item-grid::-webkit-scrollbar-thumb {
-  background: var(--border); /* cite: 65 */
-  border-radius: 2px; /* cite: 66 */
-}
-.item-grid::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-dim); /* cite: 66 */
+  background: var(--border); /* cite: 34 */
+  border-radius: 2px; /* cite: 35 */
 }
 
-/* ── Custom Item Cards ── */
+.item-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dim); /* cite: 35 */
+}
+
+
+/* ==========================================================================
+   5. ITEM CARD COMPONENT STYLES
+   ========================================================================== */
 .item-card {
-  background: var(--surface); /* cite: 66 */
-  border: 1px solid var(--border); /* cite: 66 */
-  border-radius: 2px; /* cite: 67 */
-  min-width: 220px; /* cite: 67 */
-  max-width: 220px; /* cite: 67 */
-  display: flex; /* cite: 67 */
-  flex-direction: column; /* cite: 67 */
-  transition: border-color 0.15s, transform 0.15s; /* cite: 67 */
-} /* cite: 68 */
+  background: var(--surface); /* cite: 35 */
+  border: 1px solid var(--border); /* cite: 35 */
+  border-radius: 2px; /* cite: 36 */
+  min-width: 220px; /* cite: 36 */
+  max-width: 220px; /* cite: 36 */
+  display: flex; /* cite: 36 */
+  flex-direction: column; /* cite: 36 */
+  transition: border-color 0.15s, transform 0.15s; /* cite: 36 */
+}
 
 .item-card:hover {
-  border-color: rgba(255, 255, 255, 0.3); /* cite: 68 */
-  transform: translateY(-2px); /* cite: 68 */
+  border-color: rgba(255, 255, 255, 0.3); /* cite: 37 */
+  transform: translateY(-2px); /* cite: 37 */
 }
 
 .card-header {
-  font-family: var(--font-display); /* cite: 68 */
-  font-size: 1rem; /* cite: 68 */
-  letter-spacing: 0.06em; /* cite: 68 */
-  color: var(--text); /* cite: 69 */
-  padding: 0.75rem; /* cite: 69 */
-  text-align: center; /* cite: 69 */
-  border-bottom: 1px solid var(--border); /* cite: 69 */
+  font-family: var(--font-display); /* cite: 37 */
+  font-size: 1rem; /* cite: 37 */
+  letter-spacing: 0.06em; /* cite: 37 */
+  color: var(--text); /* cite: 38 */
+  padding: 0.75rem; /* cite: 38 */
+  text-align: center; /* cite: 38 */
+  border-bottom: 1px solid var(--border); /* cite: 38 */
 }
 
 .card-visual {
-  width: 100%; /* cite: 69 */
-  aspect-ratio: 16 / 11; /* cite: 69 */
-  display: flex; /* cite: 70 */
-  align-items: center; /* cite: 70 */
-  justify-content: center; /* cite: 70 */
-  position: relative; /* cite: 70 */
-  background: rgba(0, 0, 0, 0.3); /* cite: 70 */
-} /* cite: 71 */
+  width: 100%; /* cite: 38 */
+  aspect-ratio: 16 / 11; /* cite: 38 */
+  display: flex; /* cite: 39 */
+  align-items: center; /* cite: 39 */
+  justify-content: center; /* cite: 39 */
+  position: relative; /* cite: 39 */
+  background: rgba(0, 0, 0, 0.3); /* cite: 40 */
+}
 
-/* Wireframe cross styling lines */
+/* Blueprint structural line cross decorations */
 .card-visual::before {
-  content: ""; /* cite: 71 */
-  position: absolute; /* cite: 71 */
-  inset: 0; /* cite: 71 */
-  background: /* cite: 72 */
-    linear-gradient(to top right, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)), /* cite: 72 */
-    linear-gradient(to top left, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)); /* cite: 72 */
-  opacity: 0.4; /* cite: 73 */
-  pointer-events: none; /* cite: 73 */
+  content: ""; /* cite: 40 */
+  position: absolute; /* cite: 40 */
+  inset: 0; /* cite: 40 */
+  background: 
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)), /* cite: 41 */
+    linear-gradient(to top left, transparent calc(50% - 1px), var(--border), transparent calc(50% + 1px)); /* cite: 41 */
+  opacity: 0.4; /* cite: 42 */
+  pointer-events: none; /* cite: 42 */
 }
 
 .placeholder-art {
-  font-size: 2.2rem; /* cite: 73 */
-  z-index: 1; /* cite: 73 */
-} /* cite: 74 */
-
-/* Small info button styling */
-.info-btn {
-  position: absolute; /* cite: 74 */
-  bottom: 0.5rem; /* cite: 74 */
-  left: 0.5rem; /* cite: 74 */
-  width: 1.25rem; /* cite: 74 */
-  height: 1.25rem; /* cite: 74 */
-  font-family: var(--font-display); /* cite: 74 */
-  font-size: 0.7rem; /* cite: 75 */
-  background: var(--surface); /* cite: 75 */
-  color: var(--text-muted); /* cite: 75 */
-  border: 1px solid var(--border); /* cite: 75 */
-  border-radius: 2px; /* cite: 75 */
-  cursor: pointer; /* cite: 75 */
-  z-index: 2; /* cite: 75 */
-  display: flex; /* cite: 75 */
-  align-items: center; /* cite: 75 */
-  justify-content: center; /* cite: 76 */
-}
-
-.info-btn:hover {
-  color: var(--text); /* cite: 76 */
-  border-color: rgba(255, 255, 255, 0.4); /* cite: 76 */
+  font-size: 2.2rem; /* cite: 42 */
+  z-index: 1; /* cite: 42 */
 }
 
 .card-stats {
-  font-family: var(--font-body); /* cite: 76 */
-  font-size: 0.75rem; /* cite: 76 */
-  font-weight: 500; /* cite: 77 */
-  color: var(--text-muted); /* cite: 77 */
-  text-align: center; /* cite: 77 */
-  padding: 0.6rem; /* cite: 77 */
-  border-top: 1px solid var(--border); /* cite: 77 */
-  background: rgba(0, 0, 0, 0.1); /* cite: 77 */
-} /* cite: 78 */
-
-/* ── Buy Action Buttons ── */
-.buy-btn {
-  font-family: var(--font-display); /* cite: 78 */
-  font-size: 0.9rem; /* cite: 78 */
-  letter-spacing: 0.08em; /* cite: 78 */
-  background: transparent; /* cite: 78 */
-  color: var(--gold); /* cite: 78 */
-  border: 1px solid var(--border); /* cite: 79 */
-  border-radius: 2px; /* cite: 79 */
-  padding: 0.5rem; /* cite: 79 */
-  margin: 0.75rem; /* cite: 79 */
-  cursor: pointer; /* cite: 79 */
-  transition: color 0.15s, background 0.15s, border-color 0.15s; /* cite: 79 */
-} /* cite: 80 */
-
-.buy-btn:hover {
-  background: rgba(255, 209, 36, 0.1); /* cite: 80 */
-  border-color: var(--gold); /* cite: 80 */
-  color: #fff; /* cite: 80 */
-} /* cite: 81 */
-
-/* Owned/Equipped state buttons */
-.item-card.owned {
-  border-color: rgba(212, 175, 55, 0.3); /* cite: 81 */
+  font-family: var(--font-body); /* cite: 46 */
+  font-size: 0.75rem; /* cite: 46 */
+  font-weight: 500; /* cite: 46 */
+  color: var(--text-muted); /* cite: 46 */
+  text-align: center; /* cite: 46 */
+  padding: 0.6rem; /* cite: 47 */
+  border-top: 1px solid var(--border); /* cite: 47 */
+  background: rgba(0, 0, 0, 0.1); /* cite: 47 */
 }
 
-.buy-btn.equipped {
-  font-family: var(--font-display); /* cite: 81 */
-  background: rgba(255, 255, 255, 0.03); /* cite: 82 */
-  color: var(--text-muted); /* cite: 82 */
-  border-color: var(--border); /* cite: 82 */
-  cursor: default; /* cite: 82 */
-  pointer-events: none; /* cite: 82 */
+.info-btn {
+  position: absolute; /* cite: 43 */
+  bottom: 0.5rem; /* cite: 43 */
+  left: 0.5rem; /* cite: 43 */
+  width: 1.25rem; /* cite: 43 */
+  height: 1.25rem; /* cite: 43 */
+  font-family: var(--font-display); /* cite: 43 */
+  font-size: 0.7rem; /* cite: 44 */
+  background: var(--surface); /* cite: 44 */
+  color: var(--text-muted); /* cite: 44 */
+  border: 1px solid var(--border); /* cite: 44 */
+  border-radius: 2px; /* cite: 44 */
+  cursor: pointer; /* cite: 44 */
+  z-index: 2; /* cite: 44 */
+  display: flex; /* cite: 44 */
+  align-items: center; /* cite: 44 */
+  justify-content: center; /* cite: 45 */
 }
 
-/* ── Unseparated Spritesheet Navigation Processing Logic ── */
+.info-btn:hover {
+  color: var(--text); /* cite: 45 */
+  border-color: rgba(255, 255, 255, 0.4); /* cite: 45 */
+}
+
+
+/* ==========================================================================
+   6. SPRITESHEET POSITIONING NAVIGATION (PIXEL ART ARTICULATION)
+   ========================================================================== */
 .sprite-art {
-  width: 45px;                 /* Display bounding box size inside shop window */
-  height: 45px;
+  width: 48px;
+  height: 48px;
   z-index: 1;
   background-image: url('Tag Royal item accesories.png');
   background-repeat: no-repeat;
-  background-size: 135px auto; /* Forces sheet canvas sizing to math properly */
   
-  /* CRITICAL PIXEL ART PRESERVATION: Prevents blurred engine stretching */
+  /* Maps out a uniform 3x3 layout (144px total bounding scale canvas) */
+  background-size: 144px 144px;
+  
+  /* Anti-blur rendering filters for keeping pixel art sharp */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
 
-/* Slicing standard horizontal/vertical step coordinates out of your drawing grid */
-/* Row 1 Assets */
+/* Row 1 Slices */
 .sprite-art.bar {
-  background-position: 0px 0px;
+  background-position: 0px 0px;       /* Column 1, Row 1 (Energy Bar) */
 }
 .sprite-art.tomato {
-  background-position: -45px 0px;
+  background-position: -48px 0px;     /* Column 2, Row 1 (Rotten Tomato) */
 }
 .sprite-art.bear {
-  background-position: -90px 0px; /* Red Gummy Bear */
+  background-position: -96px 0px;     /* Column 3, Row 1 (Red Candy Gummy Bear) */
 }
 
-/* Row 2 Assets */
+/* Row 2 Slices */
 .sprite-art.fart-bomb {
-  background-position: -90px -45px; /* Green Poison Skull Sack */
+  background-position: -96px -48px;   /* Column 3, Row 2 (Green Toxic Skull Sack) */
 }
 
-/* Row 3 Assets */
+/* Row 3 Slices */
 .sprite-art.potion {
-  background-position: 0px -90px; /* Glowing Magenta Bottle Flask */
+  background-position: 0px -96px;     /* Column 1, Row 3 (Magenta Flask Flask) */
+}
+
+
+/* ==========================================================================
+   7. TRANSACTION CONTROL ELEMENT TRIGGERS
+   ========================================================================== */
+.buy-btn {
+  font-family: var(--font-display); /* cite: 47 */
+  font-size: 0.9rem; /* cite: 47 */
+  letter-spacing: 0.08em; /* cite: 47 */
+  background: transparent; /* cite: 47 */
+  color: var(--gold); /* cite: 47 */
+  border: 1px solid var(--border); /* cite: 48 */
+  border-radius: 2px; /* cite: 48 */
+  padding: 0.5rem; /* cite: 48 */
+  margin: 0.75rem; /* cite: 48 */
+  cursor: pointer; /* cite: 48 */
+  transition: color 0.15s, background 0.15s, border-color 0.15s; /* cite: 48 */
+}
+
+.buy-btn:hover {
+  background: rgba(255, 209, 36, 0.1); /* cite: 49 */
+  border-color: var(--gold); /* cite: 49 */
+  color: #fff; /* cite: 49 */
+}
+
+/* Owned and equipped structural system button toggles */
+.item-card.owned {
+  border-color: rgba(212, 175, 55, 0.3); /* cite: 50 */
+}
+
+.buy-btn.equipped {
+  font-family: var(--font-display); /* cite: 50 */
+  background: rgba(255, 255, 255, 0.03); /* cite: 51 */
+  color: var(--text-muted); /* cite: 51 */
+  border-color: var(--border); /* cite: 51 */
+  cursor: default; /* cite: 51 */
+  pointer-events: none; /* cite: 51 */
 }
