@@ -1398,8 +1398,9 @@ body, html {
 }
 
 .game-logo {
-  max-width: 100%;
+  /* Adjust this width until it perfectly matches your layout */
+  width: 240px; 
   height: auto;
   display: block;
-  margin: 0 auto;
+  margin: 0 auto; /* Keeps it centered */
 }
