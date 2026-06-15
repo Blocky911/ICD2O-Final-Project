@@ -8,6 +8,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .tut-title {
+      font-size: 3.5rem !important; /* Makes the main title very large */
+      letter-spacing: 2px;
+    }
+
+    .tut-step {
+      margin-bottom: 2.5rem !important; /* Adds more space between steps */
+      align-items: flex-start !important;
+    }
+
+    .step-num {
+      font-size: 2.5rem !important; /* Makes the numbers (01, 02, etc.) stand out */
+      font-weight: bold;
+      margin-right: 1.5rem !important;
+      line-height: 1;
+    }
+
+    .step-heading {
+      font-size: 1.8rem !important; /* Makes the step titles much larger */
+      font-weight: 600;
+      margin-bottom: 0.5rem !important;
+      color: #ffffff; /* Ensures high contrast */
+    }
+
+    .step-text {
+      font-size: 1.3rem !important; /* Boosts the description text size so it's easy to read */
+      line-height: 1.6 !important; /* Adds breathing room between lines of text */
+      color: #e0e0e0; /* Brightens text for readability */
+    }
+
+    /* Optional adjustment to give the step section more width if needed for the larger text */
+    .tut-steps {
+      max-width: 650px;
+    }
+  </style>
 </head>
 <body>
 
@@ -16,16 +53,13 @@
 
   <main class="tut-container">
 
-    <!-- TOP NAV -->
     <nav class="tut-nav">
       <a href="index.html" class="back-btn">← BACK</a>
       <h1 class="tut-title">HOW TO PLAY</h1>
     </nav>
 
-    <!-- SPLIT LAYOUT -->
     <div class="tut-layout">
 
-      <!-- LEFT: Step list -->
       <section class="tut-steps">
 
         <div class="tut-step">
@@ -86,17 +120,9 @@
 
       </section>
 
-      <!-- RIGHT: Image + Next button -->
       <aside class="tut-visual">
         <button class="btn btn-ghost tut-next-btn">NEXT STEP →</button>
         <div class="tut-image-wrap">
-          <!--
-            IMAGE PLACEHOLDER
-            Replace the src below with your image filename.
-            Keep it in the same folder as this HTML file.
-            Recommended size: 800×500px or similar landscape ratio.
-            Example: src="tutorial-screenshot.png"
-          -->
           <img
             src="YOUR_IMAGE_HERE.png"
             alt="Tutorial screenshot"
