@@ -20,7 +20,8 @@
       <h1 class="shop-title">SHOP</h1>
       <div class="currency-display">
         <div class="currency-box">
-          <span class="coin-icon">🪙</span> <span id="player-coins">100</span> </div>
+          <span class="coin-icon">🪙</span> <span id="player-coins">100</span>
+        </div>
       </div>
     </header>
 
@@ -31,34 +32,54 @@
         <div class="item-grid">
           
           <div class="item-card">
-            <div class="card-header">Energy Bar</div> <div class="card-visual">
+            <div class="card-header">Energy Bar</div>
+            <div class="card-visual">
               <div class="sprite-art bar"></div>
-              <button class="info-btn" title="Provides a quick burst of speed!">i</button> </div>
-            <div class="card-stats">Speed Boost</div> <button class="buy-btn" onclick="buyItem('energy_bar', 2)">🪙 2</button> </div>
+              <button class="info-btn" title="Provides a quick burst of speed!">i</button>
+            </div>
+            <div class="card-stats">Speed Boost</div>
+            <button class="buy-btn" onclick="buyItem('energy_bar', 2)">🪙 2</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">Rotten Tomatoes</div> <div class="card-visual">
+            <div class="card-header">Rotten Tomatoes</div>
+            <div class="card-visual">
               <div class="sprite-art tomato"></div>
-              <button class="info-btn" title="Slow down the runner bot!">i</button> </div>
-            <div class="card-stats">Slowing Projectile</div> <button class="buy-btn" onclick="buyItem('tomatoes', 3)">🪙 3</button> </div>
+              <button class="info-btn" title="Slow down the runner bot!">i</button>
+            </div>
+            <div class="card-stats">Slowing Projectile</div>
+            <button class="buy-btn" onclick="buyItem('tomatoes', 3)">🪙 3</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">Gummy Bears</div> <div class="card-visual">
+            <div class="card-header">Gummy Bears</div>
+            <div class="card-visual">
               <div class="sprite-art bear"></div>
-              <button class="info-btn" title="Tasty treat that keeps you running.">i</button> </div>
-            <div class="card-stats">Stamina Restore</div> <button class="buy-btn" onclick="buyItem('gummy_bears', 5)">🪙 5</button> </div>
+              <button class="info-btn" title="Tasty treat that keeps you running.">i</button>
+            </div>
+            <div class="card-stats">Stamina Restore</div>
+            <button class="buy-btn" onclick="buyItem('gummy_bears', 5)">🪙 5</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">Fart Bomb</div> <div class="card-visual">
+            <div class="card-header">Fart Bomb</div>
+            <div class="card-visual">
               <div class="sprite-art fart-bomb"></div>
-              <button class="info-btn" title="Blasts your opponent back!">i</button> </div>
-            <div class="card-stats">Area Knockback</div> <button class="buy-btn" onclick="buyItem('fart_bomb', 18)">🪙 18</button> </div>
+              <button class="info-btn" title="Blasts your opponent back!">i</button>
+            </div>
+            <div class="card-stats">Area Knockback</div>
+            <button class="buy-btn" onclick="buyItem('fart_bomb', 18)">🪙 18</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">Untagable Potion</div> <div class="card-visual">
+            <div class="card-header">Untagable Potion</div>
+            <div class="card-visual">
               <div class="sprite-art potion"></div>
-              <button class="info-btn" title="Makes you completely immune to tags!">i</button> </div>
-            <div class="card-stats">Invincibility</div> <button class="buy-btn" onclick="buyItem('potion', 10)">🪙 10</button> </div>
+              <button class="info-btn" title="Makes you completely immune to tags!">i</button>
+            </div>
+            <div class="card-stats">Invincibility</div>
+            <button class="buy-btn" onclick="buyItem('potion', 10)">🪙 10</button>
+          </div>
 
         </div>
       </section>
@@ -67,25 +88,41 @@
         <h2 class="section-heading">PLAYER SKINS</h2>
         <div class="item-grid">
           
-          <div class="item-card owned">
-            <div class="card-header">Default Red</div> <div class="card-visual">
-              <div class="placeholder-art">🔴</div> </div>
-            <div class="card-stats">Base Character</div> <button class="buy-btn equipped">EQUIPPED</button> </div>
+          <div class="item-card">
+            <div class="card-header">Default Red</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🔴</div>
+            </div>
+            <div class="card-stats">Base Character</div>
+            <button class="buy-btn" onclick="buyItem('skin_default_red', 0)">FREE</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">Nugget</div> <div class="card-visual">
-              <div class="placeholder-art">🍗</div> </div>
-            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">🪙 15</button> </div>
+            <div class="card-header">Nugget</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🍗</div>
+            </div>
+            <div class="card-stats">Cosmetic Skin</div>
+            <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">🪙 15</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">George the Monkey</div> <div class="card-visual">
-              <div class="placeholder-art">🐒</div> </div>
-            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('skin_george', 25)">🪙 25</button> </div>
+            <div class="card-header">George the Monkey</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🐒</div>
+            </div>
+            <div class="card-stats">Cosmetic Skin</div>
+            <button class="buy-btn" onclick="buyItem('skin_george', 25)">🪙 25</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">John Pork</div> <div class="card-visual">
-              <div class="placeholder-art">🐷</div> </div>
-            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('skin_john', 50)">🪙 50</button> </div>
+            <div class="card-header">John Pork</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🐷</div>
+            </div>
+            <div class="card-stats">Cosmetic Skin</div>
+            <button class="buy-btn" onclick="buyItem('skin_john', 50)">🪙 50</button>
+          </div>
 
         </div>
       </section>
@@ -94,25 +131,41 @@
         <h2 class="section-heading">BOT SKINS</h2>
         <div class="item-grid">
           
-          <div class="item-card owned">
-            <div class="card-header">Default Blue</div> <div class="card-visual">
-              <div class="placeholder-art">🔵</div> </div>
-            <div class="card-stats">Base Enemy</div> <button class="buy-btn equipped">EQUIPPED</button> </div>
+          <div class="item-card">
+            <div class="card-header">Default Blue</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🔵</div>
+            </div>
+            <div class="card-stats">Base Enemy</div>
+            <button class="buy-btn" onclick="buyItem('bot_default_blue', 0)">FREE</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">Food Stealer</div> <div class="card-visual">
-              <div class="placeholder-art">🦝</div> </div>
-            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">🪙 15</button> </div>
+            <div class="card-header">Food Stealer</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🦝</div>
+            </div>
+            <div class="card-stats">Cosmetic Skin</div>
+            <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">🪙 15</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">Mr. McRae</div> <div class="card-visual">
-              <div class="placeholder-art">👨‍🏫</div> </div>
-            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">🪙 30</button> </div>
+            <div class="card-header">Mr. McRae</div>
+            <div class="card-visual">
+              <div class="placeholder-art">👨‍🏫</div>
+            </div>
+            <div class="card-stats">Cosmetic Skin</div>
+            <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">🪙 30</button>
+          </div>
 
           <div class="item-card">
-            <div class="card-header">Evil Nugget</div> <div class="card-visual">
-              <div class="placeholder-art">😈</div> </div>
-            <div class="card-stats">Cosmetic Skin</div> <button class="buy-btn" onclick="buyItem('bot_evil', 45)">🪙 45</button> </div>
+            <div class="card-header">Evil Nugget</div>
+            <div class="card-visual">
+              <div class="placeholder-art">😈</div>
+            </div>
+            <div class="card-stats">Cosmetic Skin</div>
+            <button class="buy-btn" onclick="buyItem('bot_evil', 45)">🪙 45</button>
+          </div>
 
         </div>
       </section>
@@ -120,10 +173,6 @@
     </main>
   </div>
 
-  <script>
-    function buyItem(id, price) {
-      console.log("Clicked to buy:", id, "for", price, "coins."); /* cite: uploaded:Store HTML.txt */
-    }
-  </script>
+  <script src="gameShop.js"></script>
 </body>
 </html>
