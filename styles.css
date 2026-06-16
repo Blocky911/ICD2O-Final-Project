@@ -1328,10 +1328,11 @@ body, html {
    11. SPRITESHEET POSITIONING MAP SYSTEM (UNIFIED COGNIZANCE)
    ========================================================================== */
 .sprite-art {
-  width: 48px;
-  height: 48px;
+  display: block;                /* FIX: Prevents empty divs from collapsing */
+  width: 48px;                   /* FIX: Standard grid element size bounding box width */
+  height: 48px;                  /* FIX: Standard grid element size bounding box height */
   background-repeat: no-repeat;
-  background-size: 144px 144px; /* Uniform 3x3 layout coordinate grid bounding scale */
+  background-size: 144px 144px;  /* FIX: Explicit layout bounds for 3x3 grid (48px * 3) */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   pointer-events: none;
@@ -1340,13 +1341,13 @@ body, html {
 
 /* Shop vs Inventory asset source fallback handler path binding */
 .shop-container .sprite-art {
-  background-image: url('Tag Royal item accesories.png');
+  background-image: url('images/Tag Royal item accesories.png'); /* FIX: Includes image folder path mapping */
 }
 .inventory-outer .sprite-art {
   background-image: url('images/item_spritesheet.png');
 }
 
-/* Standard Mini Core Asset Sheet Coordinates */
+/* Standard Mini Core Asset Sheet Coordinates (48px Grid Intervals) */
 .sprite-art.bar        { background-position: 0px 0px; }
 .sprite-art.tomato     { background-position: -48px 0px; }
 .sprite-art.bear       { background-position: -96px 0px; }
@@ -1355,15 +1356,17 @@ body, html {
 
 /* Enlarged Inspector Panels Slices (96px display size) */
 .sprite-inspect {
-  width: 96px;
-  height: 96px;
+  display: block;                /* FIX: Prevents empty canvas elements from collapsing */
+  width: 96px;                   /* FIX: Doubled structural size scaling configuration bounding width */
+  height: 96px;                  /* FIX: Doubled structural size scaling configuration bounding height */
   background-image: url('images/item_spritesheet.png');
   background-repeat: no-repeat;
-  background-size: 288px 288px; /* Doubled scale map matrix configuration */
+  background-size: 288px 288px;  /* FIX: Proportional layout system grid scaling bounds (96px * 3) */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
 
+/* Inspector Coordinates (96px Grid Multipliers) */
 .sprite-inspect.bar        { background-position: 0px 0px; }
 .sprite-inspect.tomato     { background-position: -96px 0px; }
 .sprite-inspect.bear       { background-position: -192px 0px; }
