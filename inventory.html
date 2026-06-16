@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tag Royale - My Inventory</title>
+  <title>Tag Royale - Inventory</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -16,77 +16,27 @@
   <div class="inventory-container">
     
     <header class="inventory-nav">
-      <a href="index.html" class="back-btn">← BACK</a>
-      <h1 class="inventory-title">MY GEAR</h1>
-      <div class="balance-display">
-        🪙 <span id="player-coins">100</span>
-      </div>
+      <a href="index.html" class="nav-box back-btn">back</a>
+      <h1 class="inventory-title">INVENTORY</h1>
+      <a href="shop.html" class="nav-box shop-btn">shop</a>
     </header>
 
-    <main class="inventory-content">
+    <main class="inventory-layout">
       
-      <div class="inventory-section">
-        <h2 class="sub-heading">Supplies</h2>
-        <ul class="supplies-list">
-          <li><span>Energy Bar</span> <strong id="inv-energy_bar">x0</strong></li>
-          <li><span>Rotten Tomatoes</span> <strong id="inv-tomatoes">x0</strong></li>
-          <li><span>Gummy Bears</span> <strong id="inv-gummy_bears">x0</strong></li>
-          <li><span>Fart Bomb</span> <strong id="inv-fart_bomb">x0</strong></li>
-          <li><span>Untagable Potion</span> <strong id="inv-potion">x0</strong></li>
-        </ul>
+      <div class="grid-container">
+        <div id="items-scroll-grid" class="scroll-grid"></div>
       </div>
 
-      <div class="inventory-section">
-        <h2 class="sub-heading">Character Outfits</h2>
-        <div class="skin-vault">
-          
-          <div class="vault-slot">
-            <span class="slot-art">🔴</span>
-            <button class="buy-btn" onclick="buyItem('skin_default_red', 0)">Loading...</button>
-          </div>
-
-          <div class="vault-slot">
-            <span class="slot-art">🍗</span>
-            <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">Loading...</button>
-          </div>
-
-          <div class="vault-slot">
-            <span class="slot-art">🐒</span>
-            <button class="buy-btn" onclick="buyItem('skin_george', 25)">Loading...</button>
-          </div>
-
-          <div class="vault-slot">
-            <span class="slot-art">🐷</span>
-            <button class="buy-btn" onclick="buyItem('skin_john', 50)">Loading...</button>
-          </div>
-
+      <div class="preview-panel">
+        <div class="big-item-visual">
+          <div id="preview-art" class="preview-art">❓</div>
+          <h2 id="preview-title" class="preview-title">Select An Item</h2>
         </div>
-      </div>
-
-      <div class="inventory-section">
-        <h2 class="sub-heading">Bot Models</h2>
-        <div class="skin-vault">
-          
-          <div class="vault-slot">
-            <span class="slot-art">🔵</span>
-            <button class="buy-btn" onclick="buyItem('bot_default_blue', 0)">Loading...</button>
-          </div>
-
-          <div class="vault-slot">
-            <span class="slot-art">🦝</span>
-            <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">Loading...</button>
-          </div>
-
-          <div class="vault-slot">
-            <span class="slot-art">👨‍🏫</span>
-            <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">Loading...</button>
-          </div>
-
-          <div class="vault-slot">
-            <span class="slot-art">😈</span>
-            <button class="buy-btn" onclick="buyItem('bot_evil', 45)">Loading...</button>
-          </div>
-
+        
+        <div class="description-box">
+          <p id="preview-desc">Click on any item in your grid to see details, quantities, or equip options.</p>
+          <div id="preview-stats" class="preview-stats"></div>
+          <button id="inventory-action-btn" class="action-btn-disabled" disabled>SELECT AN ITEM</button>
         </div>
       </div>
 
