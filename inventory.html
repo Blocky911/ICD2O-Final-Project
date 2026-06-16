@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tag Royale — Inventory</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag Royale - Inventory</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -11,149 +11,163 @@
 </head>
 <body>
 
-  <div class="scanlines"></div>
   <div class="bg-grid"></div>
 
-  <main class="inventory-outer">
-    <h1 class="inventory-main-title">Inventory</h1>
-
-    <div class="inventory-container">
-      
-      <header class="inv-nav">
-        <a href="index.html" class="inv-nav-btn">back</a>
-        <a href="shop.html" class="inv-nav-btn">shop</a>
-      </header>
-
-      <div class="inv-content">
-        
-        <div class="inv-grid-wrapper">
-          <div class="inv-grid">
-            
-            <div class="inv-slot active" data-item="energy">
-              <div class="sprite-art bar"></div>
-              <span class="slot-name">Energy Bar</span>
-            </div>
-
-            <div class="inv-slot" data-item="tomatoes">
-              <div class="sprite-art tomato"></div>
-              <span class="slot-name">Rotten Tomatoes</span>
-            </div>
-
-            <div class="inv-slot" data-item="gummy">
-              <div class="sprite-art bear"></div>
-              <span class="slot-name">Gummy Bears</span>
-            </div>
-
-            <div class="inv-slot" data-item="fart">
-              <div class="sprite-art fart-bomb"></div>
-              <span class="slot-name">Fart Bomb</span>
-            </div>
-
-            <div class="inv-slot" data-item="potion">
-              <div class="sprite-art potion"></div>
-              <span class="slot-name">Untaggable Potion</span>
-            </div>
-
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-            <div class="inv-slot empty"></div>
-
-          </div>
-          
-          <div class="inv-scroll-accent">
-            <div class="accent-thumb"></div>
-          </div>
+  <div class="shop-container">
+    
+    <header class="shop-nav">
+      <a href="index.html" class="back-btn">← BACK</a>
+      <h1 class="shop-title">INVENTORY</h1>
+      <div class="currency-display">
+        <div class="currency-box">
+          <span class="coin-icon">🪙</span> <span id="player-coins">100</span>
         </div>
-
-        <aside class="inv-inspect">
-          
-          <div class="inspect-visual-box">
-            <div id="inspect-art" class="sprite-inspect bar"></div>
-            <div id="inspect-title" class="inspect-title-tag">Energy Bar</div>
-          </div>
-
-          <div class="inspect-desc-box">
-            <p id="inspect-desc" class="desc-text">
-              Provides a critical quick burst of stamina, immediately restoring your active sprint reserves to keep you moving at top speed.
-            </p>
-          </div>
-
-        </aside>
-
       </div>
-    </div>
-  </main>
+    </header>
 
-  <script>
-    const itemData = {
-      energy: {
-        title: "Energy Bar",
-        spriteClass: "bar",
-        desc: "Provides a critical quick burst of stamina, immediately restoring your active sprint reserves to keep you moving at top speed."
-      },
-      tomatoes: {
-        title: "Rotten Tomatoes",
-        spriteClass: "tomato",
-        desc: "A messy projectile that slows down enemy runner bots or active taggers upon impact, swinging momentum back to you."
-      },
-      gummy: {
-        title: "Gummy Bears",
-        spriteClass: "bear",
-        desc: "A delicious, colorful treat that steadily replenishes health points and staves off complete exhaustion in high-intensity runs."
-      },
-      fart: {
-        title: "Fart Bomb",
-        spriteClass: "fart-bomb",
-        desc: "Releases a hazardous visual blast cloud that knocks nearby tag challengers backwards, buying valuable escape seconds."
-      },
-      potion: {
-        title: "Untaggable Potion",
-        spriteClass: "potion",
-        desc: "An exotic glowing formula giving full cosmetic shielding aura properties, making you totally untaggable for a short span."
-      }
-    };
-
-    const slots = document.querySelectorAll('.inv-slot:not(.empty)');
-    const inspectArt = document.getElementById('inspect-art');
-    const inspectTitle = document.getElementById('inspect-title');
-    const inspectDesc = document.getElementById('inspect-desc');
-
-    slots.forEach(slot => {
-      slot.addEventListener('click', () => {
-        // Remove active outline class from old items
-        slots.forEach(s => s.classList.remove('active'));
-        
-        // Target requested item data definitions
-        slot.classList.add('active');
-        const itemId = slot.getAttribute('data-item');
-        const item = itemData[itemId];
-        
-        if (item) {
-          // Sync inspector displays
-          inspectTitle.textContent = item.title;
-          inspectDesc.textContent = item.desc;
+    <main class="shop-layout">
+      
+      <section class="shop-section">
+        <h2 class="section-heading">MY ITEMS & BOOSTS</h2>
+        <div class="item-grid">
           
-          // Re-class item display offset coordinates
-          inspectArt.className = `sprite-inspect ${item.spriteClass}`;
-        }
-      });
-    });
-  </script>
+          <div class="item-card">
+            <div class="card-header">Energy Bar</div>
+            <div class="card-visual">
+              <div class="sprite-art bar"></div>
+            </div>
+            <div class="card-stats">Quantity Owned</div>
+            <button class="buy-btn equipped" id="inv-energy_bar">x0</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">Rotten Tomatoes</div>
+            <div class="card-visual">
+              <div class="sprite-art tomato"></div>
+            </div>
+            <div class="card-stats">Quantity Owned</div>
+            <button class="buy-btn equipped" id="inv-tomatoes">x0</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">Gummy Bears</div>
+            <div class="card-visual">
+              <div class="sprite-art bear"></div>
+            </div>
+            <div class="card-stats">Quantity Owned</div>
+            <button class="buy-btn equipped" id="inv-gummy_bears">x0</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">Fart Bomb</div>
+            <div class="card-visual">
+              <div class="sprite-art fart-bomb"></div>
+            </div>
+            <div class="card-stats">Quantity Owned</div>
+            <button class="buy-btn equipped" id="inv-fart_bomb">x0</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">Untagable Potion</div>
+            <div class="card-visual">
+              <div class="sprite-art potion"></div>
+            </div>
+            <div class="card-stats">Quantity Owned</div>
+            <button class="buy-btn equipped" id="inv-potion">x0</button>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="shop-section">
+        <h2 class="section-heading">MY PLAYER SKINS</h2>
+        <div class="item-grid">
+          
+          <div class="item-card">
+            <div class="card-header">Default Red</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🔴</div>
+            </div>
+            <div class="card-stats">Status</div>
+            <button class="buy-btn" onclick="buyItem('skin_default_red', 0)">LOADING...</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">Nugget</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🍗</div>
+            </div>
+            <div class="card-stats">Status</div>
+            <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">LOADING...</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">George the Monkey</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🐒</div>
+            </div>
+            <div class="card-stats">Status</div>
+            <button class="buy-btn" onclick="buyItem('skin_george', 25)">LOADING...</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">John Pork</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🐷</div>
+            </div>
+            <div class="card-stats">Status</div>
+            <button class="buy-btn" onclick="buyItem('skin_john', 50)">LOADING...</button>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="shop-section">
+        <h2 class="section-heading">MY BOT SKINS</h2>
+        <div class="item-grid">
+          
+          <div class="item-card">
+            <div class="card-header">Default Blue</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🔵</div>
+            </div>
+            <div class="card-stats">Status</div>
+            <button class="buy-btn" onclick="buyItem('bot_default_blue', 0)">LOADING...</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">Food Stealer</div>
+            <div class="card-visual">
+              <div class="placeholder-art">🦝</div>
+            </div>
+            <div class="card-stats">Status</div>
+            <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">LOADING...</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">Mr. McRae</div>
+            <div class="card-visual">
+              <div class="placeholder-art">👨‍🏫</div>
+            </div>
+            <div class="card-stats">Status</div>
+            <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">LOADING...</button>
+          </div>
+
+          <div class="item-card">
+            <div class="card-header">Evil Nugget</div>
+            <div class="card-visual">
+              <div class="placeholder-art">😈</div>
+            </div>
+            <div class="card-stats">Status</div>
+            <button class="buy-btn" onclick="buyItem('bot_evil', 45)">LOADING...</button>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="inventory.js"></script>
 </body>
 </html>
