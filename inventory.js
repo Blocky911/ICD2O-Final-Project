@@ -1,4 +1,4 @@
-// --- 1. LOAD DATA (SHARED FROM THE SHOP) ---
+// --- 1. LOAD SHARED GAME DATA ---
 let playerCoins = parseInt(localStorage.getItem('playerCoins')) || 100;
 
 let playerInventory = JSON.parse(localStorage.getItem('playerInventory')) || {
@@ -17,19 +17,18 @@ let equippedItems = JSON.parse(localStorage.getItem('equippedItems')) || {
     botSkin: 'bot_default_blue'
 };
 
-// --- 2. SAVE INVENTORY SELECTIONS ---
 function saveInventoryData() {
     localStorage.setItem('playerInventory', JSON.stringify(playerInventory));
     localStorage.setItem('equippedItems', JSON.stringify(equippedItems));
 }
 
-// --- 3. UPDATE INVENTORY UI ---
+// --- 2. UPDATE SCREEN STATE ---
 function updateInventoryUI() {
-    // Sync coins display
+    // Coins indicator
     const coinDisplay = document.getElementById('player-coins');
     if (coinDisplay) coinDisplay.innerText = playerCoins;
 
-    // Sync item quantities on your inventory cards (targets id="inv-energy_bar", etc.)
+    // Item counters text update
     for (const itemId in playerInventory.items) {
         const itemTextElement = document.getElementById(`inv-${itemId}`);
         if (itemTextElement) {
@@ -37,9 +36,9 @@ function updateInventoryUI() {
         }
     }
 
-    // Handle button text switching (EQUIPPED / EQUIP / LOCKED)
-    const buyButtons = document.querySelectorAll('.buy-btn');
-    buyButtons.forEach(button => {
+    // Process selection buttons for skins
+    const actionButtons = document.querySelectorAll('.buy-btn');
+    actionButtons.forEach(button => {
         const clickAttr = button.getAttribute('onclick');
         if (!clickAttr) return;
 
@@ -56,38 +55,35 @@ function updateInventoryUI() {
             if (isEquipped) {
                 button.innerText = "EQUIPPED";
                 button.className = "buy-btn equipped";
-                button.onclick = null; // Do nothing if already active
+                button.onclick = null; 
             } else if (isOwned) {
                 button.innerText = "EQUIP";
                 button.className = "buy-btn owned";
-                // Changes the click action to run the equip function instead of buying
                 button.onclick = function() { equipSkin(id); };
             } else {
                 button.innerText = "LOCKED";
                 button.className = "buy-btn locked";
-                button.onclick = function() { alert("🔒 Unlock this skin in the shop first!"); };
+                button.onclick = function() { alert("🔒 Unlock this customization in the Shop."); };
             }
         }
     });
 }
 
-// --- 4. EQUIP SELECTION LOGIC ---
+// --- 3. EQUIP CONFIGURATION ---
 function equipSkin(id) {
     if (!playerInventory.skins.includes(id)) return;
 
     if (id.startsWith('skin_')) {
         equippedItems.playerSkin = id;
-        alert("👤 Character skin equipped!");
     } else if (id.startsWith('bot_')) {
         equippedItems.botSkin = id;
-        alert("🤖 Bot skin equipped!");
     }
 
     saveInventoryData();
-    updateInventoryUI(); // Refreshes text states smoothly
+    updateInventoryUI();
 }
 
-// Run when inventory page opens
+// Run on view load
 window.onload = function() {
     updateInventoryUI();
 };

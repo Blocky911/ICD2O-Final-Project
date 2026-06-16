@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tag Royale - Inventory</title>
+  <title>Tag Royale - My Inventory</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -13,157 +13,82 @@
 
   <div class="bg-grid"></div>
 
-  <div class="shop-container">
+  <div class="inventory-container">
     
-    <header class="shop-nav">
+    <header class="inventory-nav">
       <a href="index.html" class="back-btn">← BACK</a>
-      <h1 class="shop-title">INVENTORY</h1>
-      <div class="currency-display">
-        <div class="currency-box">
-          <span class="coin-icon">🪙</span> <span id="player-coins">100</span>
-        </div>
+      <h1 class="inventory-title">MY GEAR</h1>
+      <div class="balance-display">
+        🪙 <span id="player-coins">100</span>
       </div>
     </header>
 
-    <main class="shop-layout">
+    <main class="inventory-content">
       
-      <section class="shop-section">
-        <h2 class="section-heading">MY ITEMS & BOOSTS</h2>
-        <div class="item-grid">
+      <div class="inventory-section">
+        <h2 class="sub-heading">Supplies</h2>
+        <ul class="supplies-list">
+          <li><span>Energy Bar</span> <strong id="inv-energy_bar">x0</strong></li>
+          <li><span>Rotten Tomatoes</span> <strong id="inv-tomatoes">x0</strong></li>
+          <li><span>Gummy Bears</span> <strong id="inv-gummy_bears">x0</strong></li>
+          <li><span>Fart Bomb</span> <strong id="inv-fart_bomb">x0</strong></li>
+          <li><span>Untagable Potion</span> <strong id="inv-potion">x0</strong></li>
+        </ul>
+      </div>
+
+      <div class="inventory-section">
+        <h2 class="sub-heading">Character Outfits</h2>
+        <div class="skin-vault">
           
-          <div class="item-card">
-            <div class="card-header">Energy Bar</div>
-            <div class="card-visual">
-              <div class="sprite-art bar"></div>
-            </div>
-            <div class="card-stats">Quantity Owned</div>
-            <button class="buy-btn equipped" id="inv-energy_bar">x0</button>
+          <div class="vault-slot">
+            <span class="slot-art">🔴</span>
+            <button class="buy-btn" onclick="buyItem('skin_default_red', 0)">Loading...</button>
           </div>
 
-          <div class="item-card">
-            <div class="card-header">Rotten Tomatoes</div>
-            <div class="card-visual">
-              <div class="sprite-art tomato"></div>
-            </div>
-            <div class="card-stats">Quantity Owned</div>
-            <button class="buy-btn equipped" id="inv-tomatoes">x0</button>
+          <div class="vault-slot">
+            <span class="slot-art">🍗</span>
+            <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">Loading...</button>
           </div>
 
-          <div class="item-card">
-            <div class="card-header">Gummy Bears</div>
-            <div class="card-visual">
-              <div class="sprite-art bear"></div>
-            </div>
-            <div class="card-stats">Quantity Owned</div>
-            <button class="buy-btn equipped" id="inv-gummy_bears">x0</button>
+          <div class="vault-slot">
+            <span class="slot-art">🐒</span>
+            <button class="buy-btn" onclick="buyItem('skin_george', 25)">Loading...</button>
           </div>
 
-          <div class="item-card">
-            <div class="card-header">Fart Bomb</div>
-            <div class="card-visual">
-              <div class="sprite-art fart-bomb"></div>
-            </div>
-            <div class="card-stats">Quantity Owned</div>
-            <button class="buy-btn equipped" id="inv-fart_bomb">x0</button>
-          </div>
-
-          <div class="item-card">
-            <div class="card-header">Untagable Potion</div>
-            <div class="card-visual">
-              <div class="sprite-art potion"></div>
-            </div>
-            <div class="card-stats">Quantity Owned</div>
-            <button class="buy-btn equipped" id="inv-potion">x0</button>
+          <div class="vault-slot">
+            <span class="slot-art">🐷</span>
+            <button class="buy-btn" onclick="buyItem('skin_john', 50)">Loading...</button>
           </div>
 
         </div>
-      </section>
+      </div>
 
-      <section class="shop-section">
-        <h2 class="section-heading">MY PLAYER SKINS</h2>
-        <div class="item-grid">
+      <div class="inventory-section">
+        <h2 class="sub-heading">Bot Models</h2>
+        <div class="skin-vault">
           
-          <div class="item-card">
-            <div class="card-header">Default Red</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🔴</div>
-            </div>
-            <div class="card-stats">Status</div>
-            <button class="buy-btn" onclick="buyItem('skin_default_red', 0)">LOADING...</button>
+          <div class="vault-slot">
+            <span class="slot-art">🔵</span>
+            <button class="buy-btn" onclick="buyItem('bot_default_blue', 0)">Loading...</button>
           </div>
 
-          <div class="item-card">
-            <div class="card-header">Nugget</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🍗</div>
-            </div>
-            <div class="card-stats">Status</div>
-            <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">LOADING...</button>
+          <div class="vault-slot">
+            <span class="slot-art">🦝</span>
+            <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">Loading...</button>
           </div>
 
-          <div class="item-card">
-            <div class="card-header">George the Monkey</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🐒</div>
-            </div>
-            <div class="card-stats">Status</div>
-            <button class="buy-btn" onclick="buyItem('skin_george', 25)">LOADING...</button>
+          <div class="vault-slot">
+            <span class="slot-art">👨‍🏫</span>
+            <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">Loading...</button>
           </div>
 
-          <div class="item-card">
-            <div class="card-header">John Pork</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🐷</div>
-            </div>
-            <div class="card-stats">Status</div>
-            <button class="buy-btn" onclick="buyItem('skin_john', 50)">LOADING...</button>
+          <div class="vault-slot">
+            <span class="slot-art">😈</span>
+            <button class="buy-btn" onclick="buyItem('bot_evil', 45)">Loading...</button>
           </div>
 
         </div>
-      </section>
-
-      <section class="shop-section">
-        <h2 class="section-heading">MY BOT SKINS</h2>
-        <div class="item-grid">
-          
-          <div class="item-card">
-            <div class="card-header">Default Blue</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🔵</div>
-            </div>
-            <div class="card-stats">Status</div>
-            <button class="buy-btn" onclick="buyItem('bot_default_blue', 0)">LOADING...</button>
-          </div>
-
-          <div class="item-card">
-            <div class="card-header">Food Stealer</div>
-            <div class="card-visual">
-              <div class="placeholder-art">🦝</div>
-            </div>
-            <div class="card-stats">Status</div>
-            <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">LOADING...</button>
-          </div>
-
-          <div class="item-card">
-            <div class="card-header">Mr. McRae</div>
-            <div class="card-visual">
-              <div class="placeholder-art">👨‍🏫</div>
-            </div>
-            <div class="card-stats">Status</div>
-            <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">LOADING...</button>
-          </div>
-
-          <div class="item-card">
-            <div class="card-header">Evil Nugget</div>
-            <div class="card-visual">
-              <div class="placeholder-art">😈</div>
-            </div>
-            <div class="card-stats">Status</div>
-            <button class="buy-btn" onclick="buyItem('bot_evil', 45)">LOADING...</button>
-          </div>
-
-        </div>
-      </section>
+      </div>
 
     </main>
   </div>
