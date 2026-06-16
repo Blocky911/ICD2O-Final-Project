@@ -1,11 +1,6 @@
-// ==========================================
-// 1. INITIALIZE DATA & STORAGE
-// ==========================================
+// --- 1. LOAD SAVED DATA ---
+let playerCoins = parseInt(localStorage.getItem('playerCoins')) || 100;
 
-// Load player coins (Default to 100 if new player)
-let playerCoins = parseInt(localStorage.getItem('playerCoins')) || 100; 
-
-// Load inventory (Consumables amounts and unlocked skin IDs)
 let playerInventory = JSON.parse(localStorage.getItem('playerInventory')) || {
     items: {
         energy_bar: 0,
@@ -14,60 +9,36 @@ let playerInventory = JSON.parse(localStorage.getItem('playerInventory')) || {
         fart_bomb: 0,
         potion: 0
     },
-    skins: ['skin_default_red', 'bot_default_blue'] // Starter skins unlocked by default
+    skins: ['skin_default_red', 'bot_default_blue'] // Starter skins
 };
 
-// Load currently active/equipped skins
 let equippedItems = JSON.parse(localStorage.getItem('equippedItems')) || {
     playerSkin: 'skin_default_red',
     botSkin: 'bot_default_blue'
 };
 
-// Save current state back to the browser storage
+// --- 2. SAVE DATA FUNCTION ---
 function saveGameData() {
     localStorage.setItem('playerCoins', playerCoins);
     localStorage.setItem('playerInventory', JSON.stringify(playerInventory));
     localStorage.setItem('equippedItems', JSON.stringify(equippedItems));
 }
 
-// ==========================================
-// 2. DYNAMIC UI UPDATING
-// ==========================================
-
-function updateUI() {
-    // 1. Update general coin balance on whatever page the user is viewing
+// --- 3. UPDATE SHOP UI ---
+function updateShopUI() {
+    // Update coin display
     const coinDisplay = document.getElementById('player-coins');
-    if (coinDisplay) {
-        coinDisplay.innerText = playerCoins;
-    }
+    if (coinDisplay) coinDisplay.innerText = playerCoins;
 
-    // 2. INVENTORY PAGE ONLY: Update item counts text if elements exist
-    // Loops through item IDs (energy_bar, tomatoes, etc.) and looks for a matching HTML element
-    for (const itemId in playerInventory.items) {
-        const itemElement = document.getElementById(`inv-${itemId}`);
-        if (itemElement) {
-            itemElement.innerText = `x${playerInventory.items[itemId]}`;
-        }
-    }
-
-    // 3. SHOP & INVENTORY PAGES: Update Skin Button States (Equipped / Equip / Buy)
-    // This looks for buttons across your grids to dynamically change their text
-    updateSkinButtons();
-}
-
-function updateSkinButtons() {
-    // Find all item cards or purchase buttons on the page
+    // Update buttons dynamically based on ownership
     const buyButtons = document.querySelectorAll('.buy-btn');
-    
     buyButtons.forEach(button => {
-        // Find the 'onclick' attribute to see what item ID this button belongs to
         const clickAttr = button.getAttribute('onclick');
         if (!clickAttr) return;
 
-        // Parse out the item ID from the onclick function text (e.g., "buyItem('skin_nugget', 15)")
         const match = clickAttr.match(/['"]([^'"]+)['"]/);
         if (!match) return;
-        
+
         const id = match[1];
         const isSkin = id.startsWith('skin_') || id.startsWith('bot_');
 
@@ -77,86 +48,50 @@ function updateSkinButtons() {
 
             if (isEquipped) {
                 button.innerText = "EQUIPPED";
-                button.className = "buy-btn equipped"; // Adds equipped styling class
-                // Change onclick behavior temporarily to do nothing if already equipped
-                button.setAttribute('data-old-onclick', clickAttr);
-                button.onclick = null; 
+                button.className = "buy-btn equipped";
             } else if (isOwned) {
-                button.innerText = "EQUIP";
-                button.className = "buy-btn owned"; // Adds owned styling class
-                // Override the purchase function and allow them to equip it directly
-                button.onclick = function() { equipSkin(id); };
+                button.innerText = "OWNED";
+                button.className = "buy-btn owned";
             }
         }
     });
 }
 
-// ==========================================
-// 3. ECONOMY & CORE FUNCTIONS
-// ==========================================
-
-// Main Function called when clicking a store item
+// --- 4. BUY CORE LOGIC ---
 function buyItem(id, price) {
-    // Verify affordability
+    const isSkin = id.startsWith('skin_') || id.startsWith('bot_');
+
+    // If it's a skin they already bought, don't charge them again
+    if (isSkin && playerInventory.skins.includes(id)) {
+        alert("You already own this skin! Check your inventory to equip it.");
+        return;
+    }
+
+    // Check if player can afford it
     if (playerCoins < price) {
         alert("❌ Not enough coins!");
         return;
     }
 
-    const isSkin = id.startsWith('skin_') || id.startsWith('bot_');
+    // Deduct coins
+    playerCoins -= price;
 
     if (isSkin) {
-        // Safety check if they already own it
-        if (playerInventory.skins.includes(id)) {
-            equipSkin(id);
-            return;
-        }
-        
-        // Process Skin Purchase
-        playerCoins -= price;
+        // Add skin permanently
         playerInventory.skins.push(id);
-        saveGameData();
-        alert(`🎉 Successfully purchased skin!`);
-        equipSkin(id); // Instantly auto-equip upon buying
-        
+        alert("🎉 Skin purchased! It is now available in your Inventory.");
     } else {
-        // Process Consumable Item Purchase
-        playerCoins -= price;
+        // Add consumable item count
         playerInventory.items[id] = (playerInventory.items[id] || 0) + 1;
-        saveGameData();
-        alert(`🛒 Item added to your inventory! Total: ${playerInventory.items[id]}`);
+        alert(`🛒 Item purchased! Sent to your Inventory (Total: ${playerInventory.items[id]}).`);
     }
 
-    // Refresh UI text and buttons everywhere
-    updateUI();
-}
-
-// Function to handle switching equipped characters
-function equipSkin(id) {
-    // Determine if it belongs to the playable character or the opponent bot
-    if (id.startsWith('skin_')) {
-        if (playerInventory.skins.includes(id)) {
-            equippedItems.playerSkin = id;
-            alert("👤 Player skin equipped!");
-        }
-    } else if (id.startsWith('bot_')) {
-        if (playerInventory.skins.includes(id)) {
-            equippedItems.botSkin = id;
-            alert("🤖 Bot skin equipped!");
-        }
-    }
-    
+    // Save and refresh UI
     saveGameData();
-    
-    // Hard reload button click states to make sure visual text updates smoothly
-    window.location.reload(); 
+    updateShopUI();
 }
 
-// ==========================================
-// 4. PAGE INITIALIZATION
-// ==========================================
-
-// Run every time a page loading this script finishes rendering
+// Run when shop page opens
 window.onload = function() {
-    updateUI();
+    updateShopUI();
 };
