@@ -1328,11 +1328,10 @@ body, html {
    11. SPRITESHEET POSITIONING MAP SYSTEM (UNIFIED COGNIZANCE)
    ========================================================================== */
 .sprite-art {
-  display: block;                /* FIX: Prevents empty divs from collapsing */
-  width: 48px;                   /* FIX: Standard grid element size bounding box width */
-  height: 48px;                  /* FIX: Standard grid element size bounding box height */
+  width: 48px;
+  height: 48px;
   background-repeat: no-repeat;
-  background-size: 144px 144px;  /* FIX: Explicit layout bounds for 3x3 grid (48px * 3) */
+  background-size: 144px 144px; /* Uniform 3x3 layout coordinate grid bounding scale */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   pointer-events: none;
@@ -1341,32 +1340,57 @@ body, html {
 
 /* Shop vs Inventory asset source fallback handler path binding */
 .shop-container .sprite-art {
-  background-image: url('images/Tag Royal item accesories.png'); /* FIX: Includes image folder path mapping */
+  background-image: url('images/item_spritesheet.png');
 }
 .inventory-outer .sprite-art {
   background-image: url('images/item_spritesheet.png');
 }
 
-/* Standard Mini Core Asset Sheet Coordinates (48px Grid Intervals) */
+/* Standard Mini Core Asset Sheet Coordinates */
 .sprite-art.bar        { background-position: 0px 0px; }
 .sprite-art.tomato     { background-position: -48px 0px; }
 .sprite-art.bear       { background-position: -96px 0px; }
 .sprite-art.fart-bomb  { background-position: -96px -48px; }
 .sprite-art.potion     { background-position: 0px -96px; }
 
+/* --------------------------------------------------------------------------
+   NEW: CHARACTER & BOT SKINS SPRITESHEET MATRIX
+   Source image scale: 256px x 256px. Rows are 32px high, frames are 32px wide.
+   -------------------------------------------------------------------------- */
+.skin-art {
+  width: 32px;
+  height: 32px;
+  background-image: url('images/game_skins.png');
+  background-repeat: no-repeat;
+  background-size: 256px 256px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  transform: scale(1.5); /* Scale up sprites slightly inside shop boxes */
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Alignment matrix mapping directly down row rows (front stances are column index 0) */
+.skin-art.default-blue { background-position: 0px 0px; }    /* Row 1 */
+.skin-art.default-red  { background-position: 0px -32px; }  /* Row 2 */
+.skin-art.nugget       { background-position: 0px -64px; }  /* Row 3 */
+.skin-art.evil-nugget  { background-position: 0px -96px; }  /* Row 4 */
+.skin-art.george       { background-position: 0px -128px; } /* Row 5 */
+.skin-art.mcrae        { background-position: 0px -160px; } /* Row 6 */
+.skin-art.john-pork    { background-position: 0px -192px; } /* Row 7 */
+.skin-art.stealer      { background-position: 0px -224px; } /* Row 8 */
+
 /* Enlarged Inspector Panels Slices (96px display size) */
 .sprite-inspect {
-  display: block;                /* FIX: Prevents empty canvas elements from collapsing */
-  width: 96px;                   /* FIX: Doubled structural size scaling configuration bounding width */
-  height: 96px;                  /* FIX: Doubled structural size scaling configuration bounding height */
+  width: 96px;
+  height: 96px;
   background-image: url('images/item_spritesheet.png');
   background-repeat: no-repeat;
-  background-size: 288px 288px;  /* FIX: Proportional layout system grid scaling bounds (96px * 3) */
+  background-size: 288px 288px; /* Doubled scale map matrix configuration */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
 
-/* Inspector Coordinates (96px Grid Multipliers) */
 .sprite-inspect.bar        { background-position: 0px 0px; }
 .sprite-inspect.tomato     { background-position: -96px 0px; }
 .sprite-inspect.bear       { background-position: -192px 0px; }
