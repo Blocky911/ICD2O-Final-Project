@@ -61,6 +61,7 @@ function populateInventoryGrid() {
 
         slotDiv.innerHTML = `
             <div class="box-art">${itemInfo.art}</div>
+            <div class="box-name">${itemInfo.name}</div>
             <span class="box-badge">${overlayText}</span>
         `;
         

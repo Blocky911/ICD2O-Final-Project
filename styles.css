@@ -1108,20 +1108,28 @@ body, html {
 
 
 /* ==========================================================================
-   10. INVENTORY STORAGE VAULT GRID & INSPECTION SIDEBAR
+   10. INVENTORY STORAGE VAULT GRID & INSPECTION SIDEBAR (FIXED)
    ========================================================================== */
-.inventory-outer {
+.inventory-container {
   position: relative;
   z-index: 2;
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+  padding: 2rem 2rem 4rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
-.inventory-main-title {
+.inventory-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.inventory-title {
   font-family: var(--font-display);
   font-size: 2rem;
   letter-spacing: 0.12em;
@@ -1130,79 +1138,100 @@ body, html {
   text-transform: uppercase;
 }
 
-.inventory-container {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.inv-nav {
-  display: flex;
-  gap: 1rem;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 1rem;
-}
-
-.inv-nav-btn {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  text-decoration: none;
-  text-transform: uppercase;
-  border: 1px solid var(--border);
-  padding: 0.35rem 1.2rem;
-  border-radius: 2px;
-  transition: color 0.15s, border-color 0.15s;
-}
-
-.inv-nav-btn:hover {
-  color: var(--text);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.inv-content {
-  display: flex;
-  gap: 2rem;
-  align-items: stretch;
-}
-
-.inv-grid-wrapper {
-  flex: 1;
-  display: flex;
-  gap: 1rem;
-}
-
-.inv-grid {
-  flex: 1;
+.inventory-layout {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* Item Grid Container */
+.grid-container {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1.25rem;
+}
+
+.scroll-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 0.75rem;
-  max-height: 400px;
+  max-height: 450px;
   overflow-y: auto;
   padding-right: 0.5rem;
 }
 
-.inv-grid::-webkit-scrollbar {
+.grid-item-box {
+  position: relative;
+  min-height: 140px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s, background-color 0.15s;
+}
+
+.grid-item-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.grid-item-box.active-selection {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.08);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.25);
+}
+
+.box-art {
+  font-size: 2.2rem;
+}
+
+.box-name {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.box-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.2rem 0.45rem;
+}
+
+/* Custom Scrollbar for Grid */
+.scroll-grid::-webkit-scrollbar {
   width: 4px;
 }
-.inv-grid::-webkit-scrollbar-track {
+.scroll-grid::-webkit-scrollbar-track {
   background: transparent;
 }
-.inv-grid::-webkit-scrollbar-thumb {
+.scroll-grid::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 2px;
 }
-.inv-grid::-webkit-scrollbar-thumb:hover {
+.scroll-grid::-webkit-scrollbar-thumb:hover {
   background: var(--gold-dim);
 }
 
-/* Vault Grid Inventory Slots */
-.inv-slot {
+/* Individual Inventory Items/Slots */
+.inventory-item {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--border);
   border-radius: 2px;
@@ -1212,71 +1241,32 @@ body, html {
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
-  gap: 0.5rem;
   cursor: pointer;
-  position: relative;
   transition: background 0.15s, border-color 0.15s;
 }
 
-.inv-slot:hover:not(.empty) {
+.inventory-item:hover {
   background: rgba(255, 255, 255, 0.03);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-.inv-slot.active {
+.inventory-item.active {
   border-color: var(--gold);
   background: rgba(212, 175, 55, 0.05);
 }
 
-.inv-slot.empty {
-  cursor: default;
-  opacity: 0.4;
-  background: rgba(0, 0, 0, 0.15);
-}
-
-.slot-name {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: center;
-  font-weight: 500;
-  pointer-events: none;
-}
-
-.inv-slot.active .slot-name {
-  color: var(--gold);
-}
-
-/* Vertical Decorative Accent Frame Track Rails */
-.inv-scroll-accent {
-  width: 4px;
-  background: rgba(255, 255, 255, 0.03);
+/* Sidebar Preview Panel */
+.preview-panel {
+  border: 1px solid var(--border);
   border-radius: 2px;
-  position: relative;
-}
-
-.accent-thumb {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 25%;
-  background: var(--border);
-  border-radius: 2px;
-}
-
-/* Sidebar Inspector Panel Components */
-.inv-inspect {
-  width: 280px;
-  border-left: 1px solid var(--border);
-  padding-left: 2rem;
+  padding: 1.5rem;
+  background: var(--surface);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.inspect-visual-box {
+.big-item-visual {
   width: 100%;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--border);
@@ -1290,7 +1280,8 @@ body, html {
   position: relative;
 }
 
-.inspect-visual-box::before {
+/* Blueprint decorative cross line graphics */
+.big-item-visual::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -1301,26 +1292,76 @@ body, html {
   pointer-events: none;
 }
 
-.inspect-title-tag {
+.preview-art {
+  font-size: 3.5rem;
+  z-index: 1;
+}
+
+.preview-title {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   letter-spacing: 0.08em;
   color: #fff;
   text-transform: uppercase;
+  margin: 0;
+  z-index: 1;
 }
 
-.inspect-desc-box {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 1rem;
+.description-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.desc-text {
+#preview-desc {
   margin: 0;
   font-size: 0.85rem;
   line-height: 1.5;
   color: var(--text-muted);
+}
+
+.preview-stats {
+  font-size: 0.8rem;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* Action Equipping Buttons */
+.description-box button {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  padding: 0.6rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  width: 100%;
+}
+
+.action-btn-enabled {
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  color: #060608;
+}
+
+.action-btn-enabled:hover {
+  background: #ffdf4d;
+  border-color: #ffdf4d;
+  box-shadow: 0 0 10px rgba(214, 175, 55, 0.4);
+}
+
+.action-btn-disabled {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  cursor: not-allowed !important;
+}
+
+/* Mobile responsive handling */
+@media (max-width: 850px) {
+  .inventory-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 
