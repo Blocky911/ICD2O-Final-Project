@@ -4,6 +4,299 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tag Royale</title>
+    <style>
+        /* ==========================================================
+           1. CORE VIEWPORT AND LAYOUT MANAGEMENT
+           ========================================================== */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0b0f19;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #viewport {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background-color: #11141a;
+        }
+
+        /* ==========================================================
+           2. MAP & SURFACE MATRICES
+           ========================================================== */
+        #main-map {
+            width: 5000px;
+            height: 5000px;
+            position: relative;
+            background-color: #4c8c13;
+            background-image: 
+                radial-gradient(#597327 18%, transparent 19%),
+                radial-gradient(#33540a 15%, transparent 16%),
+                linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.02) 75%),
+                linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.02) 75%);
+            background-size: 80px 80px, 40px 40px, 120px 120px, 120px 120px;
+            background-position: 0 0, 20px 20px, 0 0, 60px 60px;
+        }
+
+        /* ==========================================================
+           3. OBSTACLES & NATURE DECORATIONS
+           ========================================================== */
+        .border-tree {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            background-image: radial-gradient(circle at 40% 40%, #366623 20%, #224515 60%, #11260a 100%);
+            border-radius: 50%;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.55), inset -5px -5px 15px rgba(0,0,0,0.4);
+            z-index: 12;
+        }
+
+        .map-tree {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background-image: radial-gradient(circle at 35% 35%, #478c2b 15%, #2a5918 55%, #142e0b 100%);
+            border-radius: 50%;
+            box-shadow: 0 22px 30px rgba(0,0,0,0.6), inset -8px -8px 20px rgba(0,0,0,0.5);
+            z-index: 12;
+        }
+
+        .mud-patch {
+            position: absolute;
+            background-color: #523713;
+            background-image: radial-gradient(#3a250a 25%, transparent 30%);
+            background-size: 24px 24px;
+            border-radius: 42% 58% 35% 65%;
+            opacity: 0.92;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.75), 0 4px 10px rgba(0,0,0,0.15);
+            z-index: 2;
+        }
+
+        .rock {
+            position: absolute;
+            background-color: #718093;
+            background-image: 
+                linear-gradient(45deg, #4b5666 25%, transparent 25%), 
+                linear-gradient(-45deg, #3d4654 25%, transparent 25%),
+                linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            border-radius: 30px;
+            border: 6px solid #434e5a;
+            box-shadow: 8px 16px 24px rgba(0,0,0,0.4), inset -4px -4px 10px rgba(0,0,0,0.3);
+            z-index: 5;
+        }
+
+        .cut-hedge {
+            position: absolute;
+            background-color: #1b3d1d;
+            background-image: 
+                radial-gradient(#275429 20%, transparent 25%),
+                radial-gradient(#143016 15%, transparent 20%),
+                linear-gradient(90deg, rgba(0,0,0,0.15) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.25) 100%);
+            background-size: 20px 20px, 14px 14px, 100% 100%;
+            border: 7px solid #0a1c0b;
+            border-radius: 12px;
+            box-shadow: 0 18px 32px rgba(0,0,0,0.55), inset 0 0 25px rgba(0,0,0,0.7);
+            z-index: 9;
+            box-sizing: border-box;
+        }
+
+        /* ==========================================================
+           4. L-SHAPED HOUSE COMPONENT ARCHITECTURE
+           ========================================================== */
+        .image-house {
+            position: absolute;
+            left: 2100px;
+            top: 1700px;
+            width: 1200px;
+            height: 1200px;
+            z-index: 6;
+        }
+
+        .house-drop-shadow {
+            position: absolute;
+            left: 55px;
+            top: -35px;
+            width: 950px;
+            height: 950px;
+            background-color: rgba(0,0,0,0.42);
+            filter: blur(16px);
+            z-index: 1;
+            pointer-events: none;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
+        }
+
+        .house-yellow-deck {
+            position: absolute;
+            left: 50px;
+            top: 50px;
+            width: 850px;
+            height: 850px;
+            background-color: #cfc25d;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(0,0,0,0.06) 18px, rgba(0,0,0,0.06) 21px);
+            border: 11px solid #141414;
+            box-sizing: border-box;
+            z-index: 2;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 50%, 50% 100%, 0% 100%);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
+        }
+
+        .deck-fixture {
+            position: absolute;
+            width: 48px;
+            height: 64px;
+            background-image: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+            border: 7px solid #161616;
+            border-radius: 6px;
+            box-shadow: inset 0 5px 0 rgba(255,255,255,0.6), 0 8px 14px rgba(0,0,0,0.3);
+            z-index: 3;
+        }
+
+        .fx1 { left: 450px; top: 550px; }
+        .fx2 { left: 450px; top: 750px; }
+        .fx3 { left: 750px; top: 450px; }
+
+        .house-roof-body {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 800px;
+            height: 800px;
+            background-color: #b87151;
+            background-image: 
+                linear-gradient(0deg, rgba(0,0,0,0.1) 50%, transparent 50%),
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.04) 10px, rgba(0,0,0,0.04) 13px);
+            background-size: 100% 40px, 100% 100%;
+            border: 20px solid #181818;
+            box-sizing: border-box;
+            z-index: 4;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 45%, 45% 45%, 45% 100%, 0% 100%);
+        }
+
+        .roof-ridge-line {
+            position: absolute;
+            background-color: #1c1c1c;
+            z-index: 5;
+        }
+
+        .ridge-long-v { left: 340px; top: 0; width: 22px; height: 800px; }
+        .ridge-short-h { left: 340px; top: 340px; width: 460px; height: 22px; }
+
+        .ridge-diagonal {
+            position: absolute;
+            width: 450px;
+            height: 22px;
+            background-color: #1c1c1c;
+            z-index: 5;
+            transform-origin: left center;
+        }
+
+        .diag1 { left: 0; top: 0; transform: rotate(45deg); }
+        .diag2 { left: 0; top: 800px; transform: rotate(-45deg); }
+        .diag3 { left: 800px; top: 0; transform: rotate(135deg); }
+        .diag4 { left: 350px; top: 350px; transform: rotate(45deg); width: 630px; }
+
+        /* ==========================================================
+           5. SWIMMING POOL LAYERS & FLOATS
+           ========================================================== */
+        .pool {
+            position: absolute;
+            left: 1400px;
+            top: 2500px;
+            width: 500px;
+            height: 350px;
+            background-image: radial-gradient(circle at 50% 30%, #3cd0ff 20%, #1593c2 70%, #0a5b7a 100%);
+            border: 14px solid #dcdde1;
+            border-radius: 24px;
+            box-shadow: inset 0 12px 25px rgba(0,0,0,0.45), 0 12px 24px rgba(0,0,0,0.25);
+            z-index: 3;
+            box-sizing: border-box;
+        }
+
+        .pool-mat {
+            position: absolute;
+            width: 110px;
+            height: 65px;
+            background-image: repeating-linear-gradient(0deg, #fbc531, #fbc531 10px, #e1b12c 10px, #e1b12c 20px);
+            border-radius: 6px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.3);
+            border: 3px solid #b38610;
+            z-index: 4;
+            box-sizing: border-box;
+        }
+
+        .mat1 { left: 30px; top: 140px; }
+        .mat2 { left: 190px; top: 140px; }
+        .mat3 { left: 350px; top: 140px; }
+
+        /* ==========================================================
+           6. CHARACTER MODEL MATRIX CONFIGURATION
+           ========================================================== */
+        .character {
+            position: absolute;
+            left: 1900px; 
+            top: 1900px;
+            width: 120px;
+            height: 120px;
+            z-index: 25;
+            will-change: transform, left, top;
+            background-image: url('images/game_skins.png');
+            background-repeat: no-repeat;
+            background-size: 256px 256px;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .character.skin-default-blue { background-position: 0px 0px; }
+        .character.skin-default-red  { background-position: 0px -32px; }
+        .character.nugget           { background-position: 0px -64px; }
+        .character.evil-nugget      { background-position: 0px -96px; }
+        .character.george           { background-position: 0px -128px; }
+        .character.mcrae            { background-position: 0px -160px; }
+        .character.john-pork        { background-position: 0px -192px; }
+        .character.stealer          { background-position: 0px -224px; }
+
+        .char-body {
+            position: absolute;
+            left: 30px;
+            top: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #e84118;
+            border-radius: 50%;
+            border: 4px solid #c23616;
+            z-index: 3;
+            box-sizing: border-box;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+        }
+
+        .char-head {
+            position: absolute;
+            left: 40px;
+            top: 40px;
+            width: 40px;
+            height: 40px;
+            background-color: #fbc531;
+            border-radius: 50%;
+            border: 4px solid #e1b12c;
+            z-index: 4;
+            box-sizing: border-box;
+        }
+
+        .sleeve-l1 { position: absolute; left: 4px; top: 44px; width: 24px; height: 24px; background-color: #e84118; border: 2px solid #c23616; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+        .hand-l2 { position: absolute; left: -6px; top: 47px; width: 18px; height: 18px; background-color: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+        .sleeve-r1 { position: absolute; right: 4px; top: 44px; width: 24px; height: 24px; background-color: #e84118; border: 2px solid #c23616; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+        .hand-r2 { position: absolute; right: -6px; top: 47px; width: 18px; height: 18px; background-color: #fbc531; border: 2px solid #e1b12c; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+        .leg-l { position: absolute; left: 32px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
+        .leg-r { position: absolute; left: 66px; bottom: 12px; width: 22px; height: 22px; background-color: #353b48; border: 2px solid #2f3640; border-radius: 50%; z-index: 1; box-sizing: border-box; }
+    </style>
 </head>
 <body>
 
@@ -53,189 +346,5 @@
             <div class="rock" style="left: 1350px; top: 3100px; width: 160px; height: 140px;"></div>
 
             <div class="character">
-                <div class="char-head"></div>
-                <div class="char-body"></div>
-                <div class="sleeve-l1"></div>
-                <div class="hand-l2"></div>
-                <div class="sleeve-r1"></div>
-                <div class="hand-r2"></div>
-                <div class="leg-l"></div>
-                <div class="leg-r"></div>
-            </div>
-
-            <div id="tree-container"></div>
-        </div>
-    </div>
-
-    <script>
-        /* ========================================================================
-           8. CORE RUNTIME ENGINE & VECTOR COLLISION CONTROLLER
-           ======================================================================== */
-        const map = document.getElementById('main-map');
-        const viewport = document.getElementById('viewport');
-        const player = document.querySelector('.character');
-        const mudPatches = document.querySelectorAll('.mud-patch');
-        const treeContainer = document.getElementById('tree-container');
-
-        let playerX = 1900, playerY = 1900;
-        const playerSize = 50, playerOffset = 35;
-        let gameActive = false;
-        const NORMAL_SPEED = 8, MUD_SPEED = 3;
-        let currentSpeed = NORMAL_SPEED;
-        const keys = {
-            w: false, a: false, s: false, d: false,
-            ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
-        };
-        let obstacles = [];
-        const mapSize = 5000;
-
-        function populateMapEnvironment() {
-            // Draw map borders using tree barriers
-            for (let i = 0; i < mapSize; i += 100) {
-                createTreeObstacle(i, 0, 'border-tree');
-                createTreeObstacle(i, mapSize - 130, 'border-tree'); 
-                createTreeObstacle(0, i, 'border-tree'); 
-                createTreeObstacle(mapSize - 130, i, 'border-tree');
-            }
-            
-            // CLEANED DOWN TO A BALANCED 120 TREES
-            for (let i = 0; i < 120; i++) {
-                let randX = Math.floor(Math.random() * (mapSize - 450)) + 220;
-                let randY = Math.floor(Math.random() * (mapSize - 450)) + 220;
-
-                // Safety boundaries to prevent trees spawning on top of game pieces
-                const insidePoolZone = (randX > 1200 && randX < 2100 && randY > 2300 && randY < 3050);
-                const insideHouseZone = (randX > 1950 && randX < 3450 && randY > 1550 && randY < 3050);
-                
-                // Top-right hedge quadrant zone safety buffer
-                const insideHedgeZone = (randX > 2500 && randY < 2500);
-                
-                // Spawn buffer around character start location
-                const insideSpawnZone = (randX > 1750 && randX < 2050 && randY > 1750 && randY < 2050);
-
-                if (!insidePoolZone && !insideHouseZone && !insideHedgeZone && !insideSpawnZone) {
-                    createTreeObstacle(randX, randY, 'map-tree');
-                }
-            }
-        }
-
-        function createTreeObstacle(x, y, className) {
-            const tree = document.createElement('div');
-            tree.className = className;
-            tree.style.left = x + 'px';
-            tree.style.top = y + 'px';
-            treeContainer.appendChild(tree);
-            const radius = className === 'border-tree' ? 65 : 75;
-            obstacles.push({ type: 'circle', x: x + radius, y: y + radius, radius: radius - 22 });
-        }
-
-        function initializeObstacleMatrix() {
-            obstacles.push({ type: 'rect', x: 2100, y: 1700, w: 360, h: 800 });
-            obstacles.push({ type: 'rect', x: 2460, y: 1700, w: 440, h: 360 });
-            obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350, isPoolWater: true });
-            
-            // MASTER OBSTACLE MATRIX: SYNCED TOP-RIGHT HEDGES ONLY
-            obstacles.push({ type: 'rect', x: 3500, y: 250,  w: 1250, h: 130 });
-            obstacles.push({ type: 'rect', x: 4620, y: 380,  w: 130,  h: 950 });
-            obstacles.push({ type: 'rect', x: 3850, y: 600,  w: 450,  h: 110 });
-            obstacles.push({ type: 'rect', x: 3500, y: 950,  w: 800,  h: 120 });
-            obstacles.push({ type: 'rect', x: 4200, y: 1200, w: 150,  h: 1100 });
-            obstacles.push({ type: 'rect', x: 3400, y: 1500, w: 500,  h: 140 });
-            obstacles.push({ type: 'rect', x: 3000, y: 1800, w: 150,  h: 900 });
-            obstacles.push({ type: 'rect', x: 2600, y: 200,  w: 700,  h: 140 });
-            obstacles.push({ type: 'rect', x: 2800, y: 500,  w: 140,  h: 600 });
-
-            document.querySelectorAll('.rock').forEach(rock => {
-                obstacles.push({
-                    type: 'rect',
-                    x: parseInt(rock.style.left), y: parseInt(rock.style.top),
-                    w: parseInt(rock.style.width), h: parseInt(rock.style.height)
-                });
-            });
-        }
-
-        window.addEventListener('keydown', (e) => { if (e.key in keys) keys[e.key] = true; });
-        window.addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
-        
-        function checkMudCollision(x, y) {
-            const px = x + 60, py = y + 60;
-            let insideMud = false;
-            mudPatches.forEach(patch => {
-                const mx = parseInt(patch.style.left), my = parseInt(patch.style.top);
-                const mw = parseInt(patch.style.width), mh = parseInt(patch.style.height);
-                if (px >= mx && px <= (mx + mw) && py >= my && py <= (my + mh)) insideMud = true;
-            });
-            return insideMud;
-        }
-
-        function isOverPoolWalkboard(targetX, targetY) {
-            const px = targetX + playerOffset, py = targetY + playerOffset;
-            const pw = playerSize, ph = playerSize;
-            const walkboards = [
-                { x: 1430, y: 2640, w: 110, h: 65 },
-                { x: 1590, y: 2640, w: 110, h: 65 },
-                { x: 1750, y: 2640, w: 110, h: 65 }
-            ];
-            return walkboards.some(board => px < board.x + board.w && px + pw > board.x && py < board.y + board.h && py + ph > board.y);
-        }
-
-        function processEnvironmentIntersection(targetX, targetY) {
-            const px = targetX + playerOffset, py = targetY + playerOffset;
-            const pw = playerSize, ph = playerSize;
-            const pCenterX = px + pw / 2, pCenterY = py + ph / 2;
-            if (px < 130 || px + pw > 4870 || py < 130 || py + ph > 4870) return true;
-            for (let i = 0; i < obstacles.length; i++) {
-                const obs = obstacles[i];
-                if (obs.type === 'rect') {
-                    if (obs.isPoolWater) {
-                        const isOnWalkboard = isOverPoolWalkboard(targetX, targetY);
-                        const isWithinBoardGap = (px >= 1420 && px + pw <= 1860 && py >= 2625 && py + ph <= 2710);
-                        if (isOnWalkboard || isWithinBoardGap) continue;
-                    }
-                    if (px < obs.x + obs.w && px + pw > obs.x && py < obs.y + obs.h && py + ph > obs.y) return true;
-                } else if (obs.type === 'circle') {
-                    const distX = pCenterX - obs.x, distY = pCenterY - obs.y;
-                    if (Math.sqrt(distX * distX + distY * distY) < (pw / 2) + obs.radius) return true;
-                }
-            }
-            return false;
-        }
-
-        function coreExecutionEngine() {
-            if (!gameActive) return;
-            if (checkMudCollision(playerX, playerY)) {
-                currentSpeed = MUD_SPEED;
-                player.style.filter = "sepia(0.6) brightness(0.75)";
-            } else {
-                currentSpeed = NORMAL_SPEED;
-                player.style.filter = "none";
-            }
-
-            let nextX = playerX, nextY = playerY;
-            if (keys.w || keys.ArrowUp) nextY -= currentSpeed;
-            if (keys.s || keys.ArrowDown) nextY += currentSpeed;
-            if (keys.a || keys.ArrowLeft) nextX -= currentSpeed;
-            if (keys.d || keys.ArrowRight) nextX += currentSpeed;
-
-            if (!processEnvironmentIntersection(nextX, playerY)) playerX = nextX;
-            if (!processEnvironmentIntersection(playerX, nextY)) playerY = nextY;
-
-            player.style.left = playerX + 'px';
-            player.style.top = playerY + 'px';
-            viewport.scrollLeft = playerX - (window.innerWidth / 2) + 60;
-            viewport.scrollTop = playerY - (window.innerHeight / 2) + 60;
-
-            requestAnimationFrame(coreExecutionEngine);
-        }
-
-        function startEngineBootstrap() {
-            populateMapEnvironment();
-            initializeObstacleMatrix();
-            gameActive = true;
-            requestAnimationFrame(coreExecutionEngine);
-        }
-
-        startEngineBootstrap();
-    </script>
 </body>
 </html>
