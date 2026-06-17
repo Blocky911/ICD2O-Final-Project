@@ -4,46 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tag Royal(e) - Select Difficulty</title>
-  <link rel="stylesheet" href="difficulty.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <div class="diff-container">
-    
-    <header class="diff-header-box">
-      <h1 class="diff-title">SELECT DIFFICULTY</h1>
-    </header>
+  <div class="scanlines"></div>
+  <div class="bg-grid"></div>
 
-    <main class="diff-layout">
-      
-      <div class="diff-card">
-        <div class="circle-visual">
-          <div class="placeholder-icon">🟢</div>
+  <main class="settings-container">
+
+    <nav class="settings-nav">
+      <a href="index.html" class="back-btn">← BACK</a>
+      <h1 class="settings-title">SELECT DIFFICULTY</h1>
+    </nav>
+
+    <div class="difficulty-layout">
+      <section class="settings-panel difficulty-panel">
+        <div class="difficulty-grid">
+          <div class="diff-card">
+            <div class="circle-visual"><span class="placeholder-icon">🟢</span></div>
+            <button class="diff-btn easy" onclick="selectDifficulty('easy')">EASY</button>
+          </div>
+          <div class="diff-card">
+            <div class="circle-visual"><span class="placeholder-icon">🟡</span></div>
+            <button class="diff-btn medium" onclick="selectDifficulty('medium')">MEDIUM</button>
+          </div>
+          <div class="diff-card">
+            <div class="circle-visual"><span class="placeholder-icon">🔴</span></div>
+            <button class="diff-btn hard" onclick="selectDifficulty('hard')">HARD</button>
+          </div>
         </div>
-        <button class="diff-btn easy" onclick="selectDifficulty('easy')">EASY</button>
-      </div>
+      </section>
+    </div>
 
-      <div class="diff-card">
-        <div class="circle-visual">
-          <div class="placeholder-icon">🟡</div>
-        </div>
-        <button class="diff-btn medium" onclick="selectDifficulty('medium')">MEDIUM</button>
-      </div>
-
-      <div class="diff-card">
-        <div class="circle-visual">
-          <div class="placeholder-icon">🔴</div>
-        </div>
-        <button class="diff-btn hard" onclick="selectDifficulty('hard')">HARD</button>
-      </div>
-
-    </main>
-
-    <footer class="diff-footer">
-      <a href="index.html" class="back-btn">← CANCEL</a>
-    </footer>
-
-  </div>
+  </main>
 
   <script src="difficulty.js"></script>
 </body>

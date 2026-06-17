@@ -889,6 +889,90 @@ body, html {
   gap: 2rem;
 }
 
+.difficulty-layout {
+  display: flex;
+  justify-content: center;
+}
+
+.difficulty-panel {
+  max-width: 780px;
+}
+
+.difficulty-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.diff-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 220px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.diff-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.circle-visual {
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.placeholder-icon {
+  font-size: 2.4rem;
+}
+
+.diff-btn {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.diff-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.diff-btn.easy:hover {
+  border-color: #2ed573;
+  color: #2ed573;
+}
+
+.diff-btn.medium:hover {
+  border-color: #ffa502;
+  color: #ffa502;
+}
+
+.diff-btn.hard:hover {
+  border-color: #ff4757;
+  color: #ff4757;
+}
+
 .settings-group {
   border: 1px solid var(--border);
   border-radius: 2px;
