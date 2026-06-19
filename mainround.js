@@ -547,7 +547,6 @@ function initializeObstacleMatrix() {
     });
 }
 
-// ... Remaining movement/AI logic functions unchanged ...
 function checkMudCollision(x, y) {
     const px = x + 60, py = y + 60;
     let insideMud = false;
@@ -641,16 +640,12 @@ function executeBotIntelligence() {
         return;
     }
 
+    // STAMINA RECOVERY MODIFICATION: Only recovers if completely exhausted
     if (botIsExhausted) {
         botStamina += STAMINA_RECOVER_RATE;
         if (botStamina >= MAX_STAMINA) {
             botStamina = MAX_STAMINA;
             botIsExhausted = false; 
-        }
-    } else {
-        if (botStamina < MAX_STAMINA) {
-            botStamina += STAMINA_RECOVER_RATE;
-            if (botStamina > MAX_STAMINA) botStamina = MAX_STAMINA;
         }
     }
 
@@ -880,17 +875,13 @@ function coreExecutionEngine() {
         }
     }
 
+    // STAMINA RECOVERY MODIFICATION: Only recovers if completely exhausted
     if (playerIsExhausted) {
         playerIsSprintingToggle = false; 
         playerStamina += STAMINA_RECOVER_RATE;
         if (playerStamina >= MAX_STAMINA) {
             playerStamina = MAX_STAMINA;
             playerIsExhausted = false; 
-        }
-    } else {
-        if (playerStamina < MAX_STAMINA) {
-            playerStamina += STAMINA_RECOVER_RATE;
-            if (playerStamina > MAX_STAMINA) playerStamina = MAX_STAMINA;
         }
     }
 
