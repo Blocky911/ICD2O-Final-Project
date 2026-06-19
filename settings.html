@@ -64,13 +64,16 @@
           </div>
 
           <div class="settings-row">
-            <span class="row-label">Stamina Bar Color</span>
+            <label class="row-label" for="stamina-color">Stamina Bar Color</label>
             <div class="row-control">
-              <div class="cycle-selector">
-                <button type="button" class="cycle-btn" aria-label="Previous Color">◀</button>
-                <span class="cycle-value">DEFAULT (GREEN)</span>
-                <button type="button" class="cycle-btn" aria-label="Next Color">▶</button>
-              </div>
+              <input type="color" id="stamina-color" class="color-picker">
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <label class="row-label" for="low-stamina-color">Low Stamina Color</label>
+            <div class="row-control">
+              <input type="color" id="low-stamina-color" class="color-picker">
             </div>
           </div>
         </div>
@@ -113,6 +116,7 @@
 
       <aside class="settings-visual">
         <div class="action-box">
+          <button type="button" class="menu-btn btn-reset">RESET DEFAULTS</button>
           <button type="button" class="menu-btn btn-accept">ACCEPT</button>
           <button type="button" class="menu-btn btn-cancel">CANCEL</button>
         </div>
@@ -121,6 +125,6 @@
     </div>
 
   </main>
-
+  <script src="settings.js"></script>
 </body>
 </html>

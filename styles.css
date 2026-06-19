@@ -1164,10 +1164,14 @@ body, html {
   position: absolute;
   display: none;
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: var(--text);
-  left: 5px;
-  top: 0px;
+  
+  /* Centering properties */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1; /* Ensures text-box heights don't throw off alignment */
 }
 
 .checkbox-container input:checked ~ .checkmark:after {
@@ -1652,4 +1656,41 @@ body, html {
   color: #00ff00 !important;
   text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
   font-weight: 600;
+}
+
+/* Custom Native Color Picker Layout Styling */
+.color-picker {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--text-muted); /* Matches your menu toggles */
+  border-radius: 2px;                  /* Matches retro box borders */
+  width: 50px;
+  height: 28px;
+  cursor: pointer;
+  padding: 0;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Removes standard browser padding/borders inside the picker button */
+.color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 1px;
+}
+
+.color-picker::-moz-color-swatch {
+  border: none;
+  border-radius: 1px;
+}
+
+/* Hover effects matching your menu design theme */
+.color-picker:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 8px rgba(214, 175, 55, 0.3);
 }
