@@ -24,10 +24,19 @@ let currentSpeed = NORMAL_SPEED;
 
 // Stamina Mechanics Configuration (Symmetric Settings)
 const MAX_STAMINA = 100;
+const SPRINT_STARTUP_COST = 4.5;    // ANTI-SPAM EXPLOIT: Instant stamina tax applied the moment sprinting begins
 const STAMINA_DRAIN_RATE = 0.35;    // Stamina consumed per frame when sprinting
 const STAMINA_RECOVER_RATE = 0.12;  // Stamina recovered slowly over time
 let playerStamina = MAX_STAMINA;
 let botStamina = MAX_STAMINA;
+
+// Gradual Stamina Ramp Configuration (Slower initial crawl to punish erratic behavior)
+let playerStaminaRamp = 0.005;       
+let botStaminaRamp = 0.005;
+
+// State trackers to detect the exact frame sprinting begins
+let playerWasSprintingLastFrame = false;
+let botWasSprintingLastFrame = false;
 
 // Anti-Cheese Exhaustion Mechanics (Locks sprinting until completely full if depleted)
 let playerIsExhausted = false;
@@ -74,9 +83,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const gameDifficulty = urlParams.get('diff') || 'medium';
 
 // Multiplier calculation based on Difficulty
-let difficultyMultiplier = 1.0;
-if (gameDifficulty === 'medium') difficultyMultiplier = 1.5;
-if (gameDifficulty === 'hard') difficultyMultiplier = 2.0;
+let difficultyMultiplier = 0.6;
+if (gameDifficulty === 'medium') difficultyMultiplier = 1;
+if (gameDifficulty === 'hard') difficultyMultiplier = 1.8;
 
 function setupGameHUD() {
     // Check if HUD already exists to avoid duplication
@@ -640,30 +649,45 @@ function executeBotIntelligence() {
         return;
     }
 
-    // STAMINA RECOVERY MODIFICATION: Only recovers if completely exhausted
+    // --- BOT DYNAMIC PROGRESSIVE STAMINA SYSTEM ---
+    let botIsCurrentlySprinting = false;
     if (botIsExhausted) {
         botStamina += STAMINA_RECOVER_RATE;
         if (botStamina >= MAX_STAMINA) {
             botStamina = MAX_STAMINA;
             botIsExhausted = false; 
         }
-    }
-
-    let botIsSprinting = false;
-    if (!botIsExhausted && distance < 450 && botStamina > 0 && !checkMudCollision(botX, botY)) {
-        botIsSprinting = true;
+        botWasSprintingLastFrame = false;
+    } else if (distance < 450 && botStamina > 0 && !checkMudCollision(botX, botY)) {
+        botIsCurrentlySprinting = true;
+        
+        // Apply initial activation cost if they just switched into sprint mode this frame
+        if (!botWasSprintingLastFrame) {
+            botStamina -= SPRINT_STARTUP_COST;
+        }
+        
         localSpeed += SPRINT_BOOST_SPEED;
         botStamina -= STAMINA_DRAIN_RATE;
+        botStaminaRamp = 0.005; // Drop baseline back to lowest crawl
+        
         if (botStamina <= 0) {
             botStamina = 0;
             botIsExhausted = true; 
         }
+        botWasSprintingLastFrame = true;
+    } else {
+        botStamina += botStaminaRamp;
+        if (botStaminaRamp < STAMINA_RECOVER_RATE) {
+            botStaminaRamp += 0.001; 
+        }
+        if (botStamina > MAX_STAMINA) botStamina = MAX_STAMINA;
+        botWasSprintingLastFrame = false;
     }
 
     if (checkMudCollision(botX, botY)) {
         botElement.style.filter = "sepia(0.6) brightness(0.75)";
     } else {
-        if (botIsSprinting) {
+        if (botIsCurrentlySprinting) {
             botElement.style.filter = "drop-shadow(0px 0px 8px #00ffff) saturate(1.5)"; 
         } else if (botIsExhausted) {
             botElement.style.filter = "drop-shadow(0px 0px 4px #555555) grayscale(0.5)"; 
@@ -875,26 +899,44 @@ function coreExecutionEngine() {
         }
     }
 
-    // STAMINA RECOVERY MODIFICATION: Only recovers if completely exhausted
+    // --- PLAYER DYNAMIC PROGRESSIVE STAMINA SYSTEM ---
     if (playerIsExhausted) {
         playerIsSprintingToggle = false; 
-        playerStamina += STAMINA_RECOVER_RATE;
+        playerStamina += STAMINA_RECOVER_RATE; // Base speed recovery when completely flat out
         if (playerStamina >= MAX_STAMINA) {
             playerStamina = MAX_STAMINA;
             playerIsExhausted = false; 
         }
+        playerWasSprintingLastFrame = false;
     }
 
-    let playerIsSprinting = false;
+    let playerIsCurrentlySprinting = false;
     if (playerIsSprintingToggle && isMoving && !playerIsExhausted && playerStamina > 0 && !checkMudCollision(playerX, playerY)) {
-        playerIsSprinting = true;
+        playerIsCurrentlySprinting = true;
+        
+        // ANTI-TAP EXPLOIT CHECK: If player transitions into sprinting this frame, deduct an upfront tax
+        if (!playerWasSprintingLastFrame) {
+            playerStamina -= SPRINT_STARTUP_COST;
+        }
+
         currentSpeed += SPRINT_BOOST_SPEED;
         playerStamina -= STAMINA_DRAIN_RATE;
+        playerStaminaRamp = 0.005; // Reset ramp speed back down to full slow crawl
+        
         if (playerStamina <= 0) {
             playerStamina = 0;
             playerIsExhausted = true; 
             playerIsSprintingToggle = false;
         }
+        playerWasSprintingLastFrame = true;
+    } else if (!playerIsExhausted) {
+        // Charging slowly while moving regularly or idling
+        playerStamina += playerStaminaRamp;
+        if (playerStaminaRamp < STAMINA_RECOVER_RATE) {
+            playerStaminaRamp += 0.001; // Accelerate curve
+        }
+        if (playerStamina > MAX_STAMINA) playerStamina = MAX_STAMINA;
+        playerWasSprintingLastFrame = false;
     }
 
     if (staminaBarInner) {
@@ -911,7 +953,7 @@ function coreExecutionEngine() {
     if (checkMudCollision(playerX, playerY)) {
         player.style.filter = "sepia(0.6) brightness(0.75)";
     } else {
-        if (playerIsSprinting) {
+        if (playerIsCurrentlySprinting) {
             player.style.filter = "drop-shadow(0px 0px 8px #00ffff) saturate(1.5)"; 
         } else if (playerIsExhausted) {
             player.style.filter = "drop-shadow(0px 0px 4px #555555) grayscale(0.4)";
