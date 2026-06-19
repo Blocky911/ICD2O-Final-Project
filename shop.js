@@ -1,5 +1,6 @@
-// --- 1. LOAD SAVED DATA ---
-let playerCoins = parseInt(localStorage.getItem('playerCoins')) || 100;
+// --- 1. LOAD SAVED DATA (Fixed: Default to 0, strict validation avoids resetting 0 coins) ---
+let playerCoins = localStorage.getItem('playerCoins') !== null ? parseInt(localStorage.getItem('playerCoins')) : 0;
+let playerPoints = localStorage.getItem('playerPoints') !== null ? parseInt(localStorage.getItem('playerPoints')) : 0;
 
 let playerInventory = JSON.parse(localStorage.getItem('playerInventory')) || {
     items: {
@@ -20,6 +21,7 @@ let equippedItems = JSON.parse(localStorage.getItem('equippedItems')) || {
 // --- 2. SAVE DATA FUNCTION ---
 function saveGameData() {
     localStorage.setItem('playerCoins', playerCoins);
+    localStorage.setItem('playerPoints', playerPoints);
     localStorage.setItem('playerInventory', JSON.stringify(playerInventory));
     localStorage.setItem('equippedItems', JSON.stringify(equippedItems));
 }
@@ -57,6 +59,10 @@ function updateShopUI() {
     const coinDisplay = document.getElementById('player-coins');
     if (coinDisplay) coinDisplay.innerText = playerCoins;
 
+    // Update points progress tracker display
+    const pointsDisplay = document.getElementById('player-points-display');
+    if (pointsDisplay) pointsDisplay.innerText = `${playerPoints}/50`;
+
     // Update buttons dynamically based on ownership
     const buyButtons = document.querySelectorAll('.buy-btn');
     buyButtons.forEach(button => {
@@ -88,37 +94,30 @@ function updateShopUI() {
 function buyItem(id, price) {
     const isSkin = id.startsWith('skin_') || id.startsWith('bot_');
 
-    // If it's a skin they already bought, don't charge them again
     if (isSkin && playerInventory.skins.includes(id)) {
         showToast("You already own this skin! Check your inventory to equip it.", 'info');
         return;
     }
 
-    // Check if player can afford it
     if (playerCoins < price) {
         showToast("❌ Not enough coins!", 'error');
         return;
     }
 
-    // Deduct coins
     playerCoins -= price;
 
     if (isSkin) {
-        // Add skin permanently
         playerInventory.skins.push(id);
         showToast("🎉 Skin purchased! It is now available in your Inventory.", 'success');
     } else {
-        // Add consumable item count
         playerInventory.items[id] = (playerInventory.items[id] || 0) + 1;
         showToast(`🛒 Item purchased! Sent to your Inventory (Total: ${playerInventory.items[id]}).`, 'success');
     }
 
-    // Save and refresh UI
     saveGameData();
     updateShopUI();
 }
 
-// Run when shop page opens
 window.onload = function() {
     updateShopUI();
 };

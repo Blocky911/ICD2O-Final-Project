@@ -1638,3 +1638,18 @@ body, html {
   display: block;
   margin: 0 auto; /* Keeps it centered */
 }
+
+/* --- POINTS PROGRESS HUD ADDITIONS --- */
+.currency-display {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.points-box {
+  background: rgba(0, 255, 0, 0.12) !important;
+  border: 2px solid #00ff00 !important;
+  color: #00ff00 !important;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+  font-weight: 600;
+}
