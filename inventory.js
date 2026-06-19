@@ -1,28 +1,30 @@
-// --- 1. DEFINE BASE ITEM DATABASE DATA ---
+// --- 1. DEFINE BASE ITEM DATABASE DATA WITH SPRITESHEET POSITIONING ---
+// item_spritesheet.png items are mapped assuming a 3x3 layout (~32x32px source frames)
+// game_skins.png characters are mapped assuming an 8x8 layout (32x32px source frames)
 const GAME_ITEM_DATABASE = {
-    // Consumables
-    'energy_bar': { name: 'Energy Bar', type: 'item', art: '🔋', desc: 'Provides a quick burst of speed during matches!' },
-    'tomatoes': { name: 'Rotten Tomatoes', type: 'item', art: '🍅', desc: 'Throw it to slow down the runner bot!' },
-    'gummy_bears': { name: 'Gummy Bears', type: 'item', art: '🧸', desc: 'A tasty treat that keeps your stamina restored.' },
-    'fart_bomb': { name: 'Fart Bomb', type: 'item', art: '💣', desc: 'Blasts your opponents backward with area knockback!' },
-    'potion': { name: 'Untagable Potion', type: 'item', art: '🧪', desc: 'Makes you completely immune to tags for a short time.' },
+    // Consumables (images/item_spritesheet.png)
+    'energy_bar': { name: 'Energy Bar', type: 'item', desc: 'Provides a quick burst of speed during matches!', sheet: 'items', row: 0, col: 0 },
+    'tomatoes': { name: 'Rotten Tomatoes', type: 'item', desc: 'Throw it to slow down the runner bot!', sheet: 'items', row: 0, col: 1 },
+    'gummy_bears': { name: 'Gummy Bears', type: 'item', desc: 'A tasty treat that keeps your stamina restored.', sheet: 'items', row: 0, col: 2 },
+    'fart_bomb': { name: 'Fart Bomb', type: 'item', desc: 'Blasts your opponents backward with area knockback!', sheet: 'items', row: 1, col: 2 },
+    'potion': { name: 'Untagable Potion', type: 'item', desc: 'Makes you completely immune to tags for a short time.', sheet: 'items', row: 2, col: 0 },
     
-    // Player Skins
-    'skin_default_red': { name: 'Default Red', type: 'playerSkin', art: '🔴', desc: 'Your base starter character model.' },
-    'skin_nugget': { name: 'Nugget', type: 'playerSkin', art: '🍗', desc: 'A legendary crispy chicken cosmetic skin.' },
-    'skin_george': { name: 'George Monkey', type: 'playerSkin', art: '🐒', desc: 'Go bananas and outrun everyone with this look.' },
-    'skin_john': { name: 'John Pork', type: 'playerSkin', art: '🐷', desc: 'The internet icon pig skin is calling you.' },
+    // Player Skins (images/game_skins.png)
+    'skin_default_red': { name: 'Default Red', type: 'playerSkin', desc: 'Your base starter character model.', sheet: 'skins', row: 1, col: 0 },
+    'skin_nugget': { name: 'Nugget', type: 'playerSkin', desc: 'A legendary crispy chicken cosmetic skin.', sheet: 'skins', row: 2, col: 0 },
+    'skin_george': { name: 'George Monkey', type: 'playerSkin', desc: 'Go bananas and outrun everyone with this look.', sheet: 'skins', row: 4, col: 0 },
+    'skin_john': { name: 'John Pork', type: 'playerSkin', desc: 'The internet icon pig skin is calling you.', sheet: 'skins', row: 6, col: 0 },
     
-    // Bot Skins
-    'bot_default_blue': { name: 'Default Blue', type: 'botSkin', art: '🔵', desc: 'The classic, base enemy bot look.' },
-    'bot_stealer': { name: 'Food Stealer', type: 'botSkin', art: '🦝', desc: 'Transform your bot tracker into a sneaky raccoon.' },
-    'bot_mcrae': { name: 'Mr. McRae', type: 'botSkin', art: '👨‍🏫', desc: 'Give your opponent bot a sophisticated school teacher look.' },
-    'bot_evil': { name: 'Evil Nugget', type: 'botSkin', art: '😈', desc: 'Turn your hunter bot into a menacing spicy nugget.' }
+    // Bot Skins (images/game_skins.png)
+    'bot_default_blue': { name: 'Default Blue', type: 'botSkin', desc: 'The classic, base enemy bot look.', sheet: 'skins', row: 0, col: 0 },
+    'bot_stealer': { name: 'Food Stealer', type: 'botSkin', desc: 'Transform your bot tracker into a sneaky raccoon.', sheet: 'skins', row: 7, col: 0 },
+    'bot_mcrae': { name: 'Mr. McRae', type: 'botSkin', desc: 'Give your opponent bot a sophisticated school teacher look.', sheet: 'skins', row: 5, col: 0 },
+    'bot_evil': { name: 'Evil Nugget', type: 'botSkin', desc: 'Turn your hunter bot into a menacing spicy nugget.', sheet: 'skins', row: 3, col: 0 }
 };
 
 // --- 2. RETRIEVE STORAGE PERSISTENCE ---
 let playerInventory = JSON.parse(localStorage.getItem('playerInventory')) || {
-    items: { energy_bar: 0, tomatoes: 0, gummy_bears: 0, fart_bomb: 0, potion: 0 },
+    items: { energy_bar: 5, tomatoes: 2, gummy_bears: 3, fart_bomb: 1, potion: 1 }, // Added default sample quantities
     skins: ['skin_default_red', 'bot_default_blue']
 };
 
@@ -32,6 +34,34 @@ let equippedItems = JSON.parse(localStorage.getItem('equippedItems')) || {
 };
 
 let selectedItemId = null; // Track currently highlighted grid element
+
+// Helper function to set up dynamic sprite background styles
+function applySpriteStyle(element, item, isLargePreview = false) {
+    const sheetSrc = item.sheet === 'skins' ? 'images/game_skins.png' : 'images/item_spritesheet.png';
+    element.style.backgroundImage = `url('${sheetSrc}')`;
+    element.style.backgroundRepeat = 'no-repeat';
+    element.style.imageRendering = 'pixelated';
+    
+    // Base tile dimension configuration
+    const baseSize = 32; 
+    const displaySize = isLargePreview ? 64 : 32;
+    const scale = displaySize / baseSize;
+    
+    // Calculate accurate position maps based on row and columns
+    const posX = item.col * baseSize * scale;
+    const posY = item.row * baseSize * scale;
+    
+    // Sheet total dimensions to scale grid lookups precisely
+    if (item.sheet === 'skins') {
+        element.style.backgroundSize = `${256 * scale}px ${256 * scale}px`;
+    } else {
+        element.style.backgroundSize = `${96 * scale}px ${96 * scale}px`;
+    }
+    
+    element.style.width = `${displaySize}px`;
+    element.style.height = `${displaySize}px`;
+    element.style.backgroundPosition = `-${posX}px -${posY}px`;
+}
 
 // --- 3. CONSTRUCT THE GRID VIEW ---
 function populateInventoryGrid() {
@@ -59,11 +89,22 @@ function populateInventoryGrid() {
             else if (!isOwned) overlayText = '🔒';
         }
 
-        slotDiv.innerHTML = `
-            <div class="box-art">${itemInfo.art}</div>
-            <div class="box-name">${itemInfo.name}</div>
-            <span class="box-badge">${overlayText}</span>
-        `;
+        // Setup clean nodes programmatically to apply style layers cleanly
+        const artDiv = document.createElement('div');
+        artDiv.className = 'box-art';
+        applySpriteStyle(artDiv, itemInfo, false);
+
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'box-name';
+        nameDiv.innerText = itemInfo.name;
+
+        const badgeSpan = document.createElement('span');
+        badgeSpan.className = 'box-badge';
+        badgeSpan.innerText = overlayText;
+
+        slotDiv.appendChild(artDiv);
+        slotDiv.appendChild(nameDiv);
+        slotDiv.appendChild(badgeSpan);
         
         // Add item selection action listener
         slotDiv.onclick = () => selectItem(id);
@@ -78,10 +119,16 @@ function selectItem(id) {
     
     // Highlight selected cell item on screen visually
     document.querySelectorAll('.grid-item-box').forEach(box => box.classList.remove('active-selection'));
-    document.getElementById(`grid-box-${id}`).classList.add('active-selection');
+    const targetedBox = document.getElementById(`grid-box-${id}`);
+    if (targetedBox) targetedBox.classList.add('active-selection');
 
-    // Swap texts out dynamically
-    document.getElementById('preview-art').innerText = item.art;
+    // Update dynamic background sprites instead of writing raw text
+    const previewArt = document.getElementById('preview-art');
+    if (previewArt) {
+        previewArt.innerText = ''; // Clear fallback artifacts
+        applySpriteStyle(previewArt, item, true);
+    }
+    
     document.getElementById('preview-title').innerText = item.name;
     document.getElementById('preview-desc').innerText = item.desc;
 
