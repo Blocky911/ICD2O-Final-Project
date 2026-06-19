@@ -83,9 +83,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const gameDifficulty = urlParams.get('diff') || 'medium';
 
 // Multiplier calculation based on Difficulty
-let difficultyMultiplier = 0.6;
+let difficultyMultiplier = 0.5;
 if (gameDifficulty === 'medium') difficultyMultiplier = 1;
-if (gameDifficulty === 'hard') difficultyMultiplier = 1.8;
+if (gameDifficulty === 'hard') difficultyMultiplier = 1.3;
 
 function setupGameHUD() {
     // Check if HUD already exists to avoid duplication

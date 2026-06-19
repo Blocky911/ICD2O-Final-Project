@@ -1694,3 +1694,73 @@ body, html {
   border-color: var(--gold);
   box-shadow: 0 0 8px rgba(214, 175, 55, 0.3);
 }
+
+/* ==========================================================================
+   QUICK ACCESS HOTBAR STYLES
+   ========================================================================== */
+
+.hotbar-container {
+  margin-top: 25px;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.hotbar-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 3px;
+  color: #fff;
+  margin: 0 0 15px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hotbar-slots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hotbar-slot {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Hover state when mouse enters slot boundaries normally */
+.hotbar-slot:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Triggered via JS class toggle when actively dragging an element over the slot */
+.hotbar-slot-hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
+  border-style: solid;
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+/* Prevents sprite node image elements from interrupting dragover engine coordinates */
+.hotbar-art {
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

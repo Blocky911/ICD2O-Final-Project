@@ -24,7 +24,7 @@ const GAME_ITEM_DATABASE = {
 
 // --- 2. RETRIEVE STORAGE PERSISTENCE ---
 let playerInventory = JSON.parse(localStorage.getItem('playerInventory')) || {
-    items: { energy_bar: 5, tomatoes: 2, gummy_bears: 3, fart_bomb: 1, potion: 1 }, // Added default sample quantities
+    items: { energy_bar: 5, tomatoes: 0, gummy_bears: 3, fart_bomb: 1, potion: 1 }, 
     skins: ['skin_default_red', 'bot_default_blue']
 };
 
@@ -33,7 +33,10 @@ let equippedItems = JSON.parse(localStorage.getItem('equippedItems')) || {
     botSkin: 'bot_default_blue'
 };
 
-let selectedItemId = null; // Track currently highlighted grid element
+// State array to manage our 5 hotbar slots
+let hotbarItems = JSON.parse(localStorage.getItem('hotbarItems')) || [null, null, null, null, null];
+
+let selectedItemId = null; 
 
 // Helper function to set up dynamic sprite background styles
 function applySpriteStyle(element, item, isLargePreview = false) {
@@ -42,16 +45,13 @@ function applySpriteStyle(element, item, isLargePreview = false) {
     element.style.backgroundRepeat = 'no-repeat';
     element.style.imageRendering = 'pixelated';
     
-    // Base tile dimension configuration
     const baseSize = 32; 
     const displaySize = isLargePreview ? 64 : 32;
     const scale = displaySize / baseSize;
     
-    // Calculate accurate position maps based on row and columns
     const posX = item.col * baseSize * scale;
     const posY = item.row * baseSize * scale;
     
-    // Sheet total dimensions to scale grid lookups precisely
     if (item.sheet === 'skins') {
         element.style.backgroundSize = `${256 * scale}px ${256 * scale}px`;
     } else {
@@ -68,9 +68,8 @@ function populateInventoryGrid() {
     const gridContainer = document.getElementById('items-scroll-grid');
     if (!gridContainer) return;
     
-    gridContainer.innerHTML = ''; // Clear view
+    gridContainer.innerHTML = ''; 
 
-    // Loop through all defined global items to draw them into grid boxes
     for (const id in GAME_ITEM_DATABASE) {
         const itemInfo = GAME_ITEM_DATABASE[id];
         
@@ -78,18 +77,60 @@ function populateInventoryGrid() {
         slotDiv.className = 'grid-item-box';
         slotDiv.id = `grid-box-${id}`;
         
-        // Determine lock/count status layer
         let overlayText = '';
+        let isDraggable = true;
+
         if (itemInfo.type === 'item') {
-            overlayText = `x${playerInventory.items[id] || 0}`;
+            const currentCount = playerInventory.items[id] || 0;
+            overlayText = `x${currentCount}`;
+            // Prevent dragging if inventory count is 0
+            if (currentCount <= 0) {
+                isDraggable = false;
+            }
         } else {
             const isOwned = playerInventory.skins.includes(id);
             const isEquipped = (equippedItems.playerSkin === id || equippedItems.botSkin === id);
+            
             if (isEquipped) overlayText = 'E';
             else if (!isOwned) overlayText = '🔒';
+            
+            // Skins are purely cosmetic and non-draggable
+            isDraggable = false;
         }
 
-        // Setup clean nodes programmatically to apply style layers cleanly
+        // Apply drag attributes and customized dynamic ghost-card visuals
+        if (isDraggable) {
+            slotDiv.setAttribute('draggable', true);
+            slotDiv.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', id);
+                
+                // Create a temporary isolated container to act as the drag preview
+                let ghostContainer = document.getElementById('drag-ghost-container');
+                if (!ghostContainer) {
+                    ghostContainer = document.createElement('div');
+                    ghostContainer.id = 'drag-ghost-container';
+                    ghostContainer.style.position = 'absolute';
+                    ghostContainer.style.top = '-1000px';
+                    ghostContainer.style.left = '-1000px';
+                    ghostContainer.style.pointerEvents = 'none';
+                    document.body.appendChild(ghostContainer);
+                }
+                
+                ghostContainer.innerHTML = ''; // Wipe past reference instances
+                
+                // Generate JUST the pure graphic icon node (no borders, no backgrounds, no text)
+                const pureIconDiv = document.createElement('div');
+                applySpriteStyle(pureIconDiv, itemInfo, false);
+                
+                ghostContainer.appendChild(pureIconDiv);
+                
+                // Anchor layout feedback target precisely to the cursor center point (16px offset for 32x32px icon)
+                e.dataTransfer.setDragImage(ghostContainer, 16, 16);
+            });
+        } else {
+            slotDiv.setAttribute('draggable', false);
+        }
+
         const artDiv = document.createElement('div');
         artDiv.className = 'box-art';
         applySpriteStyle(artDiv, itemInfo, false);
@@ -106,26 +147,112 @@ function populateInventoryGrid() {
         slotDiv.appendChild(nameDiv);
         slotDiv.appendChild(badgeSpan);
         
-        // Add item selection action listener
         slotDiv.onclick = () => selectItem(id);
         gridContainer.appendChild(slotDiv);
     }
 }
 
-// --- 4. DETAILS PANELS UPDATE LOGIC ---
+// --- 4. QUICK ACCESS HOTBAR INITIALIZATION & EVENT LOGIC ---
+function initializeHotbar() {
+    const slots = document.querySelectorAll('.hotbar-slot');
+    
+    slots.forEach(slot => {
+        slot.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            slot.classList.add('hotbar-slot-hover');
+        });
+
+        slot.addEventListener('dragleave', () => {
+            slot.classList.remove('hotbar-slot-hover');
+        });
+
+        slot.addEventListener('drop', (e) => {
+            e.preventDefault();
+            slot.classList.remove('hotbar-slot-hover');
+            
+            const itemId = e.dataTransfer.getData('text/plain');
+            const slotIndex = parseInt(slot.getAttribute('data-slot'), 10);
+            
+            if (GAME_ITEM_DATABASE[itemId]) {
+                const itemInfo = GAME_ITEM_DATABASE[itemId];
+                if (itemInfo.type !== 'item') return;
+
+                // Return overwritten slots back to standard stockpile quantities
+                const oldItemId = hotbarItems[slotIndex];
+                if (oldItemId && GAME_ITEM_DATABASE[oldItemId] && GAME_ITEM_DATABASE[oldItemId].type === 'item') {
+                    playerInventory.items[oldItemId] = (playerInventory.items[oldItemId] || 0) + 1;
+                }
+
+                if ((playerInventory.items[itemId] || 0) <= 0) return; 
+                playerInventory.items[itemId] -= 1;
+
+                hotbarItems[slotIndex] = itemId;
+                localStorage.setItem('hotbarItems', JSON.stringify(hotbarItems));
+                localStorage.setItem('playerInventory', JSON.stringify(playerInventory));
+                
+                populateInventoryGrid();
+                renderHotbar();
+                if (selectedItemId === itemId) selectItem(itemId);
+            }
+        });
+
+        // Click a hotbar item to remove it and return it to the total inventory count
+        slot.onclick = () => {
+            const slotIndex = parseInt(slot.getAttribute('data-slot'), 10);
+            const itemId = hotbarItems[slotIndex];
+            
+            if (itemId !== null) {
+                if (GAME_ITEM_DATABASE[itemId] && GAME_ITEM_DATABASE[itemId].type === 'item') {
+                    playerInventory.items[itemId] = (playerInventory.items[itemId] || 0) + 1;
+                }
+
+                hotbarItems[slotIndex] = null;
+                localStorage.setItem('hotbarItems', JSON.stringify(hotbarItems));
+                localStorage.setItem('playerInventory', JSON.stringify(playerInventory));
+                
+                populateInventoryGrid();
+                renderHotbar();
+                if (selectedItemId === itemId) selectItem(itemId);
+            }
+        };
+    });
+    
+    renderHotbar();
+}
+
+function renderHotbar() {
+    const slots = document.querySelectorAll('.hotbar-slot');
+    slots.forEach((slot, index) => {
+        slot.innerHTML = ''; 
+        const itemId = hotbarItems[index];
+        
+        if (itemId && GAME_ITEM_DATABASE[itemId]) {
+            const itemInfo = GAME_ITEM_DATABASE[itemId];
+            
+            const artDiv = document.createElement('div');
+            artDiv.className = 'hotbar-art';
+            applySpriteStyle(artDiv, itemInfo, false);
+            
+            slot.appendChild(artDiv);
+            slot.title = `${itemInfo.name} (Click to remove)`;
+        } else {
+            slot.title = "Empty Slot (Drag items here)";
+        }
+    });
+}
+
+// --- 5. DETAILS PANELS UPDATE LOGIC ---
 function selectItem(id) {
     selectedItemId = id;
     const item = GAME_ITEM_DATABASE[id];
     
-    // Highlight selected cell item on screen visually
     document.querySelectorAll('.grid-item-box').forEach(box => box.classList.remove('active-selection'));
     const targetedBox = document.getElementById(`grid-box-${id}`);
     if (targetedBox) targetedBox.classList.add('active-selection');
 
-    // Update dynamic background sprites instead of writing raw text
     const previewArt = document.getElementById('preview-art');
     if (previewArt) {
-        previewArt.innerText = ''; // Clear fallback artifacts
+        previewArt.innerText = ''; 
         applySpriteStyle(previewArt, item, true);
     }
     
@@ -135,15 +262,13 @@ function selectItem(id) {
     const actionBtn = document.getElementById('inventory-action-btn');
     const statsContainer = document.getElementById('preview-stats');
 
-    // Handle button behavior conditional branching logic
     if (item.type === 'item') {
         const count = playerInventory.items[id] || 0;
         statsContainer.innerText = `Stockpile Account: ${count} owned`;
         actionBtn.innerText = "CONSUMABLE BOOST";
         actionBtn.className = "action-btn-utility";
-        actionBtn.disabled = true; // Consumables get activated inside active matches instead!
+        actionBtn.disabled = true; 
     } else {
-        // Handle cosmetic skins
         const isOwned = playerInventory.skins.includes(id);
         const isEquipped = (equippedItems.playerSkin === id || equippedItems.botSkin === id);
 
@@ -174,12 +299,20 @@ function equipSelection(id) {
 
     localStorage.setItem('equippedItems', JSON.stringify(equippedItems));
     
-    // Rerender grids and selections to project updates seamlessly
     populateInventoryGrid();
     selectItem(id);
 }
 
-// Start rendering operations instantly upon window initialization routines
 window.onload = () => {
     populateInventoryGrid();
+    initializeHotbar();
 };
+
+// Fix the "X" / restriction cursor from showing up while dragging across the screen
+window.addEventListener('dragover', (e) => {
+    e.preventDefault();
+});
+
+window.addEventListener('drop', (e) => {
+    e.preventDefault();
+});
