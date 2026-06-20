@@ -12,7 +12,16 @@
   <style>
     /* --- CUSTOM MOUSE POINTER HIGHLIGHT --- */
     * {
-      cursor: none !important; 
+      cursor: none !important;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow: hidden;  
+      margin: 0;
+      padding: 0;
+      background-color: #0b1411; 
     }
 
     .cursor-highlight {
@@ -61,7 +70,7 @@
 
     .opening-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 4rem;
+      font-size: 3.5rem;
       color: #fff;
       letter-spacing: 4px;
       margin-bottom: 20px;
@@ -112,7 +121,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: linear-gradient(to bottom, #000000, #0d0e12);
+      background: linear-gradient(to bottom, #000000, #0b1411);
       z-index: 2000;
       pointer-events: none;
     }
@@ -126,42 +135,311 @@
       animation: slideDownIn 0.6s cubic-bezier(0.7, 0, 0.3, 1) forwards;
     }
 
-    /* --- TEXT COLOR & MIDDLING ALIGNMENT FIXES --- */
-    /* Flex alignment perfectly centers the inner elements horizontally & vertically */
+    /* --- 3D PERSPECTIVE GRASS MATRIX BACKGROUND WITH DOTTED TEXTURE --- */
+    .game-world-ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh; 
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 40%, #1c331a 0%, #070d0b 80%);
+    }
+
+    /* 3D Perspective Grid lines combined with Dotted Grass details */
+    .game-world-ambient-bg::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: -50%;
+      width: 200%;
+      height: 60%;
+      background-image: 
+        radial-gradient(circle, rgba(83, 148, 44, 0.25) 15%, transparent 16%),
+        linear-gradient(rgba(83, 148, 44, 0.4) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(83, 148, 44, 0.4) 2px, transparent 2px);
+      background-size: 16px 16px, 50px 50px, 50px 50px;
+      transform: perspective(400px) rotateX(65deg);
+      transform-origin: top center;
+    }
+
+    /* Horizon gradient fill blending back into space */
+    .grass-horizon-flats {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 45vh;
+      background: linear-gradient(to top, rgba(83, 148, 44, 0.12), transparent);
+    }
+
+    /* --- MATCH-ACCURATE PROPS WITH LOGS & HOUSES --- */
+    .world-prop-tree {
+      position: absolute;
+      bottom: 40vh; /* Pushed significantly further up to avoid sprite character path completely */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 5;
+    }
+
+    .world-prop-tree.left-side {
+      left: 14%;
+      transform: scale(0.9);
+    }
+
+    .world-prop-tree.right-side {
+      right: 38%;
+      transform: scale(1.1);
+    }
+
+    /* Soft spherical layered round game leaves */
+    .tree-foliage-circle {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle at 35% 35%, #4fa331 0%, #30691d 80%);
+      border-radius: 50%;
+      box-shadow: 
+        12px 15px 20px rgba(0, 0, 0, 0.4), 
+        inset -5px -5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 2;
+    }
+
+    /* Tree trunk logs under the circles */
+    .tree-log-trunk {
+      width: 16px;
+      height: 35px;
+      background: linear-gradient(90deg, #5c3a21, #3d2414);
+      margin-top: -5px;
+      border-radius: 2px;
+      box-shadow: 5px 8px 10px rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
+    /* Peach house element - REPOSITIONED HIGHER UP THE MATRIX GRID LINE HORIZON TO PREVENT CHARACTER CLIPPING */
+    .world-prop-house {
+      position: absolute;
+      bottom: 34vh; 
+      right: 25px; 
+      width: 190px;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 6;
+      transform: scale(1.15);
+    }
+
+    .house-brown-roof {
+      width: 0;
+      height: 0;
+      border-left: 105px solid transparent;
+      border-right: 105px solid transparent;
+      border-bottom: 65px solid #5a3825;
+      filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.4));
+      z-index: 2;
+    }
+
+    .house-peach-body {
+      width: 170px;
+      height: 85px;
+      background-color: #ffb594;
+      border: 4px solid #331c11;
+      border-top: none;
+      box-sizing: border-box;
+      box-shadow: 15px 18px 25px rgba(0,0,0,0.5);
+      z-index: 1;
+    }
+
+    /* LINED SEAMLESSLY WITH EXTRA DENSE CIRCLES ACROSS SCREEN HORIZON */
+    .scenic-forest-wall {
+      position: absolute;
+      bottom: 38vh; 
+      left: -5%;
+      width: 110%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .scenic-wall-tree {
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 35% 35%, #46932b 0%, #295b19 85%);
+      border-radius: 50%;
+      box-shadow: 8px 10px 15px rgba(0, 0, 0, 0.45);
+      flex-shrink: 0;
+      margin-left: -55px; /* Heavy tight overlay to pack circles more tightly together */
+    }
+
+    /* --- PLAYER CHASE ACTION CANVAS TRACK --- */
+    .chase-sequence-track {
+      position: absolute;
+      bottom: 15vh; 
+      left: 0;
+      width: 100%;
+      height: 80px;
+    }
+
+    .chase-actor-container {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 160px; 
+      height: 100%;
+      animation: completeWrapAroundChase 14s linear infinite;
+    }
+
+    /* Shared In-Game Style 2D Box Character Design Base Layout */
+    .game-box-character {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 3px solid #000000;
+      box-sizing: border-box;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      padding: 6px;
+    }
+
+    /* Character face slits */
+    .game-box-character::before,
+    .game-box-character::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      width: 6px;
+      height: 10px;
+      background: #000000;
+      border-radius: 3px;
+    }
+    .game-box-character::before { left: 11px; }
+    .game-box-character::after { right: 11px; }
+
+    /* Red Box Player (Holding Crown) */
+    .player-actor-red {
+      background-color: #ff4a4a;
+      box-shadow: 0 0 20px rgba(255, 74, 74, 0.6), 0 10px 15px rgba(0,0,0,0.4);
+      animation: boundingRunGait 0.2s infinite alternate ease-in-out;
+    }
+
+    .crown-target-obj {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.6rem;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+      animation: crownFloatBob 0.4s infinite alternate ease-in-out;
+    }
+
+    /* Blue Box AI Bot (Chasing Player) */
+    .bot-actor-blue {
+      background-color: #0077ff;
+      box-shadow: 0 0 20px rgba(0, 119, 255, 0.6), 0 10px 15px rgba(0,0,0,0.4);
+      animation: boundingRunGait 0.16s infinite alternate-reverse ease-in-out;
+    }
+
+    /* --- UI STRUCTURE GRID --- */
+    .container {
+      position: relative;
+      z-index: 40;
+      display: grid;
+      grid-template-columns: 1fr; /* Centered primary flow layout */
+      gap: 30px;
+      width: 100%;
+      max-width: 1100px; 
+      margin: 0 auto;
+      height: 100vh;
+      padding: 0 30px; 
+      box-sizing: border-box;
+      align-items: center;
+    }
+
+    .main-left-content {
+      position: fixed;
+      top: 48%; 
+      left: 8%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+      justify-content: center;
+      max-width: 540px; 
+      z-index: 45;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+    }
+
+    .game-logo {
+      max-width: 250px;
+      height: auto;
+    }
+
+    .crown-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4px 10px !important;
+      font-size: 0.8rem !important;
+    }
+
+    .hero-sub {
+      font-size: 0.95rem !important;
+      margin-top: 8px !important;
+      text-align: center;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px !important;
+      width: 85% !important;
+    }
+
     .actions button {
-      padding: 0 !important; /* Clears button padding conflicts */
+      padding: 0 !important; 
+      height: 44px !important;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center; 
     }
 
     .actions button a.nav-link {
       text-decoration: none !important;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 10px; /* Space between icons and typography */
+      justify-content: center; 
+      gap: 10px; 
       width: 100%;
       height: 100%;
+      font-size: 1.1rem !important;
+      text-align: center;
     }
 
-    /* Colors set manually to perfectly reflect the border boxes shown in your picture */
-    .btn-primary a.nav-link {
-      color: #000000 !important; /* Black font overlaying the solid yellow background */
-    }
-
-    .btn-secondary a.nav-link {
-      color: #3bc7b2 !important; /* Matches Shop Teal precisely */
-    }
-
-    .btn-inventory a.nav-link {
-      color: #f73656 !important; /* Matches Inventory Coral Red precisely */
-    }
-
-    .btn-tutorial a.nav-link {
-      color: #ffaa00 !important; /* Matches How To Play Gold precisely */
-    }
-
-    .btn-settings a.nav-link {
-      color: #2bd97c !important; /* Matches Settings Green precisely */
-    }
+    .btn-primary a.nav-link { color: #000000 !important; }
+    .btn-secondary a.nav-link { color: #3bc7b2 !important; }
+    .btn-inventory a.nav-link { color: #f73656 !important; }
+    .btn-tutorial a.nav-link { color: #ffaa00 !important; }
+    .btn-settings a.nav-link { color: #2bd97c !important; }
 
     /* --- MENU STAGE INTRO STATES --- */
     .logo-container {
@@ -170,7 +448,7 @@
       transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), transform 1s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    .hero-sub, .crown-banner, .actions {
+    .hero-sub, .crown-banner, .actions, .achievement-menu-btn {
       opacity: 0;
       transform: translateY(15px);
       transition: opacity 0.8s ease-out, transform 0.8s ease-out;
@@ -183,12 +461,218 @@
 
     body.stage-menu-reveal .hero-sub,
     body.stage-menu-reveal .crown-banner,
-    body.stage-menu-reveal .actions {
+    body.stage-menu-reveal .actions,
+    body.stage-menu-reveal .achievement-menu-btn {
       opacity: 1;
       transform: translateY(0);
     }
 
-    /* Keyframe Animations */
+    /* --- ACHIEVEMENT TRIGGER BTN --- */
+    .achievement-menu-btn {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.05rem;
+      color: #ffaa00;
+      background: rgba(17, 19, 25, 0.85);
+      border: 2px solid rgba(255, 170, 0, 0.6);
+      border-radius: 6px;
+      padding: 5px 14px;
+      letter-spacing: 2px;
+      margin-top: 5px;
+      margin-bottom: 18px;
+      text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .achievement-menu-btn:hover {
+      background: rgba(255, 170, 0, 0.15);
+      border-color: rgba(255, 170, 0, 0.9);
+      transform: scale(1.03);
+    }
+
+    /* --- TOGGLEABLE HIDDEN BY DEFAULT ACHIEVEMENT PANEL CONTAINER --- */
+    .achievements-display-panel {
+      position: fixed;
+      right: 40px; 
+      top: 50%;
+      transform: translateY(-50%) translateX(40px);
+      width: 340px;
+      background: rgba(19, 22, 28, 0.95);
+      border: 1px solid rgba(255, 170, 0, 0.3);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 170, 0, 0.05);
+      border-radius: 12px;
+      padding: 22px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      max-height: 65vh; 
+      z-index: 150;
+      backdrop-filter: blur(14px);
+      
+      /* Fixed: Completely hidden until active class is triggered by player clicks */
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.4s;
+    }
+
+    /* Trigger active show layout state */
+    .achievements-display-panel.panel-active {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(-50%) translateX(0) !important;
+    }
+
+    .panel-header-row {
+      display: flex;
+      justify-content: space-between; 
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    .panel-header {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem;
+      color: #ffaa00;
+      letter-spacing: 2px;
+      margin: 0;
+    }
+
+    /* Circular Cross Interface Node */
+    .panel-close-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #a0a5b5;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .panel-close-btn:hover {
+      background: rgba(255, 0, 85, 0.2);
+      border-color: #ff0055;
+      color: #ffffff;
+      transform: scale(1.08);
+    }
+
+    .achievements-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .achievement-card {
+      background: rgba(11, 12, 16, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .badge-slot {
+      font-size: 1.8rem;
+      background: rgba(255, 255, 255, 0.03);
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .achievement-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .achievement-name {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    .achievement-status {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.9rem;
+      color: #8a8f9d;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    /* --- AUDIO DASHBOARD --- */
+    .audio-dashboard-widget {
+      position: fixed;
+      bottom: 25px;
+      right: 40px;
+      background: rgba(17, 19, 25, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .widget-label {
+      font-family: 'Bebas Neue', sans-serif;
+      color: #ffaa00;
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+
+    .audio-slider {
+      -webkit-appearance: none;
+      width: 80px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .audio-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffaa00;
+      box-shadow: 0 0 8px #ffaa00;
+    }
+
+    /* --- ANIMATION ENGINES --- */
+    @keyframes completeWrapAroundChase {
+      0% { left: -250px; }
+      100% { left: 100%; }
+    }
+
+    @keyframes boundingRunGait {
+      0% { transform: translateY(0) rotate(4deg) scaleY(1); }
+      100% { transform: translateY(-6px) rotate(-4deg) scaleY(0.93); }
+    }
+
+    @keyframes crownFloatBob {
+      0% { transform: translateX(-50%) translateY(0) scale(1); }
+      100% { transform: translateX(-50%) translateY(-6px) scale(1.1); }
+    }
+
     @keyframes splashProgress {
       0% { width: 0%; }
       100% { width: 100%; }
@@ -214,9 +698,7 @@
 <body>
 
   <div class="cursor-highlight" id="customCursor"></div>
-
   <div class="white-flash" id="flashOverlay"></div>
-
   <div class="exit-shade" id="exitShade"></div>
 
   <div class="opening-screen" id="openingScreen">
@@ -229,47 +711,289 @@
   </div>
 
   <div class="scanlines"></div>
-  <div class="bg-grid"></div>
+
+  <div class="game-world-ambient-bg" id="parallaxBgContainer">
+    <div class="grass-horizon-flats"></div>
+    
+    <div class="world-prop-tree left-side">
+      <div class="tree-foliage-circle"></div>
+      <div class="tree-log-trunk"></div>
+    </div>
+
+    <div class="world-prop-tree right-side">
+      <div class="tree-foliage-circle"></div>
+      <div class="tree-log-trunk"></div>
+    </div>
+
+    <div class="scenic-forest-wall">
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+      <div class="scenic-wall-tree"></div>
+    </div>
+
+    <div class="world-prop-house">
+      <div class="house-brown-roof"></div>
+      <div class="house-peach-body"></div>
+    </div>
+
+    <div class="chase-sequence-track">
+      <div class="chase-actor-container">
+        <div class="game-box-character bot-actor-blue"></div>
+
+        <div class="game-box-character player-actor-red">
+          <div class="crown-target-obj">👑</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="audio-dashboard-widget target-box">
+    <span class="widget-label">🕹 MUSIC VOLUME</span>
+    <input type="range" min="0" max="100" value="35" class="audio-slider" id="musicVolumeControl" />
+  </div>
 
   <main class="container">
 
-    <section class="hero">
-      <div class="crown-banner">
-        <span class="crown-icon">👑</span>
-        <span class="tagline">HOLD THE CROWN. RULE THE MATCH.</span>
-        <span class="crown-icon">👑</span>
+    <div class="main-left-content">
+      <section class="hero target-box">
+        <div class="crown-banner">
+          <span class="crown-icon">👑</span>
+          <span class="tagline">HOLD THE CROWN. RULE THE MATCH.</span>
+          <span class="crown-icon">👑</span>
+        </div>
+        
+        <div class="logo-container">
+          <img src="images/game_logo.webp" alt="Tag Royale Logo" class="game-logo" />
+        </div>
+
+        <button class="achievement-menu-btn target-box" id="openPanelBtn">🏆 ACHIEVEMENTS</button>
+
+        <p class="hero-sub">1v1 TAG · 2:30 ROUNDS · 10 PTS / SEC</p>
+      </section>
+
+      <section class="actions">
+        <button class="btn btn-primary target-box"><a href="difficulty.html" class="nav-link">▶ PLAY NOW</a></button>
+        <button class="btn btn-secondary target-box"><a href="shop.html" class="nav-link"><span>💸</span> SHOP</a></button>
+        <button class="btn btn-ghost btn-inventory target-box"><a href="inventory.html" class="nav-link"><span>🎒</span> INVENTORY</a></button>
+        <button class="btn btn-ghost btn-tutorial target-box"><a href="tutorial.html" class="nav-link"><span>📖</span> HOW TO PLAY</a></button>
+        <button class="btn btn-ghost btn-settings target-box"><a href="settings.html" class="nav-link"><span>⚙</span> SETTINGS</a></button>
+      </section>
+    </div>
+
+    <div class="achievements-display-panel target-box" id="achievementsPanel">
+      <div class="panel-header-row">
+        <h2 class="panel-header">ACHIEVEMENTS</h2>
+        <button class="panel-close-btn target-box" id="closePanelBtn">✕</button>
       </div>
       
-      <div class="logo-container">
-        <img src="images/game_logo.webp" alt="Tag Royale Logo" class="game-logo" />
+      <div class="achievements-list">
+        <div class="achievement-card target-box">
+          <div class="badge-slot">💀</div>
+          <div class="achievement-info">
+            <p class="achievement-name">Win 5 hard rounds</p>
+            <p class="achievement-status">LOCKED</p>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <p class="hero-sub">1v1 TAG · 2:30 ROUNDS · 10 PTS / SEC</p>
-    </section>
-
-    <section class="actions">
-      <button class="btn btn-primary"><a href="difficulty.html" class="nav-link">▶ PLAY NOW</a></button>
-      <button class="btn btn-secondary"><a href="shop.html" class="nav-link"><span>💸</span> SHOP</a></button>
-      <button class="btn btn-ghost btn-inventory"><a href="inventory.html" class="nav-link"><span>🎒</span> INVENTORY</a></button>
-      <button class="btn btn-ghost btn-tutorial"><a href="tutorial.html" class="nav-link"><span>📖</span> HOW TO PLAY</a></button>
-      <button class="btn btn-ghost btn-settings"><a href="settings.html" class="nav-link"><span>⚙</span> SETTINGS</a></button>
-    </section>
   </main>
 
   <script>
-    // 1. MOUSE HIGHLIGHT INTERACTION
+    // --- SYNTHETIC GAME AUDIO ENGINE (Web Audio API Synthesizer) ---
+    let audioCtx = null;
+    let masterMusicVolumeNode = null;
+    let musicPlaybackInterval = null;
+    let isMusicPlaying = false;
+    let currentTempoBpm = 125;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterMusicVolumeNode = audioCtx.createGain();
+        const rawSliderValue = document.getElementById('musicVolumeControl').value;
+        masterMusicVolumeNode.gain.setValueAtTime((rawSliderValue / 100) * 0.25, audioCtx.currentTime);
+        masterMusicVolumeNode.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playHoverSound() {
+      initAudio();
+      if (!audioCtx) return;
+      let osc = audioCtx.createOscillator();
+      let gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.04);
+      
+      gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.04);
+    }
+
+    function playSelectSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      let now = audioCtx.currentTime;
+      let osc1 = audioCtx.createOscillator();
+      let gain1 = audioCtx.createGain();
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(523.25, now); 
+      gain1.gain.setValueAtTime(0.12, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc1.connect(gain1);
+      gain1.connect(audioCtx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.08);
+
+      let osc2 = audioCtx.createOscillator();
+      let gain2 = audioCtx.createGain();
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(783.99, now + 0.05);
+      gain2.gain.setValueAtTime(0.08, now + 0.05);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      osc2.connect(gain2);
+      gain2.connect(masterMusicVolumeNode);
+      osc2.start(now + 0.05);
+      osc2.stop(now + 0.18);
+    }
+
+    function playWooshSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      let now = audioCtx.currentTime;
+      let duration = 0.55;
+      let bufferSize = audioCtx.sampleRate * duration;
+      let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      let data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      
+      let source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      let resonanceFilter = audioCtx.createBiquadFilter();
+      resonanceFilter.type = 'lowpass';
+      resonanceFilter.frequency.setValueAtTime(180, now);
+      resonanceFilter.frequency.exponentialRampToValueAtTime(3800, now + duration * 0.7);
+      
+      let gainNode = audioCtx.createGain();
+      gainNode.gain.setValueAtTime(0.001, now);
+      gainNode.gain.linearRampToValueAtTime(0.22, now + duration * 0.25);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+      
+      source.connect(resonanceFilter);
+      resonanceFilter.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      source.start(now);
+      source.stop(now + duration);
+    }
+
+    // --- CHIPTUNE SYNTH TRACK MAIN SCHEDULER LOOP ---
+    const basslineMelodyFrequencies = [110.00, 110.00, 130.81, 146.83, 98.00, 98.00, 110.00, 116.54];
+    const leadArpeggioMelodyNotes = [440.00, 523.25, 659.25, 783.99, 587.33, 698.46, 880.00, 1046.50];
+    let currentStepIndex = 0;
+
+    function soundTrackSchedulerLoop() {
+      let stepLengthTime = 60 / currentTempoBpm / 2;
+      let playTime = audioCtx.currentTime + 0.02;
+
+      let bassOsc = audioCtx.createOscillator();
+      let bassGain = audioCtx.createGain();
+      bassOsc.type = 'sawtooth';
+      bassOsc.frequency.setValueAtTime(basslineMelodyFrequencies[currentStepIndex % basslineMelodyFrequencies.length], playTime);
+      
+      let bassFilter = audioCtx.createBiquadFilter();
+      bassFilter.type = 'lowpass';
+      bassFilter.frequency.setValueAtTime(600, playTime);
+
+      bassGain.gain.setValueAtTime(0.35, playTime);
+      bassGain.gain.exponentialRampToValueAtTime(0.01, playTime + stepLengthTime - 0.02);
+
+      bassOsc.connect(bassFilter);
+      bassFilter.connect(bassGain);
+      bassGain.connect(masterMusicVolumeNode);
+      bassOsc.start(playTime);
+      bassOsc.stop(playTime + stepLengthTime);
+
+      if (currentStepIndex % 2 === 0 || currentStepIndex % 3 === 0) {
+        let leadOsc = audioCtx.createOscillator();
+        let leadGain = audioCtx.createGain();
+        leadOsc.type = 'triangle';
+        
+        let noteChoice = leadArpeggioMelodyNotes[(currentStepIndex + 2) % leadArpeggioMelodyNotes.length];
+        leadOsc.frequency.setValueAtTime(noteChoice, playTime);
+
+        leadGain.gain.setValueAtTime(0.18, playTime);
+        leadGain.gain.exponentialRampToValueAtTime(0.001, playTime + stepLengthTime * 1.5);
+
+        leadOsc.connect(leadGain);
+        leadGain.connect(masterMusicVolumeNode);
+        leadOsc.start(playTime);
+        leadOsc.stop(playTime + stepLengthTime * 1.5);
+      }
+      currentStepIndex = (currentStepIndex + 1) % 16;
+    }
+
+    function beginSoundtrackPlaybackLoop() {
+      if (isMusicPlaying) return;
+      initAudio();
+      isMusicPlaying = true;
+      let speedMs = (60 / currentTempoBpm / 2) * 1000;
+      musicPlaybackInterval = setInterval(soundTrackSchedulerLoop, speedMs);
+    }
+
+    // --- INTERACTIVE SYSTEM MOUSE AND PARALLAX EVENT CAPTURES ---
     const customCursor = document.getElementById('customCursor');
+    const parallaxBgContainer = document.getElementById('parallaxBgContainer');
 
     document.addEventListener('mousemove', (e) => {
       customCursor.style.left = e.clientX + 'px';
       customCursor.style.top = e.clientY + 'px';
     });
 
+    window.addEventListener('scroll', () => {
+      let scrolledAmount = window.scrollY;
+      parallaxBgContainer.style.transform = `translateY(${scrolledAmount * 0.18}px)`;
+    });
+
     document.addEventListener('mousedown', () => { customCursor.classList.add('clicking'); });
     document.addEventListener('mouseup', () => { customCursor.classList.remove('clicking'); });
 
+    document.querySelectorAll('.target-box').forEach(box => {
+      box.addEventListener('mouseenter', () => { playHoverSound(); });
+    });
 
-    // 2. TIMED CINEMATIC INTRO & BACK NAVIGATION TRANSITIONS
+    document.getElementById('musicVolumeControl').addEventListener('input', (e) => {
+      initAudio();
+      let targetVolume = (e.target.value / 100) * 0.25; 
+      masterMusicVolumeNode.gain.setValueAtTime(targetVolume, audioCtx.currentTime);
+    });
+
+    // --- INITIAL INTRO SPLASH WINDOW LOGIC TIMELINES ---
     const openingScreen = document.getElementById('openingScreen');
     const textStage = document.getElementById('textStage');
     const openingText = document.getElementById('openingText');
@@ -277,12 +1001,14 @@
     const progressBarFill = document.getElementById('progressBarFill');
     const flashOverlay = document.getElementById('flashOverlay');
     const exitShade = document.getElementById('exitShade');
+    const achievementsPanel = document.getElementById('achievementsPanel');
 
     window.addEventListener('DOMContentLoaded', () => {
       if (sessionStorage.getItem('introPlayed') === 'true') {
         openingScreen.style.display = 'none';
         document.body.classList.add('stage-logo-reveal', 'stage-menu-reveal');
         exitShade.classList.add('slide-in-active');
+        beginSoundtrackPlaybackLoop();
       } else {
         progressBarFill.classList.add('animate-progress');
 
@@ -305,14 +1031,16 @@
           openingScreen.style.display = 'none'; 
           document.body.classList.add('stage-logo-reveal');
           sessionStorage.setItem('introPlayed', 'true');
+          beginSoundtrackPlaybackLoop();
         }, 5000);
 
         setTimeout(() => { document.body.classList.add('stage-menu-reveal'); }, 6200);
       }
     });
 
+    document.body.addEventListener('click', () => { beginSoundtrackPlaybackLoop(); }, { once: false });
 
-    // 3. OUTBOUND PAGE TRANSITION (SLIDE DOWN SHADE)
+    // --- OUTBOUND NAVIGATION LINKS ---
     document.addEventListener('click', function(e) {
       const targetLink = e.target.closest('.nav-link');
       if (targetLink) {
@@ -320,13 +1048,32 @@
         const targetUrl = targetLink.getAttribute('href');
 
         if (targetUrl) {
-          exitShade.className = 'exit-shade'; 
-          void exitShade.offsetWidth; 
-          exitShade.classList.add('slide-out-active');
+          playSelectSound();
+          
+          setTimeout(() => {
+            playWooshSound();
+            exitShade.className = 'exit-shade'; 
+            void exitShade.offsetWidth; 
+            exitShade.classList.add('slide-out-active');
+          }, 80);
 
-          setTimeout(() => { window.location.href = targetUrl; }, 600);
+          setTimeout(() => { window.location.href = targetUrl; }, 680);
         }
       }
+    });
+
+    // --- INTERACTIVE BUTTON TOGGLES FOR THE ACHIEVEMENT OVERLAY PANEL ---
+    const openPanelBtn = document.getElementById('openPanelBtn');
+    const closePanelBtn = document.getElementById('closePanelBtn');
+
+    openPanelBtn.addEventListener('click', () => {
+      playSelectSound();
+      achievementsPanel.classList.add('panel-active');
+    });
+
+    closePanelBtn.addEventListener('click', () => {
+      playSelectSound();
+      achievementsPanel.classList.remove('panel-active');
     });
   </script>
 </body>
