@@ -15,6 +15,8 @@
       margin: 0;
       padding: 0;
       overflow-x: hidden;
+      /* CUSTOM GAME CURSOR FOR INVENTORY SCREEN */
+      cursor: crosshair !important;
     }
 
     /* Styles the background div to make a retro moving neon grid */
@@ -51,6 +53,87 @@
       background: transparent !important;
       position: relative;
       z-index: 2;
+    }
+
+    /* ================= MOUSE HOVER & IMAGE/TITLE RING STYLING ================= */
+    .back-btn, .hotbar-slot, #inventory-action-btn {
+      cursor: crosshair !important;
+    }
+
+    /* Position visual anchors inside panels for the absolute pseudo rings */
+    .big-item-visual, .hotbar-slot, .scroll-grid > div {
+      position: relative;
+    }
+
+    /* Ring around the Large Preview Sprite Image on Hover */
+    .preview-art-sprite {
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+    .big-item-visual:hover .preview-art-sprite {
+      transform: scale(1.05);
+    }
+    .big-item-visual:hover .preview-art-sprite::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 110%;
+      height: 110%;
+      border: 3px dashed #ffd700;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #ffd700;
+      animation: spinRing 4s linear infinite;
+      pointer-events: none;
+    }
+
+    /* Ring around the Large Preview Title Header text on Hover */
+    .preview-title {
+      position: relative;
+      display: inline-block;
+      transition: color 0.2s ease;
+    }
+    .big-item-visual:hover .preview-title {
+      color: #ffd700 !important;
+    }
+
+    /* Rings around the Hotbar quick access slots */
+    .hotbar-slot:hover::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border: 2px solid #ffd700;
+      border-radius: 8px;
+      box-shadow: 0 0 12px #ffd700;
+      pointer-events: none;
+    }
+
+    /* Keyframe Animations for active elements */
+    @keyframes spinRing {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Hover updates for navigation items */
+    .back-btn:hover {
+      color: #ffd700 !important;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+    }
+
+    #inventory-action-btn:not(:disabled):hover {
+      background-color: #ffd700 !important;
+      color: #000000 !important;
+      box-shadow: 0 0 15px #ffd700;
+    }
+
+    /* CSS rules targeting dynamic JavaScript item block content injection maps */
+    #items-scroll-grid div:hover {
+      border-color: #ffd700 !important;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
     }
   </style>
 </head>
@@ -221,7 +304,6 @@
       invMusicInterval = setInterval(playInventoryStep, intervalMs);
     }
 
-    // Unblock audio restrictions seamlessly
     window.addEventListener('DOMContentLoaded', startInventorySoundtrack);
     window.addEventListener('load', startInventorySoundtrack);
     document.addEventListener('click', startInventorySoundtrack, { once: false });

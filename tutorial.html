@@ -20,6 +20,7 @@
       --kb-key-hover-border: #d4af37; /* Gold/yellow border for popup */
       --kb-key-hover-bg: #1a1505;     /* Subtle warm tint for inside the key */
       --kb-text-muted: #544343;
+      --timeline-color: #ffd700;       /* Gold/yellow theme accent line */
     }
 
     .keyboard-section {
@@ -197,48 +198,104 @@
       display: block;
     }
 
-    /* ================= YOUR ORIGINAL STYLES (UNTOUCHED) ================= */
+    /* ================= TIMELINE & BOX RESIZING LAYOUT ================= */
     .tut-title {
       font-size: 1.8rem !important;
       letter-spacing: 0.5px;
     }
 
+    /* Set parent container layout to perfectly stretch both components equally */
+    .tut-layout {
+      display: flex;
+      gap: 3rem;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .tut-steps {
+      flex: 1;
+      max-width: 500px;
+      position: relative;
+      padding-left: 2.5rem; /* Space for the timeline vertical spine */
+    }
+
+    /* Vertical Timeline Line track */
+    .tut-steps::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      bottom: 25px;
+      left: 7px;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
     .tut-step {
-      margin-bottom: 1rem !important;
+      position: relative;
+      margin-bottom: 2.5rem !important; /* Increased spacing to align perfectly with side grid heights */
+      display: flex;
+      flex-direction: column;
       align-items: flex-start !important;
     }
 
+    /* Timeline Node indicator */
+    .tut-step::before {
+      content: '';
+      position: absolute;
+      left: -2.5rem;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #111111;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      z-index: 2;
+      transition: all 0.2s ease-in-out;
+    }
+
+    /* Dynamic hover effects for active nodes */
+    .tut-step:hover::before {
+      background: var(--timeline-color);
+      border-color: var(--timeline-color);
+      box-shadow: 0 0 8px var(--timeline-color);
+    }
+
     .step-num {
-      font-size: 1.1rem !important;
-      font-weight: bold;
-      margin-right: 0.8rem !important;
-      line-height: 1.4;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem !important;
+      font-weight: normal;
+      color: var(--timeline-color);
+      margin-bottom: 0.2rem;
+      line-height: 1;
+      letter-spacing: 1px;
     }
 
     .step-heading {
-      font-size: 1.1rem !important;
+      font-size: 1.2rem !important;
       font-weight: 600;
-      margin-bottom: 0.2rem !important;
+      margin-bottom: 0.4rem !important;
       color: #ffffff;
+      transition: color 0.2s ease;
+    }
+
+    .tut-step:hover .step-heading {
+      color: var(--timeline-color);
     }
 
     .step-text {
       font-size: 0.9rem !important;
-      line-height: 1.4 !important;
+      line-height: 1.5 !important;
       color: #cccccc;
-    }
-
-    .tut-steps {
-      max-width: 500px;
     }
 
     /* ================= VISUAL SIDEBAR GALLERY STYLES ================= */
     .tut-visual {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      justify-content: space-between; /* Spreads the wrappers smoothly from top to bottom */
       max-width: 420px;
       width: 100%;
+      flex: 1;
     }
 
     .tut-image-wrap {
@@ -249,11 +306,19 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      flex: 1; /* Forces cards to expand equally inside the container */
+      margin-bottom: 1.5rem;
     }
 
+    .tut-image-wrap:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Locks all images to a neat uniform shape and handles scaling smoothly */
     .tut-image {
       width: 100%;
-      height: auto;
+      height: 160px;
+      object-fit: cover; /* Crops visuals beautifully without distortion */
       display: block;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
@@ -267,14 +332,16 @@
       padding: 0.5rem 0.75rem;
       background: rgba(0, 0, 0, 0.6);
       font-weight: 600;
+      margin-top: auto; /* Locks text down safely at the bottom of the card */
     }
 
+    /* Fixed size support for missing placeholder objects */
     .tut-image-placeholder {
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 3rem 1.5rem;
+      height: 160px;
       text-align: center;
       background: rgba(255, 255, 255, 0.05);
     }
@@ -289,6 +356,10 @@
     .placeholder-sub {
       color: #888888;
       font-size: 0.75rem;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   </style>
 </head>
