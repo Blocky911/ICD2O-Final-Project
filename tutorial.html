@@ -6,42 +6,230 @@
   <title>Tag Royale — How to Play</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
   <style>
+    /* ================= KEYBOARD LAYOUT MODERN THEME STYLING ================= */
+    :root {
+      --kb-panel-bg: rgba(255, 204, 0, 0.45); /* Increased transparency (0.75 -> 0.45) */
+      --kb-panel-border: #d4a373;
+      --kb-key-bg: #000000;
+      --kb-key-border: #260d0d;
+      --kb-key-active: #801414;
+      --kb-key-hover-border: #d4af37; /* Gold/yellow border for popup */
+      --kb-key-hover-bg: #1a1505;     /* Subtle warm tint for inside the key */
+      --kb-text-muted: #544343;
+    }
+
+    .keyboard-section {
+      width: 100%;
+      margin: 0 auto 2.5rem auto;
+      font-family: 'DM Sans', sans-serif;
+      box-sizing: border-box;
+    }
+
+    .kb-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .kb-title span {
+      font-size: 1.8rem;
+    }
+
+    .kb-divider {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      margin-bottom: 1.5rem;
+    }
+
+    .kb-container {
+      background-color: var(--kb-panel-bg);
+      border: 1px solid var(--kb-panel-border);
+      border-radius: 6px;
+      padding: 3rem 2.5rem;
+      display: flex;
+      gap: 5rem;
+      align-items: flex-end;
+      backdrop-filter: blur(4px); /* Adds a slight blur to background elements behind the layout */
+    }
+
+    .kb-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .kb-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #000000;                /* Adjusted text color to stand out on yellow */
+      letter-spacing: 3px;
+    }
+
+    .wasd-cluster, .actions-cluster {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .actions-cluster {
+      align-items: stretch;
+    }
+
+    .row-keys {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Key Wrappers for Tooltip Anchor points */
+    .key-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Base Key Styling */
+    .kb-key {
+      background-color: var(--kb-key-bg);
+      border: 1px solid var(--kb-key-border);
+      border-radius: 4px;
+      color: #ffffff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .kb-key .arrow {
+      font-size: 0.6rem;
+      color: var(--kb-text-muted);
+      margin-top: 1px;
+      transition: color 0.15s ease;
+    }
+
+    .kb-key.active {
+      border-color: var(--kb-key-active);
+    }
+
+    /* Long key styling */
+    .shift-key {
+      width: 72px;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .esc-key {
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* POPUP & YELLOW TINT FEATURE ON HOVER */
+    .key-wrapper:hover .kb-key {
+      transform: translateY(-4px) scale(1.08); /* "Pops up" slightly */
+      border-color: var(--kb-key-hover-border);
+      background-color: var(--kb-key-hover-bg);
+      color: #ffd700; /* Text turns golden yellow */
+      box-shadow: 0 6px 12px rgba(212, 175, 55, 0.2);
+    }
+
+    .key-wrapper:hover .kb-key .arrow {
+      color: #ffd700; /* Arrow icon also matches yellow theme on pop up */
+    }
+
+    /* Hover Tooltips */
+    .kb-tooltip {
+      display: none;
+      position: absolute;
+      top: -32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      color: #000000;
+      border: 1px solid #ffffff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      white-space: nowrap;
+      border-radius: 2px;
+      letter-spacing: 0.5px;
+      z-index: 10;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    /* Tooltip Triangle Arrow */
+    .kb-tooltip::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px 4px 0;
+      border-style: solid;
+      border-color: #ffffff transparent;
+    }
+
+    /* Trigger tooltips on hover */
+    .key-wrapper:hover .kb-tooltip {
+      display: block;
+    }
+
+    /* ================= YOUR ORIGINAL STYLES (UNTOUCHED) ================= */
     .tut-title {
-      font-size: 1.8rem !important; /* Made the main header much smaller */
+      font-size: 1.8rem !important;
       letter-spacing: 0.5px;
     }
 
     .tut-step {
-      margin-bottom: 1rem !important; /* Tightened the spacing between steps */
+      margin-bottom: 1rem !important;
       align-items: flex-start !important;
     }
 
     .step-num {
-      font-size: 1.1rem !important; /* Scaled down step numbers */
+      font-size: 1.1rem !important;
       font-weight: bold;
       margin-right: 0.8rem !important;
       line-height: 1.4;
     }
 
     .step-heading {
-      font-size: 1.1rem !important; /* Made headers small and inline with text size */
+      font-size: 1.1rem !important;
       font-weight: 600;
       margin-bottom: 0.2rem !important;
       color: #ffffff;
     }
 
     .step-text {
-      font-size: 0.9rem !important; /* Standard small body text size */
+      font-size: 0.9rem !important;
       line-height: 1.4 !important;
       color: #cccccc;
     }
 
     .tut-steps {
-      max-width: 500px; /* Reduced container width to look better with small text */
+      max-width: 500px;
     }
   </style>
 </head>
@@ -56,6 +244,81 @@
       <a href="index.html" class="back-btn">← BACK</a>
       <h1 class="tut-title">HOW TO PLAY</h1>
     </nav>
+
+    <section class="keyboard-section">
+      <h2 class="kb-title"><span>⌨</span> KEYBOARD LAYOUT</h2>
+      <hr class="kb-divider">
+      
+      <div class="kb-container">
+        <div class="kb-group">
+          <div class="wasd-cluster">
+            
+            <div class="key-wrapper">
+              <span class="kb-tooltip">MOVE UP</span>
+              <div class="kb-key">W<span class="arrow">↑</span></div>
+            </div>
+
+            <div class="row-keys">
+              <div class="key-wrapper">
+                <span class="kb-tooltip">MOVE LEFT</span>
+                <div class="kb-key">A<span class="arrow">←</span></div>
+              </div>
+              <div class="key-wrapper">
+                <span class="kb-tooltip">MOVE DOWN</span>
+                <div class="kb-key">S<span class="arrow">↓</span></div>
+              </div>
+              <div class="key-wrapper">
+                <span class="kb-tooltip">MOVE RIGHT</span>
+                <div class="kb-key">D<span class="arrow">→</span></div>
+              </div>
+            </div>
+
+          </div>
+          <div class="kb-label">MOVEMENT</div>
+        </div>
+
+        <div class="kb-group">
+          <div class="actions-cluster">
+            
+            <div class="row-keys">
+              <div class="key-wrapper">
+                <span class="kb-tooltip">ITEM 1</span>
+                <div class="kb-key">1</div>
+              </div>
+              <div class="key-wrapper">
+                <span class="kb-tooltip">ITEM 2</span>
+                <div class="kb-key">2</div>
+              </div>
+              <div class="key-wrapper">
+                <span class="kb-tooltip">ITEM 3</span>
+                <div class="kb-key">3</div>
+              </div>
+              <div class="key-wrapper">
+                <span class="kb-tooltip">ITEM 4</span>
+                <div class="kb-key">4</div>
+              </div>
+              <div class="key-wrapper">
+                <span class="kb-tooltip">ITEM 5</span>
+                <div class="kb-key">5</div>
+              </div>
+            </div>
+
+            <div class="row-keys">
+              <div class="key-wrapper">
+                <span class="kb-tooltip">PAUSE MENU</span>
+                <div class="kb-key esc-key">ESC</div>
+              </div>
+              <div class="key-wrapper">
+                <span class="kb-tooltip">SPRINT</span>
+                <div class="kb-key shift-key">SHIFT</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="kb-label">ACTIONS</div>
+        </div>
+      </div>
+    </section>
 
     <div class="tut-layout">
 
