@@ -231,6 +231,65 @@
     .tut-steps {
       max-width: 500px;
     }
+
+    /* ================= VISUAL SIDEBAR GALLERY STYLES ================= */
+    .tut-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .tut-image-wrap {
+      position: relative;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid #333333;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tut-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .tut-img-caption {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ffd700;
+      padding: 0.5rem 0.75rem;
+      background: rgba(0, 0, 0, 0.6);
+      font-weight: 600;
+    }
+
+    .tut-image-placeholder {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .placeholder-label {
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .placeholder-sub {
+      color: #888888;
+      font-size: 0.75rem;
+    }
   </style>
 </head>
 <body>
@@ -328,7 +387,7 @@
           <span class="step-num">01</span>
           <div class="step-body">
             <div class="step-heading">Grab the Crown</div>
-            <div class="step-text">Use W, A, S, and D to move. Press 1-5 to use an item! Press shift to sprint, press again to stop! Tag your opponent to steal the crown from them. Whoever holds the crown earns 10 points per second — that's 1 point every 0.1 seconds.</div>
+            <div class="step-text">Use W, A, S, and D to move. Press E to use an item! Tag your opponent to steal the crown from them. Whoever holds the crown earns 10 points per second — that's 1 point every 0.1 seconds.</div>
           </div>
         </div>
 
@@ -383,18 +442,49 @@
       </section>
 
       <aside class="tut-visual">
+        
         <div class="tut-image-wrap">
           <img
-            src="YOUR_IMAGE_HERE.png"
-            alt="Tutorial screenshot"
+            src="images/Screenshot 2026-06-19 233151.jpg"
+            alt="Match Arena Interface"
             class="tut-image"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
           />
           <div class="tut-image-placeholder">
-            <span class="placeholder-label">YOUR_IMAGE_HERE.png</span>
-            <span class="placeholder-sub">Replace src attribute in tutorial.html</span>
+            <span class="placeholder-label">Image Missing</span>
+            <span class="placeholder-sub">images/Screenshot 2026-06-19 233151.jpg</span>
           </div>
+          <div class="tut-img-caption">Match View &amp; Score Tracker</div>
         </div>
+
+        <div class="tut-image-wrap">
+          <img
+            src="images/Screenshot 2026-06-19 232600.png"
+            alt="Stamina Bar and Hotbar items"
+            class="tut-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="tut-image-placeholder">
+            <span class="placeholder-label">Image Missing</span>
+            <span class="placeholder-sub">images/Screenshot 2026-06-19 232600.png</span>
+          </div>
+          <div class="tut-img-caption">Stamina Meter &amp; Inventory Hotbar</div>
+        </div>
+
+        <div class="tut-image-wrap">
+          <img
+            src="images/Screenshot 2026-06-19 232821.png"
+            alt="Crown Holder being pursued"
+            class="tut-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="tut-image-placeholder">
+            <span class="placeholder-label">Image Missing</span>
+            <span class="placeholder-sub">images/Screenshot 2026-06-19 232821.png</span>
+          </div>
+          <div class="tut-img-caption">Crown Pursuit &amp; Active Buffs</div>
+        </div>
+
       </aside>
 
     </div>
