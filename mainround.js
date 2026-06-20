@@ -12,43 +12,37 @@ let playerX = 1900;
 let playerY = 1900;
 const playerSize = 50; 
 const playerOffset = 35;
-let gameActive = false; // Note: Ensure your startup UI toggles this to true to kick off calculations
-let isPaused = false;   // New trackable flag for the pause system
+let gameActive = false; 
+let isPaused = false;   
 
-// Speed variables (Synchronized perfectly as a base)
+// Speed variables
 const NORMAL_SPEED = 8;
 const MUD_SPEED = 3;
-const CROWN_SPEED_BOOST = 1.2; // Slightly faster modifier when holding the crown
-const SPRINT_BOOST_SPEED = 4.5; // Bonus velocity when sprinting
+const CROWN_SPEED_BOOST = 1.2; 
+const SPRINT_BOOST_SPEED = 4.5; 
 let currentSpeed = NORMAL_SPEED;
 
-// Stamina Mechanics Configuration (Symmetric Settings)
+// Stamina Mechanics Configuration
 const MAX_STAMINA = 100;
-const SPRINT_STARTUP_COST = 4.5;    // ANTI-SPAM EXPLOIT: Instant stamina tax applied the moment sprinting begins
-const STAMINA_DRAIN_RATE = 0.35;    // Stamina consumed per frame when sprinting
-const STAMINA_RECOVER_RATE = 0.12;  // Stamina recovered slowly over time
+const SPRINT_STARTUP_COST = 4.5;    
+const STAMINA_DRAIN_RATE = 0.35;    
+const STAMINA_RECOVER_RATE = 0.12;  
 let playerStamina = MAX_STAMINA;
 let botStamina = MAX_STAMINA;
 
-// Gradual Stamina Ramp Configuration (Slower initial crawl to punish erratic behavior)
 let playerStaminaRamp = 0.005;       
 let botStaminaRamp = 0.005;
 
-// State trackers to detect the exact frame sprinting begins
 let playerWasSprintingLastFrame = false;
 let botWasSprintingLastFrame = false;
-
-// Anti-Cheese Exhaustion Mechanics (Locks sprinting until completely full if depleted)
 let playerIsExhausted = false;
 let botIsExhausted = false;
-
-// Toggle Sprint States
 let playerIsSprintingToggle = false;
 
-// --- MATCH TIMER & SCORE RETRIEVAL ENTITIES ---
-let gameTimeRemaining = 150; // 2 minutes and 30 seconds total (In seconds)
+// Match Timer & Score
+let gameTimeRemaining = 150; 
 let playerScore = 0;
-let scoreAccumulationTimer = 0; // Track engine cycles to increment every 0.1s (6 frames at 60 FPS)
+let scoreAccumulationTimer = 0; 
 
 // Track active keyboard inputs
 const keys = {
@@ -58,37 +52,54 @@ const keys = {
 let obstacles = [];
 const mapSize = 5000;
 
-// Role state variables for the loop mechanics
-let isPlayerIt = false; // Starts with the bot chasing you (Bot is It, Player has Crown)
-let tagCooldownTimer = 0; // Buffer window to manage freeze states (60 frames = 1 second)
+// Role state variables
+let isPlayerIt = false; 
+let tagCooldownTimer = 0; 
 const TAG_COOLDOWN_FRAMES = 60;
 
-// Crown element configuration (Slightly Bigger Matrix dimensions)
 let crownElement = null;
-
-// Dynamic HUD Displays Creator
 let hudContainer = null;
 let timerDisplayElement = null;
 let scoreDisplayElement = null;
-
-// Stamina UI DOM References
 let staminaBarContainer = null;
 let staminaBarInner = null;
-
-// Pause UI Reference
 let pauseMenuOverlay = null;
 
-// Difficulty Configuration from URL Parameters
+// Difficulty Configuration
 const urlParams = new URLSearchParams(window.location.search);
 const gameDifficulty = urlParams.get('diff') || 'medium';
 
-// Multiplier calculation based on Difficulty
 let difficultyMultiplier = 0.5;
 if (gameDifficulty === 'medium') difficultyMultiplier = 1;
-if (gameDifficulty === 'hard') difficultyMultiplier = 1.3;
+if (gameDifficulty === 'hard') difficultyMultiplier = 1.335;
+
+// ==========================================
+// IN-GAME LIVE ITEM BUFF & MECHANICS STATE
+// ==========================================
+let botStunTimer = 0;          
+let botStunMaxDuration = 0;    
+let gummyBearSpeedTimer = 0;   
+let gummyBearSlowTimer = 0;    
+let isUntaggableActive = false; 
+
+// Database references matching inventory mapping and grid layouts
+const GAME_ITEM_DATABASE = {
+    'energy_bar': { name: 'Energy Bar', sheet: 'items', row: 0, col: 0, color: '#00ffcc' },
+    'tomatoes': { name: 'Rotten Tomatoes', sheet: 'items', row: 0, col: 1, color: '#ff3333' },
+    'gummy_bears': { name: 'Gummy Bears', sheet: 'items', row: 0, col: 2, color: '#ffcc00' },
+    'fart_bomb': { name: 'Fart Bomb', sheet: 'items', row: 1, col: 2, color: '#a6ff00' },
+    'potion': { name: 'Untaggable Potion', sheet: 'items', row: 2, col: 0, color: '#cc00ff' },
+    
+    'skin_default_red': { name: 'Default Red', sheet: 'skins', row: 1, col: 0, color: '#ff4444' },
+    'skin_nugget': { name: 'Nugget Hunter', sheet: 'skins', row: 2, col: 0, color: '#e5a93b' },
+    'skin_george': { name: 'Curious George', sheet: 'skins', row: 4, col: 0, color: '#8b5a2b' },
+    'skin_john': { name: 'John Wick', sheet: 'skins', row: 6, col: 0, color: '#333333' }
+};
+
+// State tracker synced directly with inventory's format
+let hotbarItems = [null, null, null, null, null];
 
 function setupGameHUD() {
-    // Check if HUD already exists to avoid duplication
     if (document.getElementById('game-hud-overlay')) return;
 
     hudContainer = document.createElement('div');
@@ -123,19 +134,16 @@ function setupGameHUD() {
     hudContainer.appendChild(scoreDisplayElement);
     document.body.appendChild(hudContainer);
 
-    // Create the Stamina Overlay Interface visually below the player view
     createStaminaUI();
-    // Setup Pause Screen UI Elements permanently
     createPauseMenu();
+    loadPersistentHotbar();
+    createHotbarUIOverlay();
 
-    // Setup an interval to drop the clock down every second ticking natively
     setInterval(() => {
-        // Anti-exploit block: Freeze countdown if game is inactive OR paused!
         if (!gameActive || isPaused || gameTimeRemaining <= 0) return;
         
         gameTimeRemaining--;
         
-        // Calculate format readouts
         let minutes = Math.floor(gameTimeRemaining / 60);
         let seconds = gameTimeRemaining % 60;
         if (seconds < 10) seconds = '0' + seconds;
@@ -144,14 +152,9 @@ function setupGameHUD() {
 
         if (gameTimeRemaining <= 0) {
             gameActive = false;
-
-            // Ensure playerScore is firmly rounded down to an integer before saving conversion pools
             playerScore = Math.floor(playerScore);
-
-            // Calculate score with difficulty modifier applied
             let modifiedScore = Math.floor(playerScore * difficultyMultiplier);
 
-            // --- POINTS TO COINS CONVERSION SYSTEM ---
             let currentCoins = localStorage.getItem('playerCoins') !== null ? parseInt(localStorage.getItem('playerCoins')) : 0;
             let currentPoints = localStorage.getItem('playerPoints') !== null ? parseInt(localStorage.getItem('playerPoints')) : 0;
 
@@ -162,7 +165,6 @@ function setupGameHUD() {
             localStorage.setItem('playerCoins', currentCoins + coinsEarned);
             localStorage.setItem('playerPoints', leftoverPoints);
 
-            // Create a styled end game modal popup dynamically
             const modal = document.createElement('div');
             modal.style.position = 'fixed';
             modal.style.top = '0'; modal.style.left = '0';
@@ -183,16 +185,13 @@ function setupGameHUD() {
                     <p style="font-size: 32px; margin: 15px 0; color: #ffcc00;">[ ${modifiedScore} Points ➔ 🪙 ${coinsEarned} Coins ]</p>
                     <p style="font-size: 20px; color: #aaaaaa;">Leftover points banked towards next coin: ${leftoverPoints}/50</p>
                 </div>
-                <button id="menu-redirect-btn" style="padding: 12px 40px; font-size: 24px; background-color: #ffcc00; border: none; border-radius: 25px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; transition: transform 0.1s;">
+                <button id="menu-redirect-btn" style="padding: 12px 40px; font-size: 24px; background-color: #ffcc00; border: none; border-radius: 25px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;">
                     RETURN TO MAIN MENU
                 </button>
             `;
             
             document.body.appendChild(modal);
-
-            document.getElementById('menu-redirect-btn').onclick = () => {
-                window.location.href = 'index.html';
-            };
+            document.getElementById('menu-redirect-btn').onclick = () => { window.location.href = 'index.html'; };
         }
     }, 1000);
 }
@@ -201,30 +200,158 @@ function createStaminaUI() {
     staminaBarContainer = document.createElement('div');
     staminaBarContainer.id = 'player-stamina-container';
     staminaBarContainer.style.position = 'fixed';
-    staminaBarContainer.style.bottom = '30px';
+    staminaBarContainer.style.bottom = '82px'; 
     staminaBarContainer.style.left = '50%';
     staminaBarContainer.style.transform = 'translateX(-50%)';
-    staminaBarContainer.style.width = '260px';
-    staminaBarContainer.style.height = '14px';
+    staminaBarContainer.style.width = '200px';
+    staminaBarContainer.style.height = '10px';
     staminaBarContainer.style.backgroundColor = 'rgba(11, 15, 25, 0.7)';
-    staminaBarContainer.style.border = '2px solid #ffffff';
-    staminaBarContainer.style.borderRadius = '10px';
+    staminaBarContainer.style.border = '1.5px solid #ffffff';
+    staminaBarContainer.style.borderRadius = '6px';
     staminaBarContainer.style.overflow = 'hidden';
     staminaBarContainer.style.zIndex = '1000';
-    staminaBarContainer.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
 
     staminaBarInner = document.createElement('div');
     staminaBarInner.style.width = '100%';
     staminaBarInner.style.height = '100%';
     staminaBarInner.style.backgroundColor = '#00ffcc';
-    staminaBarInner.style.transition = 'width 0.05s linear, background-color 0.2s ease';
 
     staminaBarContainer.appendChild(staminaBarInner);
     document.body.appendChild(staminaBarContainer);
 }
 
 // ==========================================
-// 1d. PAUSE OVERLAY INTERFACE SYSTEM
+// COMPACT SPRITESHEET DRIVEN HOTBAR OVERLAY
+// ==========================================
+function loadPersistentHotbar() {
+    let savedHotbar = localStorage.getItem('hotbarItems');
+    if (savedHotbar) {
+        try {
+            hotbarItems = JSON.parse(savedHotbar);
+        } catch (e) { console.error("Error parsing hotbarItems array", e); }
+    } else {
+        hotbarItems = ['energy_bar', 'tomatoes', 'gummy_bears', 'fart_bomb', 'potion'];
+    }
+}
+
+function createHotbarUIOverlay() {
+    const existing = document.getElementById('game-hotbar-container');
+    if (existing) existing.remove();
+
+    const hotbarWrapper = document.createElement('div');
+    hotbarWrapper.id = 'game-hotbar-container';
+    hotbarWrapper.style.position = 'fixed';
+    hotbarWrapper.style.bottom = '15px';
+    hotbarWrapper.style.left = '50%';
+    hotbarWrapper.style.transform = 'translateX(-50%)';
+    hotbarWrapper.style.display = 'flex';
+    hotbarWrapper.style.gap = '8px';
+    hotbarWrapper.style.backgroundColor = 'rgba(11, 15, 25, 0.9)';
+    hotbarWrapper.style.padding = '6px 12px';
+    hotbarWrapper.style.borderRadius = '12px';
+    hotbarWrapper.style.border = '2px solid rgba(255, 255, 255, 0.15)';
+    hotbarWrapper.style.boxShadow = '0 6px 24px rgba(0, 0, 0, 0.6)';
+    hotbarWrapper.style.zIndex = '1000';
+
+    hotbarItems.forEach((itemId, index) => {
+        const itemSlot = document.createElement('div');
+        itemSlot.id = `hotbar-slot-${index}`;
+        itemSlot.style.width = '48px';
+        itemSlot.style.height = '48px';
+        itemSlot.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
+        itemSlot.style.borderRadius = '8px';
+        itemSlot.style.display = 'flex';
+        itemSlot.style.justifyContent = 'center';
+        itemSlot.style.alignItems = 'center';
+        itemSlot.style.position = 'relative';
+        itemSlot.style.overflow = 'hidden';
+        itemSlot.style.transition = 'transform 0.1s, border-color 0.2s';
+
+        const keyIndicator = document.createElement('div');
+        keyIndicator.innerText = index + 1;
+        keyIndicator.style.position = 'absolute';
+        keyIndicator.style.top = '2px';
+        keyIndicator.style.left = '4px';
+        keyIndicator.style.fontSize = '10px';
+        keyIndicator.style.fontWeight = 'bold';
+        keyIndicator.style.color = 'rgba(255,255,255,0.5)';
+        keyIndicator.style.zIndex = '5';
+        itemSlot.appendChild(keyIndicator);
+
+        if (itemId && GAME_ITEM_DATABASE[itemId]) {
+            const itemData = GAME_ITEM_DATABASE[itemId];
+            itemSlot.style.border = '1.5px solid rgba(255,255,255,0.25)';
+            itemSlot.style.cursor = 'pointer';
+
+            // Visual element displaying spritesheet crop matching inventory config
+            const visualRender = document.createElement('div');
+            visualRender.style.width = '32px';
+            visualRender.style.height = '32px';
+            
+            if (itemData.sheet === 'items') {
+                visualRender.style.backgroundImage = "url('images/item_spritesheet.png')";
+                // Assumes 3x3 layout with 32px source tiles
+                visualRender.style.backgroundPosition = `-${itemData.col * 32}px -${itemData.row * 32}px`;
+                visualRender.style.backgroundSize = '96px 96px';
+            } else {
+                visualRender.style.backgroundImage = "url('images/game_skins.png')";
+                // Front standing texture snapshot from row matrix
+                visualRender.style.backgroundPosition = `0px -${itemData.row * 120}px`;
+                visualRender.style.backgroundSize = '960px 960px';
+                // Adjust scaling inside mini slots
+                visualRender.style.transform = 'scale(0.35)';
+            }
+            
+            itemSlot.appendChild(visualRender);
+
+            itemSlot.onmouseenter = () => itemSlot.style.borderColor = itemData.color || '#ffcc00';
+            itemSlot.onmouseleave = () => itemSlot.style.borderColor = 'rgba(255,255,255,0.25)';
+            itemSlot.onclick = () => activateHotbarSlot(index);
+        } else {
+            itemSlot.style.border = '1.5px solid rgba(255, 255, 255, 0.06)';
+            itemSlot.style.cursor = 'default';
+        }
+
+        hotbarWrapper.appendChild(itemSlot);
+    });
+
+    document.body.appendChild(hotbarWrapper);
+}
+
+function activateHotbarSlot(index) {
+    if (!gameActive || isPaused) return;
+    let itemId = hotbarItems[index];
+    if (!itemId) return;
+
+    switch (itemId) {
+        case 'energy_bar':
+            playerStamina = MAX_STAMINA;
+            playerIsExhausted = false;
+            break;
+        case 'tomatoes':
+            botStunTimer = 360; 
+            botStunMaxDuration = 360;
+            break;
+        case 'gummy_bears':
+            gummyBearSpeedTimer = 900; 
+            gummyBearSlowTimer = 0;
+            break;
+        case 'fart_bomb':
+            botStunTimer = 900; 
+            botStunMaxDuration = 900;
+            break;
+        case 'potion':
+            isUntaggableActive = true;
+            break;
+    }
+
+    hotbarItems[index] = null;
+    localStorage.setItem('hotbarItems', JSON.stringify(hotbarItems));
+    createHotbarUIOverlay();
+}
+
+// ==========================================
+// PAUSE OVERLAY INTERFACE SYSTEM
 // ==========================================
 function createPauseMenu() {
     pauseMenuOverlay = document.createElement('div');
@@ -236,7 +363,7 @@ function createPauseMenu() {
     pauseMenuOverlay.style.height = '100vh';
     pauseMenuOverlay.style.backgroundColor = 'rgba(11, 15, 25, 0.85)';
     pauseMenuOverlay.style.backdropFilter = 'blur(8px)';
-    pauseMenuOverlay.style.display = 'none'; // Initially invisible
+    pauseMenuOverlay.style.display = 'none'; 
     pauseMenuOverlay.style.flexDirection = 'column';
     pauseMenuOverlay.style.justifyContent = 'center';
     pauseMenuOverlay.style.alignItems = 'center';
@@ -244,13 +371,13 @@ function createPauseMenu() {
     pauseMenuOverlay.style.fontFamily = "'Bebas Neue', sans-serif";
 
     pauseMenuOverlay.innerHTML = `
-        <h1 style="font-size: 72px; color: #ffcc00; margin-bottom: 5px; letter-spacing: 3px; drop-shadow: 0 4px 10px rgba(0,0,0,0.5);">GAME PAUSED</h1>
+        <h1 style="font-size: 72px; color: #ffcc00; margin-bottom: 5px; letter-spacing: 3px;">GAME PAUSED</h1>
         <p style="font-size: 20px; color: #aaaaaa; font-family: 'DM Sans', sans-serif; margin-bottom: 30px;">Timer and mechanics frozen</p>
-        <div style="display: flex; flexDirection: column; gap: 15px;">
-            <button id="pause-resume-btn" style="padding: 12px 50px; font-size: 24px; width: 280px; background-color: #ffcc00; border: none; border-radius: 25px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; transition: transform 0.1s;">
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <button id="pause-resume-btn" style="padding: 12px 50px; font-size: 24px; width: 280px; background-color: #ffcc00; border: none; border-radius: 25px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;">
                 RESUME
             </button>
-            <button id="pause-quit-btn" style="padding: 12px 50px; font-size: 24px; width: 280px; background-color: transparent; border: 2px solid #ff3333; color: #ff3333; border-radius: 25px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; transition: background-color 0.2s;">
+            <button id="pause-quit-btn" style="padding: 12px 50px; font-size: 24px; width: 280px; background-color: transparent; border: 2px solid #ff3333; color: #ff3333; border-radius: 25px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;">
                 QUIT TO MENU
             </button>
         </div>
@@ -258,19 +385,17 @@ function createPauseMenu() {
 
     document.body.appendChild(pauseMenuOverlay);
 
-    // Button functional listeners
     document.getElementById('pause-resume-btn').onclick = () => { togglePauseState(false); };
     document.getElementById('pause-quit-btn').onclick = () => { window.location.href = 'index.html'; };
 }
 
 function togglePauseState(forceStatus) {
-    if (!gameActive && forceStatus !== false) return; // Don't trigger if round ended
+    if (!gameActive && forceStatus !== false) return;
 
     isPaused = (forceStatus !== undefined) ? forceStatus : !isPaused;
 
     if (isPaused) {
         pauseMenuOverlay.style.display = 'flex';
-        // Clear current baseline input arrays to stop stuck key values on freeze frame
         for (let key in keys) keys[key] = false;
         playerIsSprintingToggle = false;
     } else {
@@ -303,7 +428,6 @@ function updateCrownPosition() {
     }
 }
 
-// Bot Tracker Arrow Setup
 let trackerArrow = null;
 
 function createTrackerArrow() {
@@ -377,7 +501,7 @@ function updateTrackerArrowPosition() {
 }
 
 // ==========================================
-// 1b. 8x8 SPRITESHEET MATRIX SELECTIONS
+// SPRITESHEET MATRIX CONFIGURATION
 // ==========================================
 const SKIN_ROW_MAPPING = {
     'skin_default_red': 1, 
@@ -418,7 +542,7 @@ function updateCharacterSpriteFrame() {
 updateCharacterSpriteFrame();
 
 // ==========================================
-// 1c. BOT ARCHITECTURE & CONFIGURATION
+// BOT ARCHITECTURE
 // ==========================================
 let botElement = null;
 let botX = playerX; 
@@ -463,20 +587,24 @@ function setupDifficultyParameters() {
 }
 
 // ==========================================
-// 2. INPUT LISTENERS & ANTI-TAB EXPLOIT BINDINGS
+// INPUT LISTENERS & HOTBAR ACTION HOOKS
 // ==========================================
 window.addEventListener('keydown', (e) => { 
-    // Handle manual key toggle pause with Escape key
     if (e.key === 'Escape') {
         togglePauseState();
         return;
     }
 
-    if (isPaused) return; // Completely discard tracking controls when paused
+    if (isPaused) return;
     if (e.key in keys) keys[e.key] = true; 
     
     if (e.key === 'Shift') {
         playerIsSprintingToggle = !playerIsSprintingToggle;
+    }
+
+    if (['1', '2', '3', '4', '5'].includes(e.key)) {
+        const slotIdx = parseInt(e.key) - 1;
+        activateHotbarSlot(slotIdx);
     }
 });
 
@@ -484,20 +612,11 @@ window.addEventListener('keyup', (e) => {
     if (e.key in keys) keys[e.key] = false; 
 });
 
-// --- ANTI-CHEESE TAB FOCUS EXPLOIT SYSTEMS ---
-window.addEventListener('blur', () => {
-    // Automatically trigger pause overlay when user switches tabs or focus drops out
-    togglePauseState(true);
-});
-
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        togglePauseState(true);
-    }
-});
+window.addEventListener('blur', () => { togglePauseState(true); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) togglePauseState(true); });
 
 // ==========================================
-// 3. COLLISION / COLLIDER DETECTIONS
+// ENVIRONMENT INTERSECTIONS
 // ==========================================
 function populateMapEnvironment() {
     for (let i = 0; i < mapSize; i += 100) {
@@ -616,6 +735,18 @@ function executeBotIntelligence() {
         tagCooldownTimer--;
     }
 
+    if (botStunTimer > 0) {
+        botStunTimer--;
+        if (botStunMaxDuration === 900) {
+            botElement.style.filter = "drop-shadow(0px 0px 14px #a6ff00) hue-rotate(90deg) brightness(0.6)";
+        } else {
+            botElement.style.filter = "drop-shadow(0px 0px 14px #ff3333) grayscale(0.8) brightness(0.6)";
+        }
+        updateCrownPosition();
+        updateTrackerArrowPosition();
+        return; 
+    }
+
     if (isPlayerIt === false && tagCooldownTimer > 0) {
         botElement.style.filter = "drop-shadow(0px 0px 10px #ff0000) brightness(0.5) sepia(1)"; 
         updateCrownPosition();
@@ -644,12 +775,18 @@ function executeBotIntelligence() {
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance < 55 && tagCooldownTimer === 0) {
+        if (!isPlayerIt && isUntaggableActive) {
+            isUntaggableActive = false; 
+            botStunTimer = 60;          
+            botStunMaxDuration = 60;
+            tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+            return;
+        }
         isPlayerIt = !isPlayerIt;
         tagCooldownTimer = TAG_COOLDOWN_FRAMES; 
         return;
     }
 
-    // --- BOT DYNAMIC PROGRESSIVE STAMINA SYSTEM ---
     let botIsCurrentlySprinting = false;
     if (botIsExhausted) {
         botStamina += STAMINA_RECOVER_RATE;
@@ -660,15 +797,13 @@ function executeBotIntelligence() {
         botWasSprintingLastFrame = false;
     } else if (distance < 450 && botStamina > 0 && !checkMudCollision(botX, botY)) {
         botIsCurrentlySprinting = true;
-        
-        // Apply initial activation cost if they just switched into sprint mode this frame
         if (!botWasSprintingLastFrame) {
             botStamina -= SPRINT_STARTUP_COST;
         }
         
         localSpeed += SPRINT_BOOST_SPEED;
         botStamina -= STAMINA_DRAIN_RATE;
-        botStaminaRamp = 0.005; // Drop baseline back to lowest crawl
+        botStaminaRamp = 0.005; 
         
         if (botStamina <= 0) {
             botStamina = 0;
@@ -795,7 +930,7 @@ function executeBotIntelligence() {
 
                 let txNeg = Math.cos(radNegative) * moveX - Math.sin(radNegative) * moveY;
                 let tyNeg = Math.sin(radNegative) * moveX + Math.cos(radNegative) * moveY;
-                if (!processEnvironmentIntersection(botX + txNeg, botY + tyNeg)) {
+                if (!processEnvironmentIntersection(txNeg + botX, tyNeg + botY)) {
                     moveX = txNeg; moveY = tyNeg;
                     pathFound = true;
                     break;
@@ -855,7 +990,7 @@ function executeBotIntelligence() {
 }
 
 // ==========================================
-// 4. MAIN GAME LOOP (MOVEMENT & CAMERA)
+// MAIN RUNTIME CYCLE ENGINE
 // ==========================================
 function coreExecutionEngine() {
     if (!gameActive) return;
@@ -899,10 +1034,20 @@ function coreExecutionEngine() {
         }
     }
 
-    // --- PLAYER DYNAMIC PROGRESSIVE STAMINA SYSTEM ---
+    if (gummyBearSpeedTimer > 0) {
+        gummyBearSpeedTimer--;
+        currentSpeed += 5.0; 
+        if (gummyBearSpeedTimer === 0) {
+            gummyBearSlowTimer = 480; 
+        }
+    } else if (gummyBearSlowTimer > 0) {
+        gummyBearSlowTimer--;
+        currentSpeed = Math.max(2.5, currentSpeed - 3.5); 
+    }
+
     if (playerIsExhausted) {
         playerIsSprintingToggle = false; 
-        playerStamina += STAMINA_RECOVER_RATE; // Base speed recovery when completely flat out
+        playerStamina += STAMINA_RECOVER_RATE; 
         if (playerStamina >= MAX_STAMINA) {
             playerStamina = MAX_STAMINA;
             playerIsExhausted = false; 
@@ -913,15 +1058,13 @@ function coreExecutionEngine() {
     let playerIsCurrentlySprinting = false;
     if (playerIsSprintingToggle && isMoving && !playerIsExhausted && playerStamina > 0 && !checkMudCollision(playerX, playerY)) {
         playerIsCurrentlySprinting = true;
-        
-        // ANTI-TAP EXPLOIT CHECK: If player transitions into sprinting this frame, deduct an upfront tax
         if (!playerWasSprintingLastFrame) {
             playerStamina -= SPRINT_STARTUP_COST;
         }
 
         currentSpeed += SPRINT_BOOST_SPEED;
         playerStamina -= STAMINA_DRAIN_RATE;
-        playerStaminaRamp = 0.005; // Reset ramp speed back down to full slow crawl
+        playerStaminaRamp = 0.005; 
         
         if (playerStamina <= 0) {
             playerStamina = 0;
@@ -930,10 +1073,9 @@ function coreExecutionEngine() {
         }
         playerWasSprintingLastFrame = true;
     } else if (!playerIsExhausted) {
-        // Charging slowly while moving regularly or idling
         playerStamina += playerStaminaRamp;
         if (playerStaminaRamp < STAMINA_RECOVER_RATE) {
-            playerStaminaRamp += 0.001; // Accelerate curve
+            playerStaminaRamp += 0.001; 
         }
         if (playerStamina > MAX_STAMINA) playerStamina = MAX_STAMINA;
         playerWasSprintingLastFrame = false;
@@ -953,7 +1095,13 @@ function coreExecutionEngine() {
     if (checkMudCollision(playerX, playerY)) {
         player.style.filter = "sepia(0.6) brightness(0.75)";
     } else {
-        if (playerIsCurrentlySprinting) {
+        if (isUntaggableActive) {
+            player.style.filter = "drop-shadow(0px 0px 12px #cc00ff) brightness(1.2) saturate(1.3)";
+        } else if (gummyBearSpeedTimer > 0) {
+            player.style.filter = "drop-shadow(0px 0px 10px #ffcc00) contrast(1.4)";
+        } else if (gummyBearSlowTimer > 0) {
+            player.style.filter = "drop-shadow(0px 0px 4px #5533aa) grayscale(0.6)";
+        } else if (playerIsCurrentlySprinting) {
             player.style.filter = "drop-shadow(0px 0px 8px #00ffff) saturate(1.5)"; 
         } else if (playerIsExhausted) {
             player.style.filter = "drop-shadow(0px 0px 4px #555555) grayscale(0.4)";
@@ -1011,7 +1159,7 @@ function coreExecutionEngine() {
     requestAnimationFrame(coreExecutionEngine);
 }
 
-// Hook setup into layout preparation sequence
+// Global initialization setup
 setupDifficultyParameters();
 setupGameHUD();
 createBot();

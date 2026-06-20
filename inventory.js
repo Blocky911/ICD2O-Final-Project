@@ -7,7 +7,7 @@ const GAME_ITEM_DATABASE = {
     'tomatoes': { name: 'Rotten Tomatoes', type: 'item', desc: 'Throw it to slow down the runner bot!', sheet: 'items', row: 0, col: 1 },
     'gummy_bears': { name: 'Gummy Bears', type: 'item', desc: 'A tasty treat that keeps your stamina restored.', sheet: 'items', row: 0, col: 2 },
     'fart_bomb': { name: 'Fart Bomb', type: 'item', desc: 'Blasts your opponents backward with area knockback!', sheet: 'items', row: 1, col: 2 },
-    'potion': { name: 'Untagable Potion', type: 'item', desc: 'Makes you completely immune to tags for a short time.', sheet: 'items', row: 2, col: 0 },
+    'potion': { name: 'Untaggable Potion', type: 'item', desc: 'Makes you completely immune to tags for a short time.', sheet: 'items', row: 2, col: 0 },
     
     // Player Skins (images/game_skins.png)
     'skin_default_red': { name: 'Default Red', type: 'playerSkin', desc: 'Your base starter character model.', sheet: 'skins', row: 1, col: 0 },
