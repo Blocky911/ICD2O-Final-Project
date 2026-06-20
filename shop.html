@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tag Royale - Shop</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -41,7 +41,7 @@
               <button class="info-btn" title="Provides a quick burst of speed!">i</button>
             </div>
             <div class="card-stats">Speed Boost</div>
-            <button class="buy-btn" onclick="buyItem('energy_bar', 2)">🪙 2</button>
+            <button class="buy-btn" onclick="buyItem('energy_bar', 2); playCoinBuySound();">🪙 2</button>
           </div>
 
           <div class="item-card">
@@ -51,7 +51,7 @@
               <button class="info-btn" title="Slow down the runner bot!">i</button>
             </div>
             <div class="card-stats">Slowing Projectile</div>
-            <button class="buy-btn" onclick="buyItem('tomatoes', 3)">🪙 3</button>
+            <button class="buy-btn" onclick="buyItem('tomatoes', 3); playCoinBuySound();">🪙 3</button>
           </div>
 
           <div class="item-card">
@@ -61,7 +61,7 @@
               <button class="info-btn" title="Tasty treat that keeps you running.">i</button>
             </div>
             <div class="card-stats">Stamina Restore</div>
-            <button class="buy-btn" onclick="buyItem('gummy_bears', 5)">🪙 5</button>
+            <button class="buy-btn" onclick="buyItem('gummy_bears', 5); playCoinBuySound();">🪙 5</button>
           </div>
 
           <div class="item-card">
@@ -71,7 +71,7 @@
               <button class="info-btn" title="Blasts your opponent back!">i</button>
             </div>
             <div class="card-stats">Area Knockback</div>
-            <button class="buy-btn" onclick="buyItem('fart_bomb', 18)">🪙 18</button>
+            <button class="buy-btn" onclick="buyItem('fart_bomb', 18); playCoinBuySound();">🪙 18</button>
           </div>
 
           <div class="item-card">
@@ -81,7 +81,7 @@
               <button class="info-btn" title="Makes you completely immune to tags!">i</button>
             </div>
             <div class="card-stats">Invincibility</div>
-            <button class="buy-btn" onclick="buyItem('potion', 10)">🪙 10</button>
+            <button class="buy-btn" onclick="buyItem('potion', 10); playCoinBuySound();">🪙 10</button>
           </div>
 
         </div>
@@ -97,7 +97,7 @@
               <div class="skin-art default-red"></div>
             </div>
             <div class="card-stats">Base Character</div>
-            <button class="buy-btn" onclick="buyItem('skin_default_red', 0)">FREE</button>
+            <button class="buy-btn" onclick="buyItem('skin_default_red', 0); playCoinBuySound();">FREE</button>
           </div>
 
           <div class="item-card">
@@ -106,7 +106,7 @@
               <div class="skin-art nugget"></div>
             </div>
             <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('skin_nugget', 15)">🪙 15</button>
+            <button class="buy-btn" onclick="buyItem('skin_nugget', 15); playCoinBuySound();">🪙 15</button>
           </div>
 
           <div class="item-card">
@@ -115,7 +115,7 @@
               <div class="skin-art george"></div>
             </div>
             <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('skin_george', 25)">🪙 25</button>
+            <button class="buy-btn" onclick="buyItem('skin_george', 25); playCoinBuySound();">🪙 25</button>
           </div>
 
           <div class="item-card">
@@ -124,7 +124,7 @@
               <div class="skin-art john-pork"></div>
             </div>
             <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('skin_john', 50)">🪙 50</button>
+            <button class="buy-btn" onclick="buyItem('skin_john', 50); playCoinBuySound();">🪙 50</button>
           </div>
 
         </div>
@@ -140,7 +140,7 @@
               <div class="skin-art default-blue"></div>
             </div>
             <div class="card-stats">Base Enemy</div>
-            <button class="buy-btn" onclick="buyItem('bot_default_blue', 0)">FREE</button>
+            <button class="buy-btn" onclick="buyItem('bot_default_blue', 0); playCoinBuySound();">FREE</button>
           </div>
 
           <div class="item-card">
@@ -149,7 +149,7 @@
               <div class="skin-art stealer"></div>
             </div>
             <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('bot_stealer', 15)">🪙 15</button>
+            <button class="buy-btn" onclick="buyItem('bot_stealer', 15); playCoinBuySound();">🪙 15</button>
           </div>
 
           <div class="item-card">
@@ -158,7 +158,7 @@
               <div class="skin-art mcrae"></div>
             </div>
             <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('bot_mcrae', 30)">🪙 30</button>
+            <button class="buy-btn" onclick="buyItem('bot_mcrae', 30); playCoinBuySound();">🪙 30</button>
           </div>
 
           <div class="item-card">
@@ -167,7 +167,7 @@
               <div class="skin-art evil-nugget"></div>
             </div>
             <div class="card-stats">Cosmetic Skin</div>
-            <button class="buy-btn" onclick="buyItem('bot_evil', 45)">🪙 45</button>
+            <button class="buy-btn" onclick="buyItem('bot_evil', 45); playCoinBuySound();">🪙 45</button>
           </div>
 
         </div>
@@ -179,5 +179,140 @@
   <div id="toast-container" class="toast-container"></div>
 
   <script src="shop.js"></script>
+
+  <script>
+    let shopAudioCtx = null;
+    let shopMasterVolume = null;
+    let shopMusicInterval = null;
+    let isShopMusicPlaying = false;
+    
+    let shopTempoBpm = 115; 
+    let shopStepIndex = 0;
+
+    const shopBassNotes = [
+        130.81, 130.81, 130.81, 130.81,  
+        146.83, 146.83, 146.83, 146.83,  
+        174.61, 174.61, 174.61, 174.61,  
+        220.00, 220.00, 196.00, 164.81   
+    ];
+
+    const shopMelodyNotes = [
+        261.63, 329.63, 392.00, 523.25,  
+        293.66, 349.23, 440.00, 587.33,  
+        349.23, 440.00, 523.25, 698.46,  
+        440.00, 523.25, 392.00, 329.63   
+    ];
+
+    function initShopAudio() {
+        try {
+            if (!shopAudioCtx) {
+                shopAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                shopMasterVolume = shopAudioCtx.createGain();
+                shopMasterVolume.gain.setValueAtTime(0.06, shopAudioCtx.currentTime); 
+                shopMasterVolume.connect(shopAudioCtx.destination);
+            }
+            if (shopAudioCtx.state === 'suspended') {
+                shopAudioCtx.resume();
+            }
+        } catch(e) {
+            console.error("Audio Context failed to initialize:", e);
+        }
+    }
+
+    function playCoinBuySound() {
+        initShopAudio();
+        if (!shopAudioCtx) return;
+        
+        let playTime = shopAudioCtx.currentTime;
+
+        let osc1 = shopAudioCtx.createOscillator();
+        let gain1 = shopAudioCtx.createGain();
+        osc1.type = 'square'; 
+        osc1.frequency.setValueAtTime(987.77, playTime); 
+        gain1.gain.setValueAtTime(0.06, playTime);
+        gain1.gain.exponentialRampToValueAtTime(0.001, playTime + 0.08);
+        osc1.connect(gain1);
+        gain1.connect(shopAudioCtx.destination);
+
+        let osc2 = shopAudioCtx.createOscillator();
+        let gain2 = shopAudioCtx.createGain();
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(1318.51, playTime + 0.07); 
+        gain2.gain.setValueAtTime(0.06, playTime + 0.07);
+        gain2.gain.exponentialRampToValueAtTime(0.001, playTime + 0.35);
+        osc2.connect(gain2);
+        gain2.connect(shopAudioCtx.destination);
+
+        osc1.start(playTime);
+        osc1.stop(playTime + 0.09);
+        osc2.start(playTime + 0.07);
+        osc2.stop(playTime + 0.36);
+    }
+
+    function playShopStep() {
+        if (!shopAudioCtx || shopAudioCtx.state === 'suspended') return;
+
+        let stepDuration = 60 / shopTempoBpm; 
+        let playTime = shopAudioCtx.currentTime + 0.01;
+
+        let bassOsc = shopAudioCtx.createOscillator();
+        let bassGain = shopAudioCtx.createGain();
+        let bassFilter = shopAudioCtx.createBiquadFilter();
+        bassOsc.type = 'triangle'; 
+        bassOsc.frequency.setValueAtTime(shopBassNotes[shopStepIndex % 16], playTime);
+        bassFilter.type = 'lowpass';
+        bassFilter.frequency.setValueAtTime(350, playTime); 
+        bassGain.gain.setValueAtTime(0.35, playTime);
+        bassGain.gain.exponentialRampToValueAtTime(0.001, playTime + stepDuration - 0.05);
+        bassOsc.connect(bassFilter);
+        bassFilter.connect(bassGain);
+        bassGain.connect(shopMasterVolume);
+        bassOsc.start(playTime);
+        bassOsc.stop(playTime + stepDuration);
+
+        if (shopStepIndex % 2 === 0) {
+            let synthOsc = shopAudioCtx.createOscillator();
+            let synthGain = shopAudioCtx.createGain();
+            synthOsc.type = 'sine'; 
+            let noteSelection = shopMelodyNotes[(shopStepIndex + 4) % 16];
+            synthOsc.frequency.setValueAtTime(noteSelection, playTime);
+            synthGain.gain.setValueAtTime(0.12, playTime);
+            synthGain.gain.exponentialRampToValueAtTime(0.001, playTime + stepDuration * 1.5);
+            synthOsc.connect(synthGain);
+            synthGain.connect(shopMasterVolume);
+            synthOsc.start(playTime);
+            synthOsc.stop(playTime + stepDuration * 1.5);
+        }
+
+        if (shopStepIndex % 4 !== 0) {
+            let tickOsc = shopAudioCtx.createOscillator();
+            let tickGain = shopAudioCtx.createGain();
+            tickOsc.type = 'triangle';
+            tickOsc.frequency.setValueAtTime(8000, playTime); 
+            tickGain.gain.setValueAtTime(0.015, playTime);
+            tickGain.gain.exponentialRampToValueAtTime(0.0001, playTime + 0.03);
+            tickOsc.connect(tickGain);
+            tickGain.connect(shopMasterVolume);
+            tickOsc.start(playTime);
+            tickOsc.stop(playTime + 0.04);
+        }
+
+        shopStepIndex = (shopStepIndex + 1) % 16;
+    }
+
+    function startShopSoundtrack() {
+        initShopAudio();
+        if (isShopMusicPlaying) return;
+        isShopMusicPlaying = true;
+        let intervalMs = (60 / shopTempoBpm) * 1000;
+        shopMusicInterval = setInterval(playShopStep, intervalMs);
+    }
+
+    window.addEventListener('DOMContentLoaded', startShopSoundtrack);
+    window.addEventListener('load', startShopSoundtrack);
+    document.addEventListener('click', startShopSoundtrack, { once: false });
+    document.addEventListener('keydown', startShopSoundtrack, { once: false });
+  </script>
 </body>
 </html>

@@ -117,7 +117,9 @@ function buyItem(id, price) {
     saveGameData();
     updateShopUI();
 }
-
+if (typeof playCoinBuySound === 'function') {
+    playCoinBuySound();
+}
 window.onload = function() {
     updateShopUI();
 };
