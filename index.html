@@ -8,8 +8,160 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  
+  <style>
+    /* --- CUSTOM MOUSE POINTER HIGHLIGHT --- */
+    * {
+      cursor: none !important; 
+    }
+
+    .cursor-highlight {
+      width: 32px;
+      height: 32px;
+      border: 2px solid #ff0055;
+      background: rgba(255, 0, 85, 0.15);
+      border-radius: 50%;
+      position: fixed;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 9999;
+      box-shadow: 0 0 15px #ff0055, inset 0 0 10px #ff0055;
+      transition: transform 0.08s ease-out, background 0.2s, border-color 0.2s;
+    }
+
+    .cursor-highlight.clicking {
+      transform: translate(-50%, -50%) scale(0.75);
+      background: rgba(0, 255, 200, 0.4);
+      border-color: #00ffc8;
+      box-shadow: 0 0 20px #00ffc8, inset 0 0 10px #00ffc8;
+    }
+
+    /* --- OPENING SEQUENCES --- */
+    .opening-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0d0e12;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Text elements wrapper for control switching */
+    .opening-text-stage {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .opening-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: #fff;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(255, 0, 85, 0.6);
+    }
+
+    .opening-bar-bg {
+      width: 240px;
+      height: 6px;
+      background: #1b1d24;
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .opening-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff0055, #ff5500);
+      box-shadow: 0 0 10px #ff0055;
+      animation: splashProgress 2s forwards cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Cinematic White Flash Overlay */
+    .white-flash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      z-index: 1001;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .white-flash.flash-active {
+      animation: flashAnim 0.6s ease-out forwards;
+    }
+
+    /* --- MAIN CONTENT & INTRO ORDERING --- */
+    .container {
+      opacity: 1; /* Keep container active, but control parts inside */
+    }
+
+    /* Logo is hidden initially until flash hits */
+    .logo-container {
+      opacity: 0;
+      transform: scale(0.8) translateY(-20px);
+      transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* Hero subtext and action buttons are hidden initially */
+    .hero-sub, .crown-banner, .actions {
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    /* Class modifications controlled by JS Timeline */
+    body.stage-logo-reveal .logo-container {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    body.stage-menu-reveal .hero-sub,
+    body.stage-menu-reveal .crown-banner,
+    body.stage-menu-reveal .actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Keyframe Animations */
+    @keyframes splashProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    @keyframes flashAnim {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
 </head>
 <body>
+
+  <div class="cursor-highlight" id="customCursor"></div>
+
+  <div class="white-flash" id="flashOverlay"></div>
+
+  <div class="opening-screen" id="openingScreen">
+    <div class="opening-text-stage" id="textStage">
+      <div class="opening-title" id="openingText">INITIALIZING MATCH</div>
+      <div class="opening-bar-bg" id="loadingBar">
+        <div class="opening-bar-fill"></div>
+      </div>
+    </div>
+  </div>
 
   <div class="scanlines"></div>
   <div class="bg-grid"></div>
@@ -25,7 +177,7 @@
       
       <div class="logo-container">
         <img src="images/game_logo.webp" alt="Tag Royale Logo" class="game-logo" />
-        </div>
+      </div>
 
       <p class="hero-sub">1v1 TAG · 2:30 ROUNDS · 10 PTS / SEC</p>
     </section>
@@ -39,5 +191,65 @@
     </section>
   </main>
 
+  <script>
+    // 1. MOUSE HIGHLIGHT INTERACTION
+    const customCursor = document.getElementById('customCursor');
+
+    document.addEventListener('mousemove', (e) => {
+      customCursor.style.left = e.clientX + 'px';
+      customCursor.style.top = e.clientY + 'px';
+    });
+
+    document.addEventListener('mousedown', () => {
+      customCursor.classList.add('clicking');
+    });
+
+    document.addEventListener('mouseup', () => {
+      customCursor.classList.remove('clicking');
+    });
+
+
+    // 2. TIMED CINEMATIC INTRO TIMELINE
+    const openingScreen = document.getElementById('openingScreen');
+    const textStage = document.getElementById('textStage');
+    const openingText = document.getElementById('openingText');
+    const loadingBar = document.getElementById('loadingBar');
+    const flashOverlay = document.getElementById('flashOverlay');
+
+    window.addEventListener('DOMContentLoaded', () => {
+      
+      // Step 1: After 2 seconds, Initializing Match is done. Fade out text to swap.
+      setTimeout(() => {
+        textStage.style.opacity = '0';
+        textStage.style.transform = 'scale(0.95)';
+      }, 2000);
+
+      // Step 2: At 2.5 seconds, Swap text to Blocky Studio Presents and fade it back in.
+      setTimeout(() => {
+        loadingBar.style.display = 'none'; // Remove loading bar
+        openingText.innerText = 'BLOCKY STUDIO PRESENTS';
+        textStage.style.opacity = '1';
+        textStage.style.transform = 'scale(1)';
+      }, 2500);
+
+      // Step 3: At 4.5 seconds, fade out the studio text before the flash hit.
+      setTimeout(() => {
+        textStage.style.opacity = '0';
+      }, 4500);
+
+      // Step 4: At 5 seconds, Trigger White Flash, remove Splash background, show Game Logo.
+      setTimeout(() => {
+        flashOverlay.classList.add('flash-active');
+        openingScreen.style.display = 'none'; // Instantly gone behind the flash
+        document.body.classList.add('stage-logo-reveal');
+      }, 5000);
+
+      // Step 5: At 6.2 seconds (slightly after logo appears), bring in the remaining UI options cleanly.
+      setTimeout(() => {
+        document.body.classList.add('stage-menu-reveal');
+      }, 6200);
+
+    });
+  </script>
 </body>
 </html>
