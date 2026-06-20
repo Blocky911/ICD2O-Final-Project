@@ -508,10 +508,9 @@
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      max-height: 65vh; 
+      max-height: 80vh; /* Increased max-height slightly to fit more scrollable content comfortably */
       z-index: 150;
       backdrop-filter: blur(14px);
-      
       /* Fixed: Completely hidden until active class is triggered by player clicks */
       opacity: 0;
       visibility: hidden;
@@ -571,6 +570,20 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      overflow-y: auto; /* Added scrollbar behavior in case list grows */
+      padding-right: 4px;
+    }
+
+    /* Scrollbar Styling for Achievements Panel */
+    .achievements-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .achievements-list::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    .achievements-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 170, 0, 0.3);
+      border-radius: 2px;
     }
 
     .achievement-card {
@@ -593,6 +606,7 @@
       align-items: center;
       justify-content: center;
       border: 1px solid rgba(255, 255, 255, 0.05);
+      flex-shrink: 0;
     }
 
     .achievement-info {
@@ -615,46 +629,6 @@
       color: #8a8f9d;
       letter-spacing: 1px;
       margin: 0;
-    }
-
-    /* --- AUDIO DASHBOARD --- */
-    .audio-dashboard-widget {
-      position: fixed;
-      bottom: 25px;
-      right: 40px;
-      background: rgba(17, 19, 25, 0.85);
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 14px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 100;
-    }
-
-    .widget-label {
-      font-family: 'Bebas Neue', sans-serif;
-      color: #ffaa00;
-      font-size: 1rem;
-      letter-spacing: 1px;
-    }
-
-    .audio-slider {
-      -webkit-appearance: none;
-      width: 80px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 2px;
-      outline: none;
-    }
-
-    .audio-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #ffaa00;
-      box-shadow: 0 0 8px #ffaa00;
     }
 
     /* --- ANIMATION ENGINES --- */
@@ -752,17 +726,11 @@
     <div class="chase-sequence-track">
       <div class="chase-actor-container">
         <div class="game-box-character bot-actor-blue"></div>
-
         <div class="game-box-character player-actor-red">
           <div class="crown-target-obj">👑</div>
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="audio-dashboard-widget target-box">
-    <span class="widget-label">🕹 MUSIC VOLUME</span>
-    <input type="range" min="0" max="100" value="35" class="audio-slider" id="musicVolumeControl" />
   </div>
 
   <main class="container">
@@ -771,7 +739,7 @@
       <section class="hero target-box">
         <div class="crown-banner">
           <span class="crown-icon">👑</span>
-          <span class="tagline">HOLD THE CROWN. RULE THE MATCH.</span>
+          <span class="tagline">HOLD THE CROWN.<br>RULE THE MATCH.</span>
           <span class="crown-icon">👑</span>
         </div>
         
@@ -807,6 +775,30 @@
             <p class="achievement-status">LOCKED</p>
           </div>
         </div>
+
+        <div class="achievement-card target-box">
+          <div class="badge-slot">⏱️</div>
+          <div class="achievement-info">
+            <p class="achievement-name">The Long Chase — Maintain a single, continuous chase with one specific bot for over 60 seconds without getting caught.</p>
+            <p class="achievement-status">LOCKED</p>
+          </div>
+        </div>
+
+        <div class="achievement-card target-box">
+          <div class="badge-slot">👑</div>
+          <div class="achievement-info">
+            <p class="achievement-name">Long Live the King — Grab the crown at the start of the match and never lose it until the timer hits zero.</p>
+            <p class="achievement-status">LOCKED</p>
+          </div>
+        </div>
+
+        <div class="achievement-card target-box">
+          <div class="badge-slot">💎</div>
+          <div class="achievement-info">
+            <p class="achievement-name">Perfect Run — Win a match on the Impossible bot difficulty setting without losing the crown once.</p>
+            <p class="achievement-status">LOCKED</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -819,13 +811,13 @@
     let musicPlaybackInterval = null;
     let isMusicPlaying = false;
     let currentTempoBpm = 125;
-
+    
     function initAudio() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         masterMusicVolumeNode = audioCtx.createGain();
-        const rawSliderValue = document.getElementById('musicVolumeControl').value;
-        masterMusicVolumeNode.gain.setValueAtTime((rawSliderValue / 100) * 0.25, audioCtx.currentTime);
+        // Fixed: Default master volume initialized directly to 0.25 scaling factor since slider was removed
+        masterMusicVolumeNode.gain.setValueAtTime(0.35 * 0.25, audioCtx.currentTime);
         masterMusicVolumeNode.connect(audioCtx.destination);
       }
       if (audioCtx.state === 'suspended') {
@@ -839,7 +831,8 @@
       let osc = audioCtx.createOscillator();
       let gain = audioCtx.createGain();
       osc.type = 'square';
-      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      nodeFrequency = 600;
+      osc.frequency.setValueAtTime(nodeFrequency, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.04);
       
       gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
@@ -916,7 +909,6 @@
     const basslineMelodyFrequencies = [110.00, 110.00, 130.81, 146.83, 98.00, 98.00, 110.00, 116.54];
     const leadArpeggioMelodyNotes = [440.00, 523.25, 659.25, 783.99, 587.33, 698.46, 880.00, 1046.50];
     let currentStepIndex = 0;
-
     function soundTrackSchedulerLoop() {
       let stepLengthTime = 60 / currentTempoBpm / 2;
       let playTime = audioCtx.currentTime + 0.02;
@@ -938,7 +930,6 @@
       bassGain.connect(masterMusicVolumeNode);
       bassOsc.start(playTime);
       bassOsc.stop(playTime + stepLengthTime);
-
       if (currentStepIndex % 2 === 0 || currentStepIndex % 3 === 0) {
         let leadOsc = audioCtx.createOscillator();
         let leadGain = audioCtx.createGain();
@@ -974,23 +965,14 @@
       customCursor.style.left = e.clientX + 'px';
       customCursor.style.top = e.clientY + 'px';
     });
-
     window.addEventListener('scroll', () => {
       let scrolledAmount = window.scrollY;
       parallaxBgContainer.style.transform = `translateY(${scrolledAmount * 0.18}px)`;
     });
-
     document.addEventListener('mousedown', () => { customCursor.classList.add('clicking'); });
     document.addEventListener('mouseup', () => { customCursor.classList.remove('clicking'); });
-
     document.querySelectorAll('.target-box').forEach(box => {
       box.addEventListener('mouseenter', () => { playHoverSound(); });
-    });
-
-    document.getElementById('musicVolumeControl').addEventListener('input', (e) => {
-      initAudio();
-      let targetVolume = (e.target.value / 100) * 0.25; 
-      masterMusicVolumeNode.gain.setValueAtTime(targetVolume, audioCtx.currentTime);
     });
 
     // --- INITIAL INTRO SPLASH WINDOW LOGIC TIMELINES ---
@@ -1028,7 +1010,7 @@
 
         setTimeout(() => {
           flashOverlay.classList.add('flash-active');
-          openingScreen.style.display = 'none'; 
+          openingScreen.style.display = 'none';
           document.body.classList.add('stage-logo-reveal');
           sessionStorage.setItem('introPlayed', 'true');
           beginSoundtrackPlaybackLoop();
@@ -1037,9 +1019,7 @@
         setTimeout(() => { document.body.classList.add('stage-menu-reveal'); }, 6200);
       }
     });
-
     document.body.addEventListener('click', () => { beginSoundtrackPlaybackLoop(); }, { once: false });
-
     // --- OUTBOUND NAVIGATION LINKS ---
     document.addEventListener('click', function(e) {
       const targetLink = e.target.closest('.nav-link');
@@ -1061,7 +1041,6 @@
         }
       }
     });
-
     // --- INTERACTIVE BUTTON TOGGLES FOR THE ACHIEVEMENT OVERLAY PANEL ---
     const openPanelBtn = document.getElementById('openPanelBtn');
     const closePanelBtn = document.getElementById('closePanelBtn');
@@ -1070,7 +1049,6 @@
       playSelectSound();
       achievementsPanel.classList.add('panel-active');
     });
-
     closePanelBtn.addEventListener('click', () => {
       playSelectSound();
       achievementsPanel.classList.remove('panel-active');
