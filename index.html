@@ -51,7 +51,6 @@
       z-index: 1000;
     }
 
-    /* Text elements wrapper for control switching */
     .opening-text-stage {
       display: flex;
       flex-direction: column;
@@ -83,6 +82,9 @@
       height: 100%;
       background: linear-gradient(90deg, #ff0055, #ff5500);
       box-shadow: 0 0 10px #ff0055;
+    }
+
+    .animate-progress {
       animation: splashProgress 2s forwards cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -103,26 +105,77 @@
       animation: flashAnim 0.6s ease-out forwards;
     }
 
-    /* --- MAIN CONTENT & INTRO ORDERING --- */
-    .container {
-      opacity: 1; /* Keep container active, but control parts inside */
+    /* --- INTEGRATED PAGE SHADE TRANSITIONS --- */
+    .exit-shade {
+      position: fixed;
+      top: -100vh;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to bottom, #000000, #0d0e12);
+      z-index: 2000;
+      pointer-events: none;
     }
 
-    /* Logo is hidden initially until flash hits */
+    .exit-shade.slide-out-active {
+      animation: slideDownOut 0.6s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+    }
+
+    .exit-shade.slide-in-active {
+      top: 0vh;
+      animation: slideDownIn 0.6s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+    }
+
+    /* --- TEXT COLOR & MIDDLING ALIGNMENT FIXES --- */
+    /* Flex alignment perfectly centers the inner elements horizontally & vertically */
+    .actions button {
+      padding: 0 !important; /* Clears button padding conflicts */
+    }
+
+    .actions button a.nav-link {
+      text-decoration: none !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px; /* Space between icons and typography */
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Colors set manually to perfectly reflect the border boxes shown in your picture */
+    .btn-primary a.nav-link {
+      color: #000000 !important; /* Black font overlaying the solid yellow background */
+    }
+
+    .btn-secondary a.nav-link {
+      color: #3bc7b2 !important; /* Matches Shop Teal precisely */
+    }
+
+    .btn-inventory a.nav-link {
+      color: #f73656 !important; /* Matches Inventory Coral Red precisely */
+    }
+
+    .btn-tutorial a.nav-link {
+      color: #ffaa00 !important; /* Matches How To Play Gold precisely */
+    }
+
+    .btn-settings a.nav-link {
+      color: #2bd97c !important; /* Matches Settings Green precisely */
+    }
+
+    /* --- MENU STAGE INTRO STATES --- */
     .logo-container {
       opacity: 0;
       transform: scale(0.8) translateY(-20px);
       transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), transform 1s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    /* Hero subtext and action buttons are hidden initially */
     .hero-sub, .crown-banner, .actions {
       opacity: 0;
       transform: translateY(15px);
       transition: opacity 0.8s ease-out, transform 0.8s ease-out;
     }
 
-    /* Class modifications controlled by JS Timeline */
     body.stage-logo-reveal .logo-container {
       opacity: 1;
       transform: scale(1) translateY(0);
@@ -146,6 +199,16 @@
       10% { opacity: 1; }
       100% { opacity: 0; }
     }
+
+    @keyframes slideDownOut {
+      0% { top: -100vh; }
+      100% { top: 0vh; }
+    }
+
+    @keyframes slideDownIn {
+      0% { top: 0vh; }
+      100% { top: 100vh; }
+    }
   </style>
 </head>
 <body>
@@ -154,11 +217,13 @@
 
   <div class="white-flash" id="flashOverlay"></div>
 
+  <div class="exit-shade" id="exitShade"></div>
+
   <div class="opening-screen" id="openingScreen">
     <div class="opening-text-stage" id="textStage">
       <div class="opening-title" id="openingText">INITIALIZING MATCH</div>
       <div class="opening-bar-bg" id="loadingBar">
-        <div class="opening-bar-fill"></div>
+        <div class="opening-bar-fill" id="progressBarFill"></div>
       </div>
     </div>
   </div>
@@ -183,11 +248,11 @@
     </section>
 
     <section class="actions">
-      <button class="btn btn-primary"><a href="difficulty.html">▶ PLAY NOW</a></button>
-      <button class="btn btn-secondary"><a href="shop.html">💸 SHOP</a></button>
-      <button class="btn btn-ghost btn-inventory"><a href="inventory.html">🎒 INVENTORY</a></button>
-      <button class="btn btn-ghost btn-tutorial"><a href="tutorial.html">📖 HOW TO PLAY</a></button>
-      <button class="btn btn-ghost btn-settings"><a href="settings.html">⚙ SETTINGS</a></button>
+      <button class="btn btn-primary"><a href="difficulty.html" class="nav-link">▶ PLAY NOW</a></button>
+      <button class="btn btn-secondary"><a href="shop.html" class="nav-link"><span>💸</span> SHOP</a></button>
+      <button class="btn btn-ghost btn-inventory"><a href="inventory.html" class="nav-link"><span>🎒</span> INVENTORY</a></button>
+      <button class="btn btn-ghost btn-tutorial"><a href="tutorial.html" class="nav-link"><span>📖</span> HOW TO PLAY</a></button>
+      <button class="btn btn-ghost btn-settings"><a href="settings.html" class="nav-link"><span>⚙</span> SETTINGS</a></button>
     </section>
   </main>
 
@@ -200,55 +265,68 @@
       customCursor.style.top = e.clientY + 'px';
     });
 
-    document.addEventListener('mousedown', () => {
-      customCursor.classList.add('clicking');
-    });
-
-    document.addEventListener('mouseup', () => {
-      customCursor.classList.remove('clicking');
-    });
+    document.addEventListener('mousedown', () => { customCursor.classList.add('clicking'); });
+    document.addEventListener('mouseup', () => { customCursor.classList.remove('clicking'); });
 
 
-    // 2. TIMED CINEMATIC INTRO TIMELINE
+    // 2. TIMED CINEMATIC INTRO & BACK NAVIGATION TRANSITIONS
     const openingScreen = document.getElementById('openingScreen');
     const textStage = document.getElementById('textStage');
     const openingText = document.getElementById('openingText');
     const loadingBar = document.getElementById('loadingBar');
+    const progressBarFill = document.getElementById('progressBarFill');
     const flashOverlay = document.getElementById('flashOverlay');
+    const exitShade = document.getElementById('exitShade');
 
     window.addEventListener('DOMContentLoaded', () => {
-      
-      // Step 1: After 2 seconds, Initializing Match is done. Fade out text to swap.
-      setTimeout(() => {
-        textStage.style.opacity = '0';
-        textStage.style.transform = 'scale(0.95)';
-      }, 2000);
+      if (sessionStorage.getItem('introPlayed') === 'true') {
+        openingScreen.style.display = 'none';
+        document.body.classList.add('stage-logo-reveal', 'stage-menu-reveal');
+        exitShade.classList.add('slide-in-active');
+      } else {
+        progressBarFill.classList.add('animate-progress');
 
-      // Step 2: At 2.5 seconds, Swap text to Blocky Studio Presents and fade it back in.
-      setTimeout(() => {
-        loadingBar.style.display = 'none'; // Remove loading bar
-        openingText.innerText = 'BLOCKY STUDIO PRESENTS';
-        textStage.style.opacity = '1';
-        textStage.style.transform = 'scale(1)';
-      }, 2500);
+        setTimeout(() => {
+          textStage.style.opacity = '0';
+          textStage.style.transform = 'scale(0.95)';
+        }, 2000);
 
-      // Step 3: At 4.5 seconds, fade out the studio text before the flash hit.
-      setTimeout(() => {
-        textStage.style.opacity = '0';
-      }, 4500);
+        setTimeout(() => {
+          loadingBar.style.display = 'none'; 
+          openingText.innerText = 'BLOCKY STUDIO PRESENTS';
+          textStage.style.opacity = '1';
+          textStage.style.transform = 'scale(1)';
+        }, 2500);
 
-      // Step 4: At 5 seconds, Trigger White Flash, remove Splash background, show Game Logo.
-      setTimeout(() => {
-        flashOverlay.classList.add('flash-active');
-        openingScreen.style.display = 'none'; // Instantly gone behind the flash
-        document.body.classList.add('stage-logo-reveal');
-      }, 5000);
+        setTimeout(() => { textStage.style.opacity = '0'; }, 4500);
 
-      // Step 5: At 6.2 seconds (slightly after logo appears), bring in the remaining UI options cleanly.
-      setTimeout(() => {
-        document.body.classList.add('stage-menu-reveal');
-      }, 6200);
+        setTimeout(() => {
+          flashOverlay.classList.add('flash-active');
+          openingScreen.style.display = 'none'; 
+          document.body.classList.add('stage-logo-reveal');
+          sessionStorage.setItem('introPlayed', 'true');
+        }, 5000);
 
+        setTimeout(() => { document.body.classList.add('stage-menu-reveal'); }, 6200);
+      }
+    });
+
+
+    // 3. OUTBOUND PAGE TRANSITION (SLIDE DOWN SHADE)
+    document.addEventListener('click', function(e) {
+      const targetLink = e.target.closest('.nav-link');
+      if (targetLink) {
+        e.preventDefault();
+        const targetUrl = targetLink.getAttribute('href');
+
+        if (targetUrl) {
+          exitShade.className = 'exit-shade'; 
+          void exitShade.offsetWidth; 
+          exitShade.classList.add('slide-out-active');
+
+          setTimeout(() => { window.location.href = targetUrl; }, 600);
+        }
+      }
     });
   </script>
 </body>
