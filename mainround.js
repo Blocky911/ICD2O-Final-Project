@@ -21,7 +21,6 @@ const MUD_SPEED = 3;
 const CROWN_SPEED_BOOST = 1.2; 
 const SPRINT_BOOST_SPEED = 4.5; 
 let currentSpeed = NORMAL_SPEED;
-
 // Stamina Mechanics Configuration
 const MAX_STAMINA = 100;
 const SPRINT_STARTUP_COST = 4.5;    
