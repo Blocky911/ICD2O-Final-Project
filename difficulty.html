@@ -40,6 +40,7 @@
       opacity: 1;
       transform: translateY(0);
     }
+    /* Lock overlay kept minimal here; main theme rules are in styles.css */
   </style>
 </head>
 <body>
@@ -70,9 +71,10 @@
             <div class="circle-visual"><span class="placeholder-icon">🔴</span></div>
             <button class="diff-btn hard" onclick="selectDifficulty('hard')">HARD</button>
           </div>
-          <div class="diff-card">
-            <div class="circle-visual"><span class="placeholder-icon">💀</span></div>
-            <button class="diff-btn hard" onclick="selectDifficulty('impossible')">IMPOSSIBLE</button>
+          <div class="diff-card impossible">
+            <div class="circle-visual"><span class="placeholder-icon">🟣</span></div>
+            <div class="lock-overlay" aria-hidden="true"><span class="lock-icon">🔒</span>IMPOSSIBLE MODE</div>
+            <button class="diff-btn impossible" onclick="selectDifficulty('impossible')">IMPOSSIBLE</button>
           </div>
         </div>
       </section>

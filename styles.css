@@ -1059,6 +1059,36 @@ body, html {
   color: #ff4757;
 }
 
+/* Impossible difficulty theming */
+.difficulty-grid .diff-card { position: relative; }
+.diff-card.impossible .circle-visual {
+  background: rgba(255,255,255,0.02);
+  color: inherit;
+  border-color: rgba(159,122,234,0.12);
+}
+.diff-card.impossible .placeholder-icon {
+  color: #9f7aea;
+}
+.diff-btn.impossible:hover {
+  border-color: #9f7aea;
+  color: #9f7aea;
+}
+.diff-card .lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 6, 60, 0.7);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 1.05rem;
+  pointer-events: none;
+}
+.diff-card.locked .lock-overlay { display: flex; }
+.diff-card.locked .diff-btn { filter: grayscale(20%); opacity: 0.95; }
+.lock-icon { font-size: 1.2rem; margin-right: 8px; }
+
 .settings-group {
   border: 1px solid var(--border);
   border-radius: 2px;

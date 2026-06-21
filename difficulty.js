@@ -37,3 +37,20 @@ function selectDifficulty(level) {
     // Redirects to mainround.html, passing the choice dynamically via query parameters
     window.location.href = "mainround.html?diff=" + level; // parameter name 'diff' is used to identify the difficulty level in the next page
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const impossibleCard = document.querySelector('.diff-card.impossible');
+    const impossibleBtn = document.querySelector('.diff-btn.impossible');
+    if (!impossibleCard || !impossibleBtn) return;
+    if (!isImpossibleUnlocked()) {
+        impossibleCard.classList.add('locked');
+        // keep the button clickable so `selectDifficulty` can show the toast
+        impossibleBtn.removeAttribute('disabled');
+        impossibleBtn.setAttribute('aria-disabled', 'true');
+        impossibleBtn.title = 'Locked: Win 5 hard rounds to unlock';
+    } else {
+        impossibleCard.classList.remove('locked');
+        impossibleBtn.removeAttribute('aria-disabled');
+        impossibleBtn.title = '';
+    }
+});
