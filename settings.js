@@ -8,10 +8,9 @@ const DEFAULT_SETTINGS = {
     musicVolume: 50,
     sfxVolume: 70,
     deafMode: false,
-    staminaColor: "#00ffcc",     // Default Green/Cyan
-    lowStaminaColor: "#ff007f",  // Default Hot Pink
-    exhaustionColor: "#ff5e00",  // Default Exhaustion Orange
-    showScore: true,
+    staminaColor: "#00ffcc",     // Default Normal Colour
+    lowStaminaColor: "#ff007f",  // Default Low Colour
+    exhaustionColor: "#ff5e00",  // Default Exhaustion Colour
     showTimer: true,
     showItems: true
 };
