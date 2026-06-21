@@ -43,7 +43,7 @@ let gameTimeRemaining = 150;
 let playerScore = 0;
 let scoreAccumulationTimer = 0; 
 
-// Track active keyboard inputs
+// Tracks active keyboard components
 const keys = {
     w: false, a: false, s: false, d: false,
     ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
@@ -51,7 +51,7 @@ const keys = {
 let obstacles = [];
 const mapSize = 5000;
 
-// Role state variables
+// Roles and state trackers to keep everyone consistent.
 let isPlayerIt = false; 
 let tagCooldownTimer = 0; 
 const TAG_COOLDOWN_FRAMES = 60;
@@ -90,7 +90,7 @@ window.gameSettings = loadGameSettings();
 
 // Difficulty Configuration
 const urlParams = new URLSearchParams(window.location.search);
-const gameDifficulty = urlParams.get('diff') || 'medium';
+const gameDifficulty = urlParams.get('diff') || 'medium'; // gets the difficulty level from query parameters, defaults to 'medium' if not provided
 
 let difficultyMultiplier = 0.35;
 if (gameDifficulty === 'medium') difficultyMultiplier = 0.7;
@@ -105,7 +105,7 @@ const DEFAULT_ACHIEVEMENTS = {
     unlockedAchievements: []
 };
 
-let achievements = JSON.parse(localStorage.getItem('gameAchievements')) || DEFAULT_ACHIEVEMENTS;
+let achievements = JSON.parse(localStorage.getItem('gameAchievements')) || DEFAULT_ACHIEVEMENTS; // get achievement progress from localStorage or initialize with defaults
 let chaseStartTime = 0;
 let maxChaseDuration = 0;
 let hasLostCrownThisRound = false;
@@ -129,7 +129,7 @@ let isUntaggableActive = false;
 let botUntaggableActive = false;
 
 // Database references matching inventory mapping and grid layouts
-const GAME_ITEM_DATABASE = {
+const GAME_ITEM_DATABASE = { // status colours for characters
     'energy_bar': { name: 'Energy Bar', sheet: 'items', row: 0, col: 0, color: '#00ffcc' },
     'tomatoes': { name: 'Rotten Tomatoes', sheet: 'items', row: 0, col: 1, color: '#ff3333' },
     'gummy_bears': { name: 'Gummy Bears', sheet: 'items', row: 0, col: 2, color: '#ffcc00' },
@@ -139,7 +139,7 @@ const GAME_ITEM_DATABASE = {
     'skin_default_red': { name: 'Default Red', sheet: 'skins', row: 1, col: 0, color: '#ff4444' },
     'skin_nugget': { name: 'Nugget Hunter', sheet: 'skins', row: 2, col: 0, color: '#e5a93b' },
     'skin_george': { name: 'Curious George', sheet: 'skins', row: 4, col: 0, color: '#8b5a2b' },
-    'skin_john': { name: 'John Wick', sheet: 'skins', row: 6, col: 0, color: '#333333' }
+    'skin_john': { name: 'John Pork', sheet: 'skins', row: 6, col: 0, color: '#333333' }
 };
 
 // State tracker synced directly with inventory's format
