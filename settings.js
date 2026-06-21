@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS = {
     deafMode: false,
     staminaColor: "#00ffcc",     // Default Green/Cyan
     lowStaminaColor: "#ff007f",  // Default Hot Pink
+    exhaustionColor: "#ff5e00",  // Default Exhaustion Orange
     showScore: true,
     showTimer: true,
     showItems: true
@@ -33,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const musicSlider = document.getElementById('music-vol');
     const sfxSlider = document.getElementById('sfx-vol');
-    const deafCheck = document.getElementById('colorblind-toggle');
     const scoreCheck = document.getElementById('show-score');
     const timerCheck = document.getElementById('show-timer');
     const itemsCheck = document.getElementById('show-items');
@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Custom Native Color Picker Elements
     const staminaColorPicker = document.getElementById('stamina-color');
     const lowStaminaColorPicker = document.getElementById('low-stamina-color');
+    const exhaustionColorPicker = document.getElementById('exhaustion-color');
 
     const resetBtn = document.querySelector('.btn-reset');
     const acceptBtn = document.querySelector('.btn-accept');
@@ -94,13 +95,13 @@ document.addEventListener("DOMContentLoaded", () => {
         masterSlider.value = settings.masterVolume;
         musicSlider.value = settings.musicVolume;
         sfxSlider.value = settings.sfxVolume;
-        deafCheck.checked = settings.deafMode;
         scoreCheck.checked = settings.showScore;
         timerCheck.checked = settings.showTimer;
         itemsCheck.checked = settings.showItems;
 
         if (staminaColorPicker) staminaColorPicker.value = settings.staminaColor;
         if (lowStaminaColorPicker) lowStaminaColorPicker.value = settings.lowStaminaColor;
+        if (exhaustionColorPicker) exhaustionColorPicker.value = settings.exhaustionColor;
     }
 
     // Populate interface elements from current local profile logs on load
@@ -128,12 +129,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Save active UI state modifications into localStorage
     acceptBtn.addEventListener('click', () => {
         const payload = {
-            masterVolume: parseInt(masterSlider.value),
-            musicVolume: parseInt(musicSlider.value),
-            sfxVolume: parseInt(sfxSlider.value),
-            deafMode: deafCheck.checked,
+            masterVolume: parseInt(masterSlider.value, 10),
+            musicVolume: parseInt(musicSlider.value, 10),
+            sfxVolume: parseInt(sfxSlider.value, 10),
             staminaColor: staminaColorPicker ? staminaColorPicker.value : DEFAULT_SETTINGS.staminaColor,
             lowStaminaColor: lowStaminaColorPicker ? lowStaminaColorPicker.value : DEFAULT_SETTINGS.lowStaminaColor,
+            exhaustionColor: exhaustionColorPicker ? exhaustionColorPicker.value : DEFAULT_SETTINGS.exhaustionColor,
             showScore: scoreCheck.checked,
             showTimer: timerCheck.checked,
             showItems: itemsCheck.checked

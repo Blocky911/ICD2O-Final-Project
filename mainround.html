@@ -322,6 +322,8 @@
     <script>
         let gameplayAudioCtx = null;
         let masterGameplayVolumeNode = null;
+        let musicGainNode = null;
+        let sfxGainNode = null;
         let guitarDistortionNode = null;
         let snareNoiseBuffer = null;
         let gameplayMusicInterval = null;
@@ -379,7 +381,16 @@
                 gameplayAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 
                 masterGameplayVolumeNode = gameplayAudioCtx.createGain();
-                masterGameplayVolumeNode.gain.setValueAtTime(0.08, gameplayAudioCtx.currentTime); 
+                musicGainNode = gameplayAudioCtx.createGain();
+                sfxGainNode = gameplayAudioCtx.createGain();
+                const savedSettings = window.gameSettings || JSON.parse(localStorage.getItem('tagRoyaleSettings') || '{}');
+                const masterVolume = savedSettings.masterVolume ?? 80;
+                const musicVolume = savedSettings.musicVolume ?? 50;
+                const sfxVolume = savedSettings.sfxVolume ?? 70;
+
+                masterGameplayVolumeNode.gain.setValueAtTime(masterVolume / 100 * 0.08, gameplayAudioCtx.currentTime);
+                musicGainNode.gain.setValueAtTime(musicVolume / 100, gameplayAudioCtx.currentTime);
+                sfxGainNode.gain.setValueAtTime(sfxVolume / 100, gameplayAudioCtx.currentTime);
                 
                 guitarDistortionNode = gameplayAudioCtx.createWaveShaper();
                 guitarDistortionNode.curve = generateDistortionCurve(68);
@@ -387,6 +398,8 @@
 
                 snareNoiseBuffer = createNoiseBuffer();
 
+                musicGainNode.connect(masterGameplayVolumeNode);
+                sfxGainNode.connect(masterGameplayVolumeNode);
                 guitarDistortionNode.connect(masterGameplayVolumeNode);
                 masterGameplayVolumeNode.connect(gameplayAudioCtx.destination);
             }
@@ -427,7 +440,7 @@
 
             osc.connect(filter);
             filter.connect(gain);
-            gain.connect(gameplayAudioCtx.destination);
+            gain.connect(sfxGainNode);
 
             osc.start(playTime);
             osc.stop(playTime + 0.1);
@@ -451,7 +464,7 @@
             gain.gain.exponentialRampToValueAtTime(0.001, playTime + 0.28);
 
             osc.connect(gain);
-            gain.connect(gameplayAudioCtx.destination);
+            gain.connect(sfxGainNode);
 
             osc.start(playTime);
             osc.stop(playTime + 0.3);
@@ -479,7 +492,7 @@
                 gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.4);
 
                 osc.connect(gain);
-                gain.connect(gameplayAudioCtx.destination);
+                gain.connect(sfxGainNode);
 
                 osc.start(noteTime);
                 osc.stop(noteTime + 0.45);
@@ -498,7 +511,7 @@
             gain.gain.setValueAtTime(0.8, playTime);
             gain.gain.exponentialRampToValueAtTime(0.001, playTime + duration * 1.2);
             osc.connect(gain);
-            gain.connect(masterGameplayVolumeNode);
+            gain.connect(musicGainNode);
             osc.start(playTime);
             osc.stop(playTime + duration * 1.2);
         }
@@ -514,7 +527,7 @@
             noiseGain.gain.exponentialRampToValueAtTime(0.01, playTime + duration * 0.95);
             noiseNode.connect(noiseFilter);
             noiseFilter.connect(noiseGain);
-            noiseGain.connect(masterGameplayVolumeNode);
+            noiseGain.connect(musicGainNode);
 
             let osc = gameplayAudioCtx.createOscillator();
             let oscGain = gameplayAudioCtx.createGain();
@@ -523,7 +536,7 @@
             oscGain.gain.setValueAtTime(0.4, playTime);
             oscGain.gain.exponentialRampToValueAtTime(0.01, playTime + 0.08);
             osc.connect(oscGain);
-            oscGain.connect(masterGameplayVolumeNode);
+            oscGain.connect(musicGainNode);
 
             noiseNode.start(playTime);
             osc.start(playTime);
@@ -554,7 +567,7 @@
             bassGain.gain.exponentialRampToValueAtTime(0.01, playTime + stepDuration - 0.01);
             bassOsc.connect(bassFilter);
             bassFilter.connect(bassGain);
-            bassGain.connect(masterGameplayVolumeNode);
+            bassGain.connect(musicGainNode);
             bassOsc.start(playTime);
             bassOsc.stop(playTime + stepDuration);
 
@@ -598,7 +611,7 @@
                 arpGain.gain.setValueAtTime(0.04, playTime);
                 arpGain.gain.exponentialRampToValueAtTime(0.001, playTime + stepDuration * 0.85);
                 arpOsc.connect(arpGain);
-                arpGain.connect(masterGameplayVolumeNode);
+                arpGain.connect(musicGainNode);
                 arpOsc.start(playTime);
                 arpOsc.stop(playTime + stepDuration * 0.85);
             }

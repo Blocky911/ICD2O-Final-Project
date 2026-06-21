@@ -64,6 +64,30 @@ let staminaBarContainer = null;
 let staminaBarInner = null;
 let pauseMenuOverlay = null;
 
+const DEFAULT_SETTINGS = {
+    masterVolume: 80,
+    musicVolume: 50,
+    sfxVolume: 70,
+    staminaColor: '#00ffcc',
+    lowStaminaColor: '#ff007f',
+    exhaustionColor: '#ff5e00',
+    showScore: true,
+    showTimer: true,
+    showItems: true
+};
+
+function loadGameSettings() {
+    const stored = localStorage.getItem('tagRoyaleSettings');
+    if (!stored) return DEFAULT_SETTINGS;
+    try {
+        return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+    } catch (e) {
+        return DEFAULT_SETTINGS;
+    }
+}
+
+window.gameSettings = loadGameSettings();
+
 // Difficulty Configuration
 const urlParams = new URLSearchParams(window.location.search);
 const gameDifficulty = urlParams.get('diff') || 'medium';
@@ -123,11 +147,13 @@ function setupGameHUD() {
     timerDisplayElement.id = 'hud-timer';
     timerDisplayElement.style.color = '#ffffff';
     timerDisplayElement.innerHTML = 'TIME: <span style="color: #ffcc00;">2:30</span>';
+    timerDisplayElement.style.display = window.gameSettings.showTimer ? '' : 'none';
 
     scoreDisplayElement = document.createElement('div');
     scoreDisplayElement.id = 'hud-score';
     scoreDisplayElement.style.color = '#ffffff';
     scoreDisplayElement.innerHTML = 'SCORE: <span style="color: #00ff00;">0000</span>';
+    scoreDisplayElement.style.display = window.gameSettings.showScore ? '' : 'none';
 
     hudContainer.appendChild(timerDisplayElement);
     hudContainer.appendChild(scoreDisplayElement);
@@ -213,7 +239,7 @@ function createStaminaUI() {
     staminaBarInner = document.createElement('div');
     staminaBarInner.style.width = '100%';
     staminaBarInner.style.height = '100%';
-    staminaBarInner.style.backgroundColor = '#00ffcc';
+    staminaBarInner.style.backgroundColor = window.gameSettings.staminaColor;
 
     staminaBarContainer.appendChild(staminaBarInner);
     document.body.appendChild(staminaBarContainer);
@@ -236,6 +262,7 @@ function loadPersistentHotbar() {
 function createHotbarUIOverlay() {
     const existing = document.getElementById('game-hotbar-container');
     if (existing) existing.remove();
+    if (!window.gameSettings.showItems) return;
 
     const hotbarWrapper = document.createElement('div');
     hotbarWrapper.id = 'game-hotbar-container';
@@ -1083,11 +1110,11 @@ function coreExecutionEngine() {
     if (staminaBarInner) {
         staminaBarInner.style.width = `${(playerStamina / MAX_STAMINA) * 100}%`;
         if (playerIsExhausted) {
-            staminaBarInner.style.backgroundColor = '#ff7700'; 
+            staminaBarInner.style.backgroundColor = window.gameSettings.exhaustionColor;
         } else if (playerStamina < 25) {
-            staminaBarInner.style.backgroundColor = '#ff3333'; 
+            staminaBarInner.style.backgroundColor = window.gameSettings.lowStaminaColor;
         } else {
-            staminaBarInner.style.backgroundColor = '#00ffcc';
+            staminaBarInner.style.backgroundColor = window.gameSettings.staminaColor;
         }
     }
 
