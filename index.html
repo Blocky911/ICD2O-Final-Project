@@ -1079,6 +1079,62 @@
       playSelectSound();
       achievementsPanel.classList.remove('panel-active');
     });
+
+    // --- LOAD AND DISPLAY ACHIEVEMENTS ---
+    function updateAchievementUI() {
+      const achievements = JSON.parse(localStorage.getItem('gameAchievements')) || { hardRoundWins: 0, unlockedAchievements: [] };
+      
+      // Update achievement statuses
+      const achHardWins = document.getElementById('ach-hard-wins');
+      if (achHardWins) {
+        if (achievements.unlockedAchievements.includes('hard-wins-5')) {
+          achHardWins.innerText = 'UNLOCKED ✓';
+          achHardWins.style.color = '#00ff00';
+        } else {
+          achHardWins.innerText = `LOCKED (${achievements.hardRoundWins}/5)`;
+          achHardWins.style.color = '#aaaaaa';
+        }
+      }
+
+      const achLongChase = document.getElementById('ach-long-chase');
+      if (achLongChase) {
+        if (achievements.unlockedAchievements.includes('long-chase')) {
+          achLongChase.innerText = 'UNLOCKED ✓';
+          achLongChase.style.color = '#00ff00';
+        } else {
+          achLongChase.innerText = 'LOCKED';
+          achLongChase.style.color = '#aaaaaa';
+        }
+      }
+
+      const achKing = document.getElementById('ach-king');
+      if (achKing) {
+        if (achievements.unlockedAchievements.includes('long-live-king')) {
+          achKing.innerText = 'UNLOCKED ✓';
+          achKing.style.color = '#00ff00';
+        } else {
+          achKing.innerText = 'LOCKED';
+          achKing.style.color = '#aaaaaa';
+        }
+      }
+
+      const achPerfect = document.getElementById('ach-perfect');
+      if (achPerfect) {
+        if (achievements.unlockedAchievements.includes('perfect-run')) {
+          achPerfect.innerText = 'UNLOCKED ✓';
+          achPerfect.style.color = '#00ff00';
+        } else {
+          achPerfect.innerText = 'LOCKED';
+          achPerfect.style.color = '#aaaaaa';
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', updateAchievementUI);
+    window.addEventListener('load', updateAchievementUI);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) updateAchievementUI();
+    });
   </script>
 </body>
 </html>

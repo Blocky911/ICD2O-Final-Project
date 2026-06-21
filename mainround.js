@@ -95,6 +95,21 @@ const gameDifficulty = urlParams.get('diff') || 'medium';
 let difficultyMultiplier = 0.35;
 if (gameDifficulty === 'medium') difficultyMultiplier = 0.7;
 if (gameDifficulty === 'hard') difficultyMultiplier = 1.2;
+if (gameDifficulty === 'impossible') difficultyMultiplier = 1.6;
+
+// ==========================================
+// ACHIEVEMENT TRACKING SYSTEM
+// ==========================================
+const DEFAULT_ACHIEVEMENTS = {
+    hardRoundWins: 0,
+    unlockedAchievements: []
+};
+
+let achievements = JSON.parse(localStorage.getItem('gameAchievements')) || DEFAULT_ACHIEVEMENTS;
+let chaseStartTime = 0;
+let maxChaseDuration = 0;
+let hasLostCrownThisRound = false;
+let crownGrabbedAtStart = false;
 
 // ==========================================
 // IN-GAME LIVE ITEM BUFF & MECHANICS STATE
@@ -102,7 +117,8 @@ if (gameDifficulty === 'hard') difficultyMultiplier = 1.2;
 let playerStunTimer = 0;
 let playerStunMaxDuration = 0;
 let botStunTimer = 0;          
-let botStunMaxDuration = 0;    
+let botStunMaxDuration = 0;
+let playerWasPreviouslyIt = false;    
 let gummyBearSpeedTimer = 0;   
 let gummyBearSlowTimer = 0;    
 let playerGummyBearSpeedTimer = 0;
@@ -132,6 +148,10 @@ let botHotbarItems = [null, null, null, null, null];
 
 function setupGameHUD() {
     if (document.getElementById('game-hud-overlay')) return;
+
+    // Initialize achievement tracking: player starts with the crown
+    crownGrabbedAtStart = true;
+    chaseStartTime = Date.now();
 
     hudContainer = document.createElement('div');
     hudContainer.id = 'game-hud-overlay';
@@ -198,6 +218,28 @@ function setupGameHUD() {
             localStorage.setItem('playerCoins', currentCoins + coinsEarned);
             localStorage.setItem('playerPoints', leftoverPoints);
             saveHotbarState();
+
+            // Check and unlock achievements
+            if (gameDifficulty === 'hard' && !isPlayerIt) {
+                achievements.hardRoundWins++;
+                if (achievements.hardRoundWins >= 5) {
+                    unlockAchievement('hard-wins-5');
+                }
+            }
+
+            if (maxChaseDuration >= 60 && !isPlayerIt) {
+                unlockAchievement('long-chase');
+            }
+
+            if (crownGrabbedAtStart && !hasLostCrownThisRound && !isPlayerIt) {
+                unlockAchievement('long-live-king');
+            }
+
+            if (gameDifficulty === 'impossible' && !hasLostCrownThisRound && !isPlayerIt) {
+                unlockAchievement('perfect-run');
+            }
+
+            saveAchievementProgress();
 
             const modal = document.createElement('div');
             modal.style.position = 'fixed';
@@ -721,7 +763,22 @@ function updateBotSpriteFrame() {
 }
 
 function setupDifficultyParameters() {
-    botSpeed = NORMAL_SPEED; 
+    botSpeed = NORMAL_SPEED;
+    chaseStartTime = 0;
+    maxChaseDuration = 0;
+    hasLostCrownThisRound = false;
+    crownGrabbedAtStart = false;
+}
+
+function unlockAchievement(achievementId) {
+    if (!achievements.unlockedAchievements.includes(achievementId)) {
+        achievements.unlockedAchievements.push(achievementId);
+        localStorage.setItem('gameAchievements', JSON.stringify(achievements));
+    }
+}
+
+function saveAchievementProgress() {
+    localStorage.setItem('gameAchievements', JSON.stringify(achievements));
 }
 
 // ==========================================
@@ -981,7 +1038,24 @@ function executeBotIntelligence() {
             return;
         }
         isPlayerIt = !isPlayerIt;
-        tagCooldownTimer = TAG_COOLDOWN_FRAMES; 
+        tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+        
+        // Achievement tracking: track crown changes
+        if (playerWasPreviouslyIt === false && isPlayerIt === true) {
+            // Player just became "It" (lost the crown)
+            hasLostCrownThisRound = true;
+            chaseStartTime = 0;
+        } else if (playerWasPreviouslyIt === true && isPlayerIt === false) {
+            // Player just became "not It" (got the crown back)
+            if (chaseStartTime === 0) {
+                chaseStartTime = Date.now();
+                if (crownGrabbedAtStart === false) {
+                    crownGrabbedAtStart = true;
+                }
+            }
+        }
+        playerWasPreviouslyIt = isPlayerIt;
+        
         return;
     }
 
@@ -1195,6 +1269,11 @@ function coreExecutionEngine() {
     if (isPaused) {
         requestAnimationFrame(coreExecutionEngine);
         return;
+    }
+
+    // Track continuous chase duration
+    if (!isPlayerIt && chaseStartTime > 0) {
+        maxChaseDuration = Math.max(maxChaseDuration, (Date.now() - chaseStartTime) / 1000);
     }
 
     if (!isPlayerIt) {
