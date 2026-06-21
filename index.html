@@ -807,18 +807,44 @@
   <script>
     // --- SYNTHETIC GAME AUDIO ENGINE (Web Audio API Synthesizer) ---
     let audioCtx = null;
-    let masterMusicVolumeNode = null;
+    let masterGainNode = null;
+    let musicGainNode = null;
+    let sfxGainNode = null;
     let musicPlaybackInterval = null;
     let isMusicPlaying = false;
     let currentTempoBpm = 125;
+
+    const DEFAULT_MENU_VOLUME_SETTINGS = {
+      masterVolume: 80,
+      musicVolume: 50,
+      sfxVolume: 70
+    };
+
+    function loadMenuVolumeSettings() {
+      const stored = localStorage.getItem('tagRoyaleSettings');
+      if (!stored) return DEFAULT_MENU_VOLUME_SETTINGS;
+      try {
+        return { ...DEFAULT_MENU_VOLUME_SETTINGS, ...JSON.parse(stored) };
+      } catch (err) {
+        return DEFAULT_MENU_VOLUME_SETTINGS;
+      }
+    }
     
     function initAudio() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        masterMusicVolumeNode = audioCtx.createGain();
-        // Fixed: Default master volume initialized directly to 0.25 scaling factor since slider was removed
-        masterMusicVolumeNode.gain.setValueAtTime(0.35 * 0.25, audioCtx.currentTime);
-        masterMusicVolumeNode.connect(audioCtx.destination);
+        masterGainNode = audioCtx.createGain();
+        musicGainNode = audioCtx.createGain();
+        sfxGainNode = audioCtx.createGain();
+
+        const settings = loadMenuVolumeSettings();
+        masterGainNode.gain.setValueAtTime((settings.masterVolume / 100), audioCtx.currentTime);
+        musicGainNode.gain.setValueAtTime((settings.musicVolume / 100) * 0.25, audioCtx.currentTime);
+        sfxGainNode.gain.setValueAtTime(settings.sfxVolume / 100, audioCtx.currentTime);
+
+        musicGainNode.connect(masterGainNode);
+        sfxGainNode.connect(masterGainNode);
+        masterGainNode.connect(audioCtx.destination);
       }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
@@ -839,7 +865,7 @@
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
       
       osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      gain.connect(sfxGainNode);
       osc.start();
       osc.stop(audioCtx.currentTime + 0.04);
     }
@@ -856,7 +882,7 @@
       gain1.gain.setValueAtTime(0.12, now);
       gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
       osc1.connect(gain1);
-      gain1.connect(audioCtx.destination);
+      gain1.connect(sfxGainNode);
       osc1.start(now);
       osc1.stop(now + 0.08);
 
@@ -867,7 +893,7 @@
       gain2.gain.setValueAtTime(0.08, now + 0.05);
       gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
       osc2.connect(gain2);
-      gain2.connect(masterMusicVolumeNode);
+      gain2.connect(sfxGainNode);
       osc2.start(now + 0.05);
       osc2.stop(now + 0.18);
     }
@@ -899,7 +925,7 @@
       
       source.connect(resonanceFilter);
       resonanceFilter.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
+      gainNode.connect(sfxGainNode);
       
       source.start(now);
       source.stop(now + duration);
@@ -927,7 +953,7 @@
 
       bassOsc.connect(bassFilter);
       bassFilter.connect(bassGain);
-      bassGain.connect(masterMusicVolumeNode);
+      bassGain.connect(musicGainNode);
       bassOsc.start(playTime);
       bassOsc.stop(playTime + stepLengthTime);
       if (currentStepIndex % 2 === 0 || currentStepIndex % 3 === 0) {
@@ -942,7 +968,7 @@
         leadGain.gain.exponentialRampToValueAtTime(0.001, playTime + stepLengthTime * 1.5);
 
         leadOsc.connect(leadGain);
-        leadGain.connect(masterMusicVolumeNode);
+        leadGain.connect(musicGainNode);
         leadOsc.start(playTime);
         leadOsc.stop(playTime + stepLengthTime * 1.5);
       }

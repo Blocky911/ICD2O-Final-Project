@@ -417,12 +417,13 @@ body, html {
 
 .btn-secondary {
   border: 1px solid #2bcbba;
+  background-color: rgba(43, 203, 186, 0.12);
 }
 .btn-secondary a {
   color: #2bcbba;
 }
 .btn-secondary:hover {
-  background: rgba(43, 203, 186, 0.08);
+  background: rgba(43, 203, 186, 0.18);
 }
 
 .btn-ghost {
@@ -431,34 +432,37 @@ body, html {
 
 .btn-inventory {
   border: 1px solid #ff4757 !important;
+  background-color: rgba(255, 71, 87, 0.12) !important;
 }
 .btn-inventory a {
   color: #ff4757 !important;
 }
 .btn-inventory:hover {
-  background-color: rgba(255, 71, 87, 0.08) !important;
+  background-color: rgba(255, 71, 87, 0.18) !important;
   box-shadow: 0 0 8px rgba(255, 71, 87, 0.3);
 }
 
 .btn-tutorial {
   border: 1px solid #ffa502 !important;
+  background-color: rgba(255, 165, 2, 0.12) !important;
 }
 .btn-tutorial a {
   color: #ffa502 !important;
 }
 .btn-tutorial:hover {
-  background-color: rgba(255, 165, 2, 0.08) !important;
+  background-color: rgba(255, 165, 2, 0.18) !important;
   box-shadow: 0 0 8px rgba(255, 165, 2, 0.3);
 }
 
 .btn-settings {
   border: 1px solid #2ed573 !important;
+  background-color: rgba(46, 213, 115, 0.12) !important;
 }
 .btn-settings a {
   color: #2ed573 !important;
 }
 .btn-settings:hover {
-  background-color: rgba(46, 213, 115, 0.08) !important;
+  background-color: rgba(46, 213, 115, 0.18) !important;
   box-shadow: 0 0 8px rgba(46, 213, 115, 0.3);
 }
 
