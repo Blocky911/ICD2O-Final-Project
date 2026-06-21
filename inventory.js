@@ -11,15 +11,15 @@ const GAME_ITEM_DATABASE = {
     
     // Player Skins (images/game_skins.png)
     'skin_default_red': { name: 'Default Red', type: 'playerSkin', desc: 'Your base starter character model.', sheet: 'skins', row: 1, col: 0 },
-    'skin_nugget': { name: 'Nugget', type: 'playerSkin', desc: 'A legendary crispy chicken cosmetic skin.', sheet: 'skins', row: 2, col: 0 },
+    'skin_nugget': { name: 'Nugget', type: 'playerSkin', desc: 'A very unique adversary for Mr. McRae', sheet: 'skins', row: 2, col: 0 },
     'skin_george': { name: 'George Monkey', type: 'playerSkin', desc: 'Go bananas and outrun everyone with this look.', sheet: 'skins', row: 4, col: 0 },
-    'skin_john': { name: 'John Pork', type: 'playerSkin', desc: 'The internet icon pig skin is calling you.', sheet: 'skins', row: 6, col: 0 },
+    'skin_john': { name: 'John Pork', type: 'playerSkin', desc: 'He is calling you...', sheet: 'skins', row: 6, col: 0 },
     
     // Bot Skins (images/game_skins.png)
     'bot_default_blue': { name: 'Default Blue', type: 'botSkin', desc: 'The classic, base enemy bot look.', sheet: 'skins', row: 0, col: 0 },
     'bot_stealer': { name: 'Food Stealer', type: 'botSkin', desc: 'Transform your bot tracker into a sneaky raccoon.', sheet: 'skins', row: 7, col: 0 },
     'bot_mcrae': { name: 'Mr. McRae', type: 'botSkin', desc: 'Give your opponent bot a sophisticated school teacher look.', sheet: 'skins', row: 5, col: 0 },
-    'bot_evil': { name: 'Evil Nugget', type: 'botSkin', desc: 'Turn your hunter bot into a menacing spicy nugget.', sheet: 'skins', row: 3, col: 0 }
+    'bot_evil': { name: 'Evil Nugget', type: 'botSkin', desc: 'Basically the equivalent to Mr. McRae', sheet: 'skins', row: 3, col: 0 }
 };
 
 // --- 2. RETRIEVE STORAGE PERSISTENCE ---

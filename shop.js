@@ -54,6 +54,26 @@ function showToast(message, type = 'info', duration = 3200) {
 }
 
 // --- 3. UPDATE SHOP UI ---
+// --- Shop item descriptions (copied from inventory) ---
+const SHOP_ITEM_DESCRIPTIONS = {
+    energy_bar: 'Restores your stamina bar completely and removes exhaustion.',
+    tomatoes: 'Stuns your opponent for 6 seconds, preventing them from moving or tagging.',
+    gummy_bears: 'Grants a 15-second speed boost followed by a slowdown period.',
+    fart_bomb: 'Stuns your opponent for 15 seconds. Much more powerful than tomatoes!',
+    potion: 'Makes you immune to one tag. Wears off after you get tagged.'
+};
+
+// Attach info button handlers to show descriptions via toast
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.info-btn[data-item]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = btn.getAttribute('data-item');
+            const desc = SHOP_ITEM_DESCRIPTIONS[id] || 'No description available.';
+            showToast(desc, 'info', 4200);
+        });
+    });
+});
+
 function updateShopUI() {
     // Update coin display
     const coinDisplay = document.getElementById('player-coins');
