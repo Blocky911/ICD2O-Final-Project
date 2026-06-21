@@ -56,6 +56,10 @@ let isPlayerIt = false;
 let tagCooldownTimer = 0; 
 const TAG_COOLDOWN_FRAMES = 60;
 
+// Inventory Cooldown System
+let playerInventoryCooldownTimer = 0;
+const INVENTORY_COOLDOWN_FRAMES = 45; // ~0.75 seconds at 60fps
+
 let crownElement = null;
 let hudContainer = null;
 let timerDisplayElement = null;
@@ -465,12 +469,40 @@ function createHotbarUIOverlay() {
         if (itemId && GAME_ITEM_DATABASE[itemId]) {
             const itemData = GAME_ITEM_DATABASE[itemId];
             itemSlot.style.border = '1.5px solid rgba(255,255,255,0.25)';
-            itemSlot.style.cursor = 'pointer';
+            itemSlot.style.cursor = playerInventoryCooldownTimer > 0 ? 'not-allowed' : 'pointer';
+
+            // Cooldown overlay
+            if (playerInventoryCooldownTimer > 0) {
+                const cooldownOverlay = document.createElement('div');
+                cooldownOverlay.style.position = 'absolute';
+                cooldownOverlay.style.top = '0';
+                cooldownOverlay.style.left = '0';
+                cooldownOverlay.style.width = '100%';
+                cooldownOverlay.style.height = '100%';
+                cooldownOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                cooldownOverlay.style.borderRadius = '8px';
+                cooldownOverlay.style.display = 'flex';
+                cooldownOverlay.style.justifyContent = 'center';
+                cooldownOverlay.style.alignItems = 'center';
+                cooldownOverlay.style.zIndex = '10';
+                
+                const cooldownText = document.createElement('div');
+                const cooldownPercent = Math.ceil((playerInventoryCooldownTimer / INVENTORY_COOLDOWN_FRAMES) * 100);
+                cooldownText.innerText = cooldownPercent + '%';
+                cooldownText.style.color = '#ffcc00';
+                cooldownText.style.fontSize = '12px';
+                cooldownText.style.fontWeight = 'bold';
+                cooldownText.style.textShadow = '0 0 4px rgba(0,0,0,0.8)';
+                
+                cooldownOverlay.appendChild(cooldownText);
+                itemSlot.appendChild(cooldownOverlay);
+            }
 
             // Visual element displaying spritesheet crop matching inventory config
             const visualRender = document.createElement('div');
             visualRender.style.width = '32px';
             visualRender.style.height = '32px';
+            visualRender.style.opacity = playerInventoryCooldownTimer > 0 ? '0.4' : '1';
             
             if (itemData.sheet === 'items') {
                 visualRender.style.backgroundImage = "url('images/item_spritesheet.png')";
@@ -535,6 +567,7 @@ function showItemPopup(text, duration = 1600) {
 
 function activateHotbarSlot(index) {
     if (!gameActive || isPaused) return;
+    if (playerInventoryCooldownTimer > 0) return; // Prevent use during cooldown
     let itemId = hotbarItems[index];
     if (!itemId) return;
 
@@ -564,6 +597,7 @@ function activateHotbarSlot(index) {
         showItemPopup(`You used ${name}`);
     } catch (e) {}
 
+    playerInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; // Start cooldown
     hotbarItems[index] = null;
     createHotbarUIOverlay();
 }
@@ -1342,6 +1376,15 @@ function coreExecutionEngine() {
     if (playerStunTimer > 0) {
         playerStunTimer--;
         playerIsSprintingToggle = false;
+    }
+
+    // Decrement inventory cooldown
+    if (playerInventoryCooldownTimer > 0) {
+        playerInventoryCooldownTimer--;
+        // Refresh hotbar UI to update cooldown display
+        if (playerInventoryCooldownTimer % 3 === 0) {
+            createHotbarUIOverlay();
+        }
     }
 
     let moveX = 0;
