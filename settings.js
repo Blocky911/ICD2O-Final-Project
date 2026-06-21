@@ -46,6 +46,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const acceptBtn = document.querySelector('.btn-accept');
     const cancelBtn = document.querySelector('.btn-cancel');
 
+    let audioCtx = null;
+    let previewMasterGain = null;
+
+    function initializePreviewAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        previewMasterGain = audioCtx.createGain();
+        previewMasterGain.gain.setValueAtTime(1, audioCtx.currentTime);
+        previewMasterGain.connect(audioCtx.destination);
+    }
+
+    function playPreviewSound(volume) {
+        if (!window.AudioContext && !window.webkitAudioContext) return;
+        initializePreviewAudio();
+
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+
+        gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+
+        osc.connect(gainNode).connect(previewMasterGain);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.12);
+    }
+
+    function getPreviewVolume(slider, sliderType) {
+        const masterLevel = Number(masterSlider.value) / 100;
+        const sliderLevel = Number(slider.value) / 100;
+
+        if (sliderType === 'master') {
+            return Math.max(0.01, masterLevel * 0.7);
+        }
+        return Math.max(0.01, masterLevel * sliderLevel * 0.8);
+    }
+
     // Helper function to dynamically map an incoming settings block into the DOM controls
     function applySettingsToUI(settings) {
         masterSlider.value = settings.masterVolume;
@@ -64,10 +107,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentSettings = loadGameSettings();
     applySettingsToUI(currentSettings);
 
+    masterSlider.addEventListener('input', (event) => {
+        playPreviewSound(getPreviewVolume(event.target, 'master'));
+    });
+    musicSlider.addEventListener('input', (event) => {
+        playPreviewSound(getPreviewVolume(event.target, 'music'));
+    });
+    sfxSlider.addEventListener('input', (event) => {
+        playPreviewSound(getPreviewVolume(event.target, 'sfx'));
+    });
+
     // Dynamic Reset back to original baseline configuration state
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
             applySettingsToUI(DEFAULT_SETTINGS);
+            playPreviewSound(getPreviewVolume(masterSlider, 'master'));
         });
     }
 
