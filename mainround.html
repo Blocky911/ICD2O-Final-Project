@@ -401,7 +401,7 @@
 
                 musicGainNode.connect(masterGameplayVolumeNode);
                 sfxGainNode.connect(masterGameplayVolumeNode);
-                guitarDistortionNode.connect(masterGameplayVolumeNode);
+                guitarDistortionNode.connect(musicGainNode);
                 masterGameplayVolumeNode.connect(gameplayAudioCtx.destination);
             }
             if (gameplayAudioCtx.state === 'suspended') {
