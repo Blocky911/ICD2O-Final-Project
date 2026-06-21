@@ -3,11 +3,11 @@
 // game_skins.png characters are mapped assuming an 8x8 layout (32x32px source frames)
 const GAME_ITEM_DATABASE = {
     // Consumables (images/item_spritesheet.png)
-    'energy_bar': { name: 'Energy Bar', type: 'item', desc: 'Provides a quick burst of speed during matches!', sheet: 'items', row: 0, col: 0 },
-    'tomatoes': { name: 'Rotten Tomatoes', type: 'item', desc: 'Throw it to slow down the runner bot!', sheet: 'items', row: 0, col: 1 },
-    'gummy_bears': { name: 'Gummy Bears', type: 'item', desc: 'A tasty treat that keeps your stamina restored.', sheet: 'items', row: 0, col: 2 },
-    'fart_bomb': { name: 'Fart Bomb', type: 'item', desc: 'Blasts your opponents backward with area knockback!', sheet: 'items', row: 1, col: 2 },
-    'potion': { name: 'Untaggable Potion', type: 'item', desc: 'Makes you completely immune to tags for a short time.', sheet: 'items', row: 2, col: 0 },
+    'energy_bar': { name: 'Energy Bar', type: 'item', desc: 'Restores your stamina bar completely and removes exhaustion.', sheet: 'items', row: 0, col: 0 },
+    'tomatoes': { name: 'Rotten Tomatoes', type: 'item', desc: 'Stuns your opponent for 6 seconds, preventing them from moving or tagging.', sheet: 'items', row: 0, col: 1 },
+    'gummy_bears': { name: 'Gummy Bears', type: 'item', desc: 'Grants a 15-second speed boost followed by a slowdown period.', sheet: 'items', row: 0, col: 2 },
+    'fart_bomb': { name: 'Fart Bomb', type: 'item', desc: 'Stuns your opponent for 15 seconds. Much more powerful than tomatoes!', sheet: 'items', row: 1, col: 2 },
+    'potion': { name: 'Untaggable Potion', type: 'item', desc: 'Makes you immune to one tag. Wears off after you get tagged.', sheet: 'items', row: 2, col: 0 },
     
     // Player Skins (images/game_skins.png)
     'skin_default_red': { name: 'Default Red', type: 'playerSkin', desc: 'Your base starter character model.', sheet: 'skins', row: 1, col: 0 },

@@ -92,18 +92,25 @@ window.gameSettings = loadGameSettings();
 const urlParams = new URLSearchParams(window.location.search);
 const gameDifficulty = urlParams.get('diff') || 'medium';
 
-let difficultyMultiplier = 0.5;
-if (gameDifficulty === 'medium') difficultyMultiplier = 1;
-if (gameDifficulty === 'hard') difficultyMultiplier = 1.335;
+let difficultyMultiplier = 0.35;
+if (gameDifficulty === 'medium') difficultyMultiplier = 0.7;
+if (gameDifficulty === 'hard') difficultyMultiplier = 1.2;
 
 // ==========================================
 // IN-GAME LIVE ITEM BUFF & MECHANICS STATE
 // ==========================================
+let playerStunTimer = 0;
+let playerStunMaxDuration = 0;
 let botStunTimer = 0;          
 let botStunMaxDuration = 0;    
 let gummyBearSpeedTimer = 0;   
 let gummyBearSlowTimer = 0;    
+let playerGummyBearSpeedTimer = 0;
+let playerGummyBearSlowTimer = 0;
+let botGummyBearSpeedTimer = 0;
+let botGummyBearSlowTimer = 0;
 let isUntaggableActive = false; 
+let botUntaggableActive = false;
 
 // Database references matching inventory mapping and grid layouts
 const GAME_ITEM_DATABASE = {
@@ -121,6 +128,7 @@ const GAME_ITEM_DATABASE = {
 
 // State tracker synced directly with inventory's format
 let hotbarItems = [null, null, null, null, null];
+let botHotbarItems = [null, null, null, null, null];
 
 function setupGameHUD() {
     if (document.getElementById('game-hud-overlay')) return;
@@ -189,6 +197,7 @@ function setupGameHUD() {
 
             localStorage.setItem('playerCoins', currentCoins + coinsEarned);
             localStorage.setItem('playerPoints', leftoverPoints);
+            saveHotbarState();
 
             const modal = document.createElement('div');
             modal.style.position = 'fixed';
@@ -256,6 +265,109 @@ function loadPersistentHotbar() {
         } catch (e) { console.error("Error parsing hotbarItems array", e); }
     } else {
         hotbarItems = ['energy_bar', 'tomatoes', 'gummy_bears', 'fart_bomb', 'potion'];
+    }
+    botHotbarItems = hotbarItems.slice();
+}
+
+function saveHotbarState() {
+    localStorage.setItem('hotbarItems', JSON.stringify(hotbarItems));
+}
+
+function applyItemEffect(itemId, isBot) {
+    if (isBot) {
+        switch (itemId) {
+            case 'energy_bar':
+                botStamina = MAX_STAMINA;
+                botIsExhausted = false;
+                break;
+            case 'tomatoes':
+                playerStunTimer = 360;
+                playerStunMaxDuration = 360;
+                break;
+            case 'gummy_bears':
+                botGummyBearSpeedTimer = 900;
+                botGummyBearSlowTimer = 0;
+                break;
+            case 'fart_bomb':
+                playerStunTimer = 900;
+                playerStunMaxDuration = 900;
+                break;
+            case 'potion':
+                botUntaggableActive = true;
+                break;
+        }
+    } else {
+        switch (itemId) {
+            case 'energy_bar':
+                playerStamina = MAX_STAMINA;
+                playerIsExhausted = false;
+                break;
+            case 'tomatoes':
+                botStunTimer = 360;
+                botStunMaxDuration = 360;
+                break;
+            case 'gummy_bears':
+                playerGummyBearSpeedTimer = 900;
+                playerGummyBearSlowTimer = 0;
+                break;
+            case 'fart_bomb':
+                botStunTimer = 900;
+                botStunMaxDuration = 900;
+                break;
+            case 'potion':
+                isUntaggableActive = true;
+                break;
+        }
+    }
+}
+
+function consumeBotItem(itemId) {
+    const index = botHotbarItems.indexOf(itemId);
+    if (index === -1) return false;
+    applyItemEffect(itemId, true);
+    botHotbarItems[index] = null;
+    return true;
+}
+
+function evaluateBotItemUse(distance) {
+    if (botStunTimer > 0 || playerStunTimer > 0) return;
+    if (botHotbarItems.every(item => !item)) return;
+
+    if (botStamina < 30 && botHotbarItems.includes('energy_bar')) {
+        consumeBotItem('energy_bar');
+        return;
+    }
+
+    if (!isPlayerIt) {
+        if (!botUntaggableActive && botHotbarItems.includes('potion') && distance < 260) {
+            consumeBotItem('potion');
+            return;
+        }
+        if (botGummyBearSpeedTimer === 0 && botHotbarItems.includes('gummy_bears') && distance < 480 && botStamina > 20 && !checkMudCollision(botX, botY)) {
+            consumeBotItem('gummy_bears');
+            return;
+        }
+        if (botHotbarItems.includes('tomatoes') && distance < 240) {
+            consumeBotItem('tomatoes');
+            return;
+        }
+        if (botHotbarItems.includes('fart_bomb') && distance < 220) {
+            consumeBotItem('fart_bomb');
+            return;
+        }
+    } else {
+        if (botGummyBearSpeedTimer === 0 && botHotbarItems.includes('gummy_bears') && botStamina > 20 && !checkMudCollision(botX, botY)) {
+            consumeBotItem('gummy_bears');
+            return;
+        }
+        if (botHotbarItems.includes('tomatoes') && distance < 340) {
+            consumeBotItem('tomatoes');
+            return;
+        }
+        if (botHotbarItems.includes('fart_bomb') && distance < 280) {
+            consumeBotItem('fart_bomb');
+            return;
+        }
     }
 }
 
@@ -372,7 +484,6 @@ function activateHotbarSlot(index) {
     }
 
     hotbarItems[index] = null;
-    localStorage.setItem('hotbarItems', JSON.stringify(hotbarItems));
     createHotbarUIOverlay();
 }
 
@@ -598,6 +709,7 @@ function createBot() {
     botElement.style.top = botY + 'px';
     
     map.appendChild(botElement);
+    removeTreeObstaclesUnderBot();
     updateBotSpriteFrame();
 }
 
@@ -621,8 +733,10 @@ window.addEventListener('keydown', (e) => {
         return;
     }
 
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+
     if (isPaused) return;
-    if (e.key in keys) keys[e.key] = true; 
+    if (key in keys) keys[key] = true; 
     
     if (e.key === 'Shift') {
         playerIsSprintingToggle = !playerIsSprintingToggle;
@@ -635,7 +749,8 @@ window.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('keyup', (e) => { 
-    if (e.key in keys) keys[e.key] = false; 
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (key in keys) keys[key] = false; 
 });
 
 window.addEventListener('blur', () => { togglePauseState(true); });
@@ -674,7 +789,44 @@ function createTreeObstacle(x, y, className) {
     tree.style.top = y + 'px';
     treeContainer.appendChild(tree);
     const radius = className === 'border-tree' ? 65 : 75;
-    obstacles.push({ type: 'circle', x: x + radius, y: y + radius, radius: radius - 22 });
+    obstacles.push({ type: 'circle', x: x + radius, y: y + radius, radius: radius - 22, element: tree });
+}
+
+function removeTreeObstaclesUnderBot() {
+    if (!botElement) return;
+    const botCenterX = botX + 60;
+    const botCenterY = botY + 60;
+    const botRadius = 60;
+
+    obstacles = obstacles.filter(obs => {
+        if (obs.type !== 'circle' || !obs.element) return true;
+        const dx = obs.x - botCenterX;
+        const dy = obs.y - botCenterY;
+        const overlapThreshold = obs.radius + botRadius - 10;
+        if (Math.sqrt(dx * dx + dy * dy) < overlapThreshold) {
+            if (obs.element.parentNode) obs.element.parentNode.removeChild(obs.element);
+            return false;
+        }
+        return true;
+    });
+}
+
+function removeTreeObstaclesUnderPlayer() {
+    const playerCenterX = playerX + 60;
+    const playerCenterY = playerY + 60;
+    const playerRadius = 60;
+
+    obstacles = obstacles.filter(obs => {
+        if (obs.type !== 'circle' || !obs.element) return true;
+        const dx = obs.x - playerCenterX;
+        const dy = obs.y - playerCenterY;
+        const overlapThreshold = obs.radius + playerRadius - 10;
+        if (Math.sqrt(dx * dx + dy * dy) < overlapThreshold) {
+            if (obs.element.parentNode) obs.element.parentNode.removeChild(obs.element);
+            return false;
+        }
+        return true;
+    });
 }
 
 function initializeObstacleMatrix() {
@@ -791,6 +943,17 @@ function executeBotIntelligence() {
         }
     }
 
+    if (botGummyBearSpeedTimer > 0) {
+        botGummyBearSpeedTimer--;
+        localSpeed += 5.0;
+        if (botGummyBearSpeedTimer === 0) {
+            botGummyBearSlowTimer = 480;
+        }
+    } else if (botGummyBearSlowTimer > 0) {
+        botGummyBearSlowTimer--;
+        localSpeed = Math.max(2.5, localSpeed - 3.5);
+    }
+
     let playerCenterX = playerX + 60;
     let playerCenterY = playerY + 60;
     let botImgCenterX = botX + 60;
@@ -800,11 +963,20 @@ function executeBotIntelligence() {
     let dy = playerCenterY - botImgCenterY;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
+    evaluateBotItemUse(distance);
+
     if (distance < 55 && tagCooldownTimer === 0) {
         if (!isPlayerIt && isUntaggableActive) {
             isUntaggableActive = false; 
             botStunTimer = 60;          
             botStunMaxDuration = 60;
+            tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+            return;
+        }
+        if (isPlayerIt && botUntaggableActive) {
+            botUntaggableActive = false;
+            playerStunTimer = 60;
+            playerStunMaxDuration = 60;
             tagCooldownTimer = TAG_COOLDOWN_FRAMES;
             return;
         }
@@ -1036,15 +1208,22 @@ function coreExecutionEngine() {
         scoreAccumulationTimer = 0; 
     }
 
+    if (playerStunTimer > 0) {
+        playerStunTimer--;
+        playerIsSprintingToggle = false;
+    }
+
     let moveX = 0;
     let moveY = 0;
     let isMoving = false;
     let targetDirectionCol = currentDirectionCol;
 
-    if (keys.w || keys.ArrowUp) { moveY -= 1; targetDirectionCol = SPRITE_COLUMNS.BACK; isMoving = true; }
-    if (keys.s || keys.ArrowDown) { moveY += 1; targetDirectionCol = SPRITE_COLUMNS.FRONT; isMoving = true; }
-    if (keys.a || keys.ArrowLeft) { moveX -= 1; targetDirectionCol = SPRITE_COLUMNS.LEFT; isMoving = true; }
-    if (keys.d || keys.ArrowRight) { moveX += 1; targetDirectionCol = SPRITE_COLUMNS.RIGHT; isMoving = true; }
+    if (playerStunTimer === 0) {
+        if (keys.w || keys.ArrowUp) { moveY -= 1; targetDirectionCol = SPRITE_COLUMNS.BACK; isMoving = true; }
+        if (keys.s || keys.ArrowDown) { moveY += 1; targetDirectionCol = SPRITE_COLUMNS.FRONT; isMoving = true; }
+        if (keys.a || keys.ArrowLeft) { moveX -= 1; targetDirectionCol = SPRITE_COLUMNS.LEFT; isMoving = true; }
+        if (keys.d || keys.ArrowRight) { moveX += 1; targetDirectionCol = SPRITE_COLUMNS.RIGHT; isMoving = true; }
+    }
 
     if (!isMoving) {
         playerIsSprintingToggle = false;
@@ -1069,6 +1248,17 @@ function coreExecutionEngine() {
     } else if (gummyBearSlowTimer > 0) {
         gummyBearSlowTimer--;
         currentSpeed = Math.max(2.5, currentSpeed - 3.5); 
+    }
+
+    if (playerGummyBearSpeedTimer > 0) {
+        playerGummyBearSpeedTimer--;
+        currentSpeed += 5.0;
+        if (playerGummyBearSpeedTimer === 0) {
+            playerGummyBearSlowTimer = 480;
+        }
+    } else if (playerGummyBearSlowTimer > 0) {
+        playerGummyBearSlowTimer--;
+        currentSpeed = Math.max(2.5, currentSpeed - 3.5);
     }
 
     if (playerIsExhausted) {
@@ -1118,14 +1308,16 @@ function coreExecutionEngine() {
         }
     }
 
-    if (checkMudCollision(playerX, playerY)) {
+    if (playerStunTimer > 0) {
+        player.style.filter = "drop-shadow(0px 0px 14px #ff0000) saturate(0.8) brightness(0.8)";
+    } else if (checkMudCollision(playerX, playerY)) {
         player.style.filter = "sepia(0.6) brightness(0.75)";
     } else {
         if (isUntaggableActive) {
             player.style.filter = "drop-shadow(0px 0px 12px #cc00ff) brightness(1.2) saturate(1.3)";
-        } else if (gummyBearSpeedTimer > 0) {
+        } else if (playerGummyBearSpeedTimer > 0) {
             player.style.filter = "drop-shadow(0px 0px 10px #ffcc00) contrast(1.4)";
-        } else if (gummyBearSlowTimer > 0) {
+        } else if (playerGummyBearSlowTimer > 0) {
             player.style.filter = "drop-shadow(0px 0px 4px #5533aa) grayscale(0.6)";
         } else if (playerIsCurrentlySprinting) {
             player.style.filter = "drop-shadow(0px 0px 8px #00ffff) saturate(1.5)"; 
