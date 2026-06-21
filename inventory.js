@@ -23,15 +23,45 @@ const GAME_ITEM_DATABASE = {
 };
 
 // --- 2. RETRIEVE STORAGE PERSISTENCE ---
-let playerInventory = JSON.parse(localStorage.getItem('playerInventory')) || {
-    items: { energy_bar: 5, tomatoes: 0, gummy_bears: 3, fart_bomb: 1, potion: 1 }, 
-    skins: ['skin_default_red', 'bot_default_blue']
-};
+function loadStoredInventory() {
+    let stored = {};
+    try {
+        stored = JSON.parse(localStorage.getItem('playerInventory') || '{}');
+    } catch (err) {
+        console.warn('Invalid playerInventory data, resetting defaults.', err);
+        stored = {};
+    }
 
-let equippedItems = JSON.parse(localStorage.getItem('equippedItems')) || {
-    playerSkin: 'skin_default_red',
-    botSkin: 'bot_default_blue'
-};
+    return {
+        items: {
+            energy_bar: 5,
+            tomatoes: 0,
+            gummy_bears: 3,
+            fart_bomb: 1,
+            potion: 1,
+            ...((stored.items && typeof stored.items === 'object') ? stored.items : {})
+        },
+        skins: Array.isArray(stored.skins) ? stored.skins : ['skin_default_red', 'bot_default_blue']
+    };
+}
+
+function loadStoredEquippedItems() {
+    let stored = {};
+    try {
+        stored = JSON.parse(localStorage.getItem('equippedItems') || '{}');
+    } catch (err) {
+        console.warn('Invalid equippedItems data, resetting defaults.', err);
+        stored = {};
+    }
+
+    return {
+        playerSkin: typeof stored.playerSkin === 'string' ? stored.playerSkin : 'skin_default_red',
+        botSkin: typeof stored.botSkin === 'string' ? stored.botSkin : 'bot_default_blue'
+    };
+}
+
+let playerInventory = loadStoredInventory();
+let equippedItems = loadStoredEquippedItems();
 
 // State array to manage our 5 hotbar slots
 let hotbarItems = JSON.parse(localStorage.getItem('hotbarItems')) || [null, null, null, null, null];
