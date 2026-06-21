@@ -813,6 +813,8 @@ function unlockAchievement(achievementId) {
     if (!achievements.unlockedAchievements.includes(achievementId)) {
         achievements.unlockedAchievements.push(achievementId);
         localStorage.setItem('gameAchievements', JSON.stringify(achievements));
+        console.log(`✓ Achievement Unlocked: ${achievementId}`, achievements);
+        showItemPopup(`🏆 Achievement Unlocked: ${achievementId}`);
     }
 }
 
