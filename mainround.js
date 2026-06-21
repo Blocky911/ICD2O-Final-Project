@@ -367,6 +367,10 @@ function consumeBotItem(itemId) {
     const index = botHotbarItems.indexOf(itemId);
     if (index === -1) return false;
     applyItemEffect(itemId, true);
+    try {
+        const name = GAME_ITEM_DATABASE[itemId] ? GAME_ITEM_DATABASE[itemId].name : itemId;
+        showItemPopup(`BOT used ${name}`);
+    } catch (e) {}
     botHotbarItems[index] = null;
     return true;
 }
@@ -498,6 +502,37 @@ function createHotbarUIOverlay() {
     document.body.appendChild(hotbarWrapper);
 }
 
+// Small HUD popup for item use notifications
+function showItemPopup(text, duration = 1600) {
+    const popup = document.createElement('div');
+    popup.className = 'item-use-popup';
+    popup.style.position = 'fixed';
+    popup.style.left = '50%';
+    popup.style.top = '110px';
+    popup.style.transform = 'translateX(-50%) translateY(-6px)';
+    popup.style.padding = '10px 18px';
+    popup.style.background = 'rgba(11,15,25,0.95)';
+    popup.style.color = '#ffffff';
+    popup.style.border = '2px solid rgba(255,255,255,0.08)';
+    popup.style.borderRadius = '12px';
+    popup.style.fontFamily = "'DM Sans', 'Segoe UI', sans-serif";
+    popup.style.fontSize = '16px';
+    popup.style.zIndex = '12000';
+    popup.style.opacity = '0';
+    popup.style.transition = 'opacity 220ms ease, transform 220ms ease';
+    popup.innerText = text;
+    document.body.appendChild(popup);
+    requestAnimationFrame(() => {
+        popup.style.opacity = '1';
+        popup.style.transform = 'translateX(-50%) translateY(0px)';
+    });
+    setTimeout(() => {
+        popup.style.opacity = '0';
+        popup.style.transform = 'translateX(-50%) translateY(-8px)';
+        setTimeout(() => { if (popup.parentNode) popup.parentNode.removeChild(popup); }, 300);
+    }, duration);
+}
+
 function activateHotbarSlot(index) {
     if (!gameActive || isPaused) return;
     let itemId = hotbarItems[index];
@@ -524,6 +559,10 @@ function activateHotbarSlot(index) {
             isUntaggableActive = true;
             break;
     }
+    try {
+        const name = GAME_ITEM_DATABASE[itemId] ? GAME_ITEM_DATABASE[itemId].name : itemId;
+        showItemPopup(`You used ${name}`);
+    } catch (e) {}
 
     hotbarItems[index] = null;
     createHotbarUIOverlay();
@@ -972,6 +1011,7 @@ function executeBotIntelligence() {
 
     if (botStunTimer > 0) {
         botStunTimer--;
+        // Mark bot as stunned visually but DO NOT early-return: keep tag checks active
         if (botStunMaxDuration === 900) {
             botElement.style.filter = "drop-shadow(0px 0px 14px #a6ff00) hue-rotate(90deg) brightness(0.6)";
         } else {
@@ -979,7 +1019,6 @@ function executeBotIntelligence() {
         }
         updateCrownPosition();
         updateTrackerArrowPosition();
-        return; 
     }
 
     if (isPlayerIt === false && tagCooldownTimer > 0) {
@@ -1056,6 +1095,17 @@ function executeBotIntelligence() {
         }
         playerWasPreviouslyIt = isPlayerIt;
         
+        return;
+    }
+
+    // If bot is stunned, allow tagging above but skip movement and AI decisions
+    if (botStunTimer > 0) {
+        // keep bot visually in place and skip the rest of AI movement
+        botElement.style.left = botX + 'px';
+        botElement.style.top = botY + 'px';
+        updateBotSpriteFrame();
+        updateCrownPosition();
+        updateTrackerArrowPosition();
         return;
     }
 
