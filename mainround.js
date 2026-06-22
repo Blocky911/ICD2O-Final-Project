@@ -58,6 +58,7 @@ const TAG_COOLDOWN_FRAMES = 60;
 
 // Inventory Cooldown System
 let playerInventoryCooldownTimer = 0;
+let botInventoryCooldownTimer = 0; // Added tracking variable for the bot's item cooldown
 const INVENTORY_COOLDOWN_FRAMES = 45; // ~0.75 seconds at 60fps
 
 let crownElement = null;
@@ -118,6 +119,7 @@ let crownGrabbedAtStart = false;
 // ==========================================
 // IN-GAME LIVE ITEM BUFF & MECHANICS STATE
 // ==========================================
+
 let playerStunTimer = 0;
 let playerStunMaxDuration = 0;
 let botStunTimer = 0;          
@@ -391,6 +393,7 @@ function evaluateBotItemUse(distance) {
         and prevents one side from having an unfair advantage by having better items in their hotbar
     */
     if (botStunTimer > 0 || playerStunTimer > 0) return;
+    if (botInventoryCooldownTimer > 0) return; // Guard: Prevent item usage during active cooldown
     if (botHotbarItems.every(item => !item)) return;
 
     // --- SIGNIFICANT EASY AND MEDIUM ITEM USE NERFS ---
@@ -403,8 +406,10 @@ function evaluateBotItemUse(distance) {
     if (botStamina < 35 && botHotbarItems.includes('energy_bar')) {
         let healRange = (gameDifficulty === 'easy') ? 100 : (gameDifficulty === 'medium' ? 250 : (isPlayerIt ? 600 : 350));
         if (distance < healRange) {
-            consumeBotItem('energy_bar');
-            return;
+            if (consumeBotItem('energy_bar')) {
+                botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; // Trigger cooldown
+                return;
+            }
         }
     }
 
@@ -413,37 +418,29 @@ function evaluateBotItemUse(distance) {
 
     if (!isPlayerIt) { // Bot is holding the crown (Fleeing)
         if (!botUntaggableActive && botHotbarItems.includes('potion') && distance < 260) {
-            consumeBotItem('potion');
-            return;
+            if (consumeBotItem('potion')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
         if (botGummyBearSpeedTimer === 0 && botHotbarItems.includes('gummy_bears') && distance < 500 && botStamina > 15 && !checkMudCollision(botX, botY)) {
-            consumeBotItem('gummy_bears');
-            return;
+            if (consumeBotItem('gummy_bears')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
         if (botHotbarItems.includes('tomatoes') && distance < 260) {
-            consumeBotItem('tomatoes');
-            return;
+            if (consumeBotItem('tomatoes')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
         if (botHotbarItems.includes('fart_bomb') && distance < 200) {
-            consumeBotItem('fart_bomb');
-            return;
+            if (consumeBotItem('fart_bomb')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
     } else { // Bot is "It" (Chasing)
         if (botGummyBearSpeedTimer === 0 && botHotbarItems.includes('gummy_bears') && distance > 300 && !checkMudCollision(botX, botY)) {
-            consumeBotItem('gummy_bears');
-            return;
+            if (consumeBotItem('gummy_bears')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
         if (botHotbarItems.includes('tomatoes') && distance < 360) {
-            consumeBotItem('tomatoes');
-            return;
+            if (consumeBotItem('tomatoes')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
         if (botHotbarItems.includes('fart_bomb') && distance < 260) {
-            consumeBotItem('fart_bomb');
-            return;
+            if (consumeBotItem('fart_bomb')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
     }
 }
-
 function executeBotIntelligence() {
     /*
         This is the general bot movement and decision-making function that runs every frame after the spawn delay.
