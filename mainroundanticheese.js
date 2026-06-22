@@ -121,24 +121,24 @@ executeBotIntelligence = function() {
             // Decay the pacing score slowly over time so normal steering adjustments don't pile up
             reversalTimer++;
             if (reversalTimer >= 15) {
-                if (botReversalCounter > 0) botReversalCounter -= 1;
+                if (botReversalCounter > 0) botReversalCounter = Math.max(0, botReversalCounter - 1);
                 reversalTimer = 0;
             }
 
             // 3. Evaluate Trigger Conditions
-            let isPacingViolently = botReversalCounter >= 250; 
+            // Configured exactly to 185 back-and-forth direction switches
+            let isPacingViolently = botReversalCounter >= 185; 
             let isPositionFrozen = movedDist < 0.4;
 
             if (isPositionFrozen || isPacingViolently) {
                 botStuckFrames++;
                 
-                // Must be stuck/vibrating consecutively for 5 seconds (300 frames)
-                if (botStuckFrames > 300) {
+                // Timings tuned for a tighter 3-second (180 frame) cutoff or pacing triggers
+                if (botStuckFrames > 180 || (isPacingViolently && botStuckFrames > 120)) {
                     botIsGhostMode = true;
                     playGhostSound();
-                    showItemPopup("The game thinks that the AI is stuck! It has phased into ghost mode to try to get unstuck. It will be intangible but also unable to tag or be tagged until it fully exits all obstacles.", 4000);
+                    showItemPopup("👻 AI GHOST PHASE!");
                     
-                    // Instantly drain stamina upon entering ghost mode
                     if (typeof botStamina !== 'undefined') {
                         botStamina = 0;
                     }
