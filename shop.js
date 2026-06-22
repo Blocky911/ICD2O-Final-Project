@@ -12,12 +12,12 @@ function loadStoredInventory() {
     }
 
     return {
-        items: {
-            energy_bar: 0,
+        items: { /* FIXED: default values don't line up with values in inventory.js (was all 0)  */
+            energy_bar: 5,     
             tomatoes: 0,
-            gummy_bears: 0,
-            fart_bomb: 0,
-            potion: 0,
+            gummy_bears: 3,    
+            fart_bomb: 1,      
+            potion: 1,         
             ...((stored.items && typeof stored.items === 'object') ? stored.items : {})
         },
         skins: Array.isArray(stored.skins) ? stored.skins : ['skin_default_red', 'bot_default_blue']
