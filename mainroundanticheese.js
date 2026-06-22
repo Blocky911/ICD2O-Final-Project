@@ -137,7 +137,7 @@ executeBotIntelligence = function() {
                 if (botStuckFrames > 180 || (isPacingViolently && botStuckFrames > 120)) {
                     botIsGhostMode = true;
                     playGhostSound();
-                    showItemPopup("👻 AI GHOST PHASE!");
+                    showItemPopup("The game thinks you're cheating or the Ai is stuck! Phasing through obstacles to get back in the game...", 3500);
                     
                     if (typeof botStamina !== 'undefined') {
                         botStamina = 0;
