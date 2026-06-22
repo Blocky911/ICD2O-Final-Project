@@ -1722,6 +1722,10 @@ function coreExecutionEngine() {
         }
     }
 
+    if (botInventoryCooldownTimer > 0) {
+        botInventoryCooldownTimer--;
+    }
+
     let moveX = 0;
     let moveY = 0;
     let isMoving = false;
