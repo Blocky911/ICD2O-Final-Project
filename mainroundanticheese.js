@@ -136,7 +136,7 @@ executeBotIntelligence = function() {
                 if (botStuckFrames > 300) {
                     botIsGhostMode = true;
                     playGhostSound();
-                    showItemPopup("👻 AI GHOST PHASE!");
+                    showItemPopup("The game thinks that the AI is stuck! It has phased into ghost mode to try to get unstuck. It will be intangible but also unable to tag or be tagged until it fully exits all obstacles.", 4000);
                     
                     // Instantly drain stamina upon entering ghost mode
                     if (typeof botStamina !== 'undefined') {
