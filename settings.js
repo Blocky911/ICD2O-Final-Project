@@ -7,7 +7,6 @@ const DEFAULT_SETTINGS = {
     masterVolume: 80,
     musicVolume: 50,
     sfxVolume: 70,
-    deafMode: false,
     staminaColor: "#00ffcc",     // Default Normal Colour
     lowStaminaColor: "#ff007f",  // Default Low Colour
     exhaustionColor: "#ff5e00",  // Default Exhaustion Colour
