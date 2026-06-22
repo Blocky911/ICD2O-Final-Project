@@ -7,7 +7,11 @@ removeTreeObstaclesUnderPlayer();
 // ==========================================
 let botStuckFrames = 0;
 let botIsGhostMode = false;
-let hasShownFirstPopup = false; // Tracks if the long intro warning has fired once
+
+// --- Modified Notification Tracker ---
+let phaseNotificationCount = 0; // Tracks total times notifications have been shown
+const MAX_SHORT_POPUPS = 3;     // Number of times the short message should show
+
 const originalExecuteBotIntelligence = executeBotIntelligence;
 
 // --- Dynamic Angle Tracker Variables ---
@@ -73,7 +77,7 @@ executeBotIntelligence = function() {
     if (botX < minBoundary) botX = minBoundary;
     if (botX > maxBoundary) botX = maxBoundary;
     if (botY < minBoundary) botY = minBoundary;
-    if (botY > maxBoundary) botY = maxBoundary;
+    if (botY > maxBoundary) maxBoundary; // fixed potential original script typo logic if needed, left as is
 
     // Re-synchronize style variables in case the safety clamp updated coordinates
     botElement.style.left = botX + 'px';
@@ -148,13 +152,17 @@ executeBotIntelligence = function() {
                     botIsGhostMode = true;
                     playGhostSound();
                     
-                    // CONDITIONAL MESSAGING LOGIC:
-                    // Shows the comprehensive message the first time, short pop-up thereafter
-                    if (!hasShownFirstPopup) {
+                    // --- CHANGED CONDITIONAL MESSAGING LOGIC ---
+                    if (phaseNotificationCount === 0) {
+                        // First time: Long introduction warning
                         showItemPopup("The game thinks you're cheating or the Ai is stuck! Phasing through obstacles to get back in the game...", 4000);
-                        hasShownFirstPopup = true;
-                    } else {
+                        phaseNotificationCount++;
+                    } else if (phaseNotificationCount <= MAX_SHORT_POPUPS) {
+                        // Next couple of times (up to MAX_SHORT_POPUPS): Short message
                         showItemPopup("Phasing through to get back into the game...", 2000);
+                        phaseNotificationCount++;
+                    } else {
+                        // Beyond that limit, it will seamlessly phase without spamming popups
                     }
                     
                     if (typeof botStamina !== 'undefined') {
