@@ -387,19 +387,22 @@ function evaluateBotItemUse(distance) {
     if (botStunTimer > 0 || playerStunTimer > 0) return;
     if (botHotbarItems.every(item => !item)) return;
 
-    // Easy bots are clueless: 40% chance every frame to completely skip item logic
-    if (gameDifficulty === 'easy' && Math.random() < 0.4) return;
+    // --- SIGNIFICANT EASY AND MEDIUM ITEM USE NERFS ---
+    // Easy bots are completely clueless: 75% chance every frame to skip item logic entirely
+    if (gameDifficulty === 'easy' && Math.random() < 0.75) return;
+    // Medium bots now have a 35% chance to skip item logic, making them noticeably more flawed
+    if (gameDifficulty === 'medium' && Math.random() < 0.35) return;
 
     // Emergency Heal: Pop stamina bar if low during crucial moments
     if (botStamina < 35 && botHotbarItems.includes('energy_bar')) {
-        let healRange = (gameDifficulty === 'easy') ? 150 : (isPlayerIt ? 600 : 350);
+        let healRange = (gameDifficulty === 'easy') ? 100 : (gameDifficulty === 'medium' ? 250 : (isPlayerIt ? 600 : 350));
         if (distance < healRange) {
             consumeBotItem('energy_bar');
             return;
         }
     }
 
-    // Smart Offensive Hold: Harder bots don't throw if player is untaggable. Easy bots waste them!
+    // Smart Offensive Hold: Harder bots don't throw if player is untaggable. Easy/Medium bots waste them!
     if (isUntaggableActive && gameDifficulty !== 'easy' && gameDifficulty !== 'medium') return;
 
     if (!isPlayerIt) { // Bot is holding the crown (Fleeing)
@@ -476,9 +479,11 @@ function executeBotIntelligence() {
         localSpeed = isPlayerIt ? (botSpeed + CROWN_SPEED_BOOST) : botSpeed;
     }
 
-    // Slightly nerf base speed on easy difficulty so players can catch up comfortably
+    // --- SIGNIFICANT SPEED NERFS FOR EASY AND MEDIUM ---
     if (gameDifficulty === 'easy') {
-        localSpeed *= 0.85;
+        localSpeed *= 0.65; // Dropped from 0.85 to 0.65 so players can easily catch/outrun them
+    } else if (gameDifficulty === 'medium') {
+        localSpeed *= 0.82; // Added an 18% speed reduction to make medium balanced
     }
 
     if (botGummyBearSpeedTimer > 0) {
@@ -546,8 +551,9 @@ function executeBotIntelligence() {
     let botIsCurrentlySprinting = false;
     let sprintThreshold = isPlayerIt ? 550 : 400;
 
-    // Easy bots panic sprint from too far away or drop it entirely
-    if (gameDifficulty === 'easy') sprintThreshold = isPlayerIt ? 350 : 250;
+    // --- REBALANCED SPRINT THRESHOLDS ---
+    if (gameDifficulty === 'easy') sprintThreshold = isPlayerIt ? 180 : 120;   // Rarely sprints
+    if (gameDifficulty === 'medium') sprintThreshold = isPlayerIt ? 380 : 250; // Sprints much less aggressively
 
     if (botIsExhausted) {
         botStamina += STAMINA_RECOVER_RATE;
@@ -599,9 +605,9 @@ function executeBotIntelligence() {
         let preferredX = (dx / distance) * localSpeed * factor;
         let preferredY = (dy / distance) * localSpeed * factor;
 
-        // Fleeing Juke Mechanic (Disabled on easy difficulty)
-        if (factor === 1 && distance < 250 && gameDifficulty !== 'easy') {
-            let jukeWeight = gameDifficulty === 'medium' ? 0.15 : 0.35;
+        // Fleeing Juke Mechanic (Now completely disabled on BOTH Easy and Medium difficulty)
+        if (factor === 1 && distance < 250 && gameDifficulty !== 'easy' && gameDifficulty !== 'medium') {
+            let jukeWeight = 0.35;
             preferredX += (-dy / distance) * localSpeed * jukeWeight;
             preferredY += (dx / distance) * localSpeed * jukeWeight;
         }
@@ -611,10 +617,13 @@ function executeBotIntelligence() {
         let safetyBubbleDist = gameDifficulty === 'impossible' ? 130 : (gameDifficulty === 'hard' ? 110 : 75); 
         let forceIntensity = gameDifficulty === 'impossible' ? 3.5 : 2.5;
 
-        // Easy bots have tiny wall awareness buffers
+        // --- CLUMSIER ENVIRONMENT AVOIDANCE ---
         if (gameDifficulty === 'easy') {
-            safetyBubbleDist = 45;
-            forceIntensity = 1.2;
+            safetyBubbleDist = 35;  // Tiny wall awareness (will hit obstacles frequently)
+            forceIntensity = 0.9;
+        } else if (gameDifficulty === 'medium') {
+            safetyBubbleDist = 50;  // Reduced awareness buffer
+            forceIntensity = 1.6;
         }
 
         const botPx = botX + playerOffset + 25;
@@ -656,8 +665,8 @@ function executeBotIntelligence() {
         moveX = preferredX + pushX;
         moveY = preferredY + pushY;
 
-        // Predictive Raycasting Lookahead Engine (Scaled by difficulty)
-        let raycastMultiplier = gameDifficulty === 'easy' ? 0.8 : (gameDifficulty === 'medium' ? 1.6 : 2.5);
+        // Predictive Raycasting Lookahead Engine (Scaled down for lower difficulties)
+        let raycastMultiplier = gameDifficulty === 'easy' ? 0.5 : (gameDifficulty === 'medium' ? 1.0 : 2.5);
         let raycastDistance = localSpeed * raycastMultiplier;
         let lookAheadX = botX + (moveX * raycastDistance);
         let lookAheadY = botY + (moveY * raycastDistance);
@@ -665,9 +674,10 @@ function executeBotIntelligence() {
         if (processEnvironmentIntersection(lookAheadX, lookAheadY)) {
             let pathFound = false;
             
-            // Easy/Medium bots have simple or zero angular adjustment paths
-            let angleSteps = [35, -35, 70, -70];
-            if (gameDifficulty === 'easy') angleSteps = []; // Easy bots get stuck / slide crudely
+            // --- REDUCED ANGULAR STEPS FOR FLUID NAVIGATION ---
+            let angleSteps = []; 
+            if (gameDifficulty === 'medium') angleSteps = [45, -45]; // Medium bots can only search one crude angle step
+            if (gameDifficulty === 'easy') angleSteps = [];          // Easy bots get zero micro-corrections (will slide crudely)
             if (gameDifficulty === 'impossible' || gameDifficulty === 'hard') angleSteps = [25, -25, 50, -50, 75, -75, 90, -90];
 
             for (let angle of angleSteps) {

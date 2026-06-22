@@ -161,8 +161,6 @@ executeBotIntelligence = function() {
                         // Next couple of times (up to MAX_SHORT_POPUPS): Short message
                         showItemPopup("Phasing through to get back into the game...", 2000);
                         phaseNotificationCount++;
-                    } else {
-                        // Beyond that limit, it will seamlessly phase without spamming popups
                     }
                     
                     if (typeof botStamina !== 'undefined') {
