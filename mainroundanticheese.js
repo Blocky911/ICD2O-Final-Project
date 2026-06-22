@@ -7,11 +7,11 @@ removeTreeObstaclesUnderPlayer();
 // ==========================================
 let botStuckFrames = 0;
 let botIsGhostMode = false;
+let hasShownFirstPopup = false; // Tracks if the long intro warning has fired once
 const originalExecuteBotIntelligence = executeBotIntelligence;
 
-// --- Back-and-Forth Pacing Detector Variables ---
-let lastBotDirX = 0; // -1 for Left, 1 for Right, 0 for None
-let lastBotDirY = 0; // -1 for Up, 1 for Down, 0 for None
+// --- Dynamic Angle Tracker Variables ---
+let lastMovementAngle = null; 
 let botReversalCounter = 0;
 let reversalTimer = 0;
 
@@ -80,7 +80,7 @@ executeBotIntelligence = function() {
     botElement.style.top = botY + 'px';
 
     if (botIsGhostMode) {
-        // STAMINA PENALTY TRADE-OFF: Force bot stamina to remain entirely depleted while phasing
+        // Force bot stamina to remain entirely depleted while phasing
         if (typeof botStamina !== 'undefined') {
             botStamina = 0;
         }
@@ -100,44 +100,62 @@ executeBotIntelligence = function() {
         let distance = Math.sqrt(dx * dx + dy * dy);
 
         if (botSpawnTimer >= BOT_DELAY_FRAMES && botStunTimer <= 0 && tagCooldownTimer === 0 && distance > 55) {
-            let movedDist = Math.sqrt((botX - oldX) ** 2 + (botY - oldY) ** 2);
+            let velX = botX - oldX;
+            let velY = botY - oldY;
+            let movedDist = Math.sqrt(velX * velX + velY * velY);
             
-            // 1. Calculate current directional states (-1, 0, or 1)
-            let currentDirX = (botX - oldX) > 0.1 ? 1 : ((botX - oldX) < -0.1 ? -1 : 0);
-            let currentDirY = (botY - oldY) > 0.1 ? 1 : ((botY - oldY) < -0.1 ? -1 : 0);
+            // 1. Determine current moving angle in radians
+            let currentAngle = Math.atan2(velY, velX);
 
-            // 2. Detect tracking reversals (Back and forth oscillations)
-            if (currentDirX !== 0 && lastBotDirX !== 0 && currentDirX !== lastBotDirX) {
-                botReversalCounter += 1;
+            // 2. Evaluate Dynamic Angular Changes if the bot is actually attempting movement
+            if (movedDist > 0.05 && lastMovementAngle !== null) {
+                let angleDiff = Math.abs(currentAngle - lastMovementAngle);
+                if (angleDiff > Math.PI) {
+                    angleDiff = (2 * Math.PI) - angleDiff;
+                }
+
+                let angleDiffDegrees = angleDiff * (180 / Math.PI);
+
+                if (angleDiffDegrees > 135) {
+                    botReversalCounter += 3.0;
+                } else if (angleDiffDegrees > 75) {
+                    botReversalCounter += 1.5;
+                } else if (angleDiffDegrees > 25) {
+                    botReversalCounter += 0.2;
+                }
             }
-            if (currentDirY !== 0 && lastBotDirY !== 0 && currentDirY !== lastBotDirY) {
-                botReversalCounter += 1;
+
+            if (movedDist > 0.05) {
+                lastMovementAngle = currentAngle;
             }
 
-            // Save state for next tick frame evaluation
-            if (currentDirX !== 0) lastBotDirX = currentDirX;
-            if (currentDirY !== 0) lastBotDirY = currentDirY;
-
-            // Decay the pacing score slowly over time so normal steering adjustments don't pile up
+            // Decay the dynamic anti-cheat buffer score steadily
             reversalTimer++;
-            if (reversalTimer >= 15) {
-                if (botReversalCounter > 0) botReversalCounter = Math.max(0, botReversalCounter - 1);
+            if (reversalTimer >= 10) {
+                if (botReversalCounter > 0) botReversalCounter = Math.max(0, botReversalCounter - 1.5);
                 reversalTimer = 0;
             }
 
             // 3. Evaluate Trigger Conditions
-            // Configured exactly to 185 back-and-forth direction switches
             let isPacingViolently = botReversalCounter >= 185; 
             let isPositionFrozen = movedDist < 0.4;
 
             if (isPositionFrozen || isPacingViolently) {
                 botStuckFrames++;
                 
-                // Timings tuned for a tighter 3-second (180 frame) cutoff or pacing triggers
-                if (botStuckFrames > 180 || (isPacingViolently && botStuckFrames > 120)) {
+                // Triggers anti-stuck loop at 3 seconds (180 frames)
+                if (botStuckFrames > 180) {
                     botIsGhostMode = true;
                     playGhostSound();
-                    showItemPopup("The game thinks you're cheating or the Ai is stuck! Phasing through obstacles to get back in the game...", 3500);
+                    
+                    // CONDITIONAL MESSAGING LOGIC:
+                    // Shows the comprehensive message the first time, short pop-up thereafter
+                    if (!hasShownFirstPopup) {
+                        showItemPopup("The game thinks you're cheating or the Ai is stuck! Phasing through obstacles to get back in the game...", 4000);
+                        hasShownFirstPopup = true;
+                    } else {
+                        showItemPopup("Phasing through to get back into the game...", 2000);
+                    }
                     
                     if (typeof botStamina !== 'undefined') {
                         botStamina = 0;

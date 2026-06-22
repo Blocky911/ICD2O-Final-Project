@@ -741,6 +741,7 @@ function createHotbarUIOverlay() {
     if (existing) existing.remove();
     if (!window.gameSettings.showItems) return;
 
+        // initializes hotbar overlay container and slots
     const hotbarWrapper = document.createElement('div');
     hotbarWrapper.id = 'game-hotbar-container';
     hotbarWrapper.style.position = 'fixed';
@@ -755,7 +756,8 @@ function createHotbarUIOverlay() {
     hotbarWrapper.style.border = '2px solid rgba(255, 255, 255, 0.15)';
     hotbarWrapper.style.boxShadow = '0 6px 24px rgba(0, 0, 0, 0.6)';
     hotbarWrapper.style.zIndex = '1000';
-
+        
+    // displays each item properly
     hotbarItems.forEach((itemId, index) => {
         const itemSlot = document.createElement('div');
         itemSlot.id = `hotbar-slot-${index}`;
@@ -813,7 +815,7 @@ function createHotbarUIOverlay() {
                 itemSlot.appendChild(cooldownOverlay);
             }
 
-            // Visual element displaying spritesheet crop matching inventory config
+            // Visual element displaying spritesheet crop matching inventory configuration
             const visualRender = document.createElement('div');
             visualRender.style.width = '32px';
             visualRender.style.height = '32px';
