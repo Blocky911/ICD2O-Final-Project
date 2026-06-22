@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!impossibleCard || !impossibleBtn) return;
     if (!isImpossibleUnlocked()) {
         impossibleCard.classList.add('locked');
-        // keep the button clickable so `selectDifficulty` can show the toast
-        impossibleBtn.removeAttribute('disabled');
+        impossibleBtn.removeAttribute('disabled'); /* the button has to be kept unclickable
+                                                      to allow the toast to clarify the achievement to earn */
         impossibleBtn.setAttribute('aria-disabled', 'true');
         impossibleBtn.title = 'Locked: Win 5 hard rounds to unlock';
     } else {

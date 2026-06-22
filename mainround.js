@@ -384,6 +384,12 @@ function consumeBotItem(itemId) {
 // ==========================================
 
 function evaluateBotItemUse(distance) {
+    /*
+        This function is for the bot to think about what items to use
+        it uses the same items as the player, but they do not share the same hotbar
+        This item-copying logic makes the game balanced, as both players have the same items
+        and prevents one side from having an unfair advantage by having better items in their hotbar
+    */
     if (botStunTimer > 0 || playerStunTimer > 0) return;
     if (botHotbarItems.every(item => !item)) return;
 
@@ -439,6 +445,11 @@ function evaluateBotItemUse(distance) {
 }
 
 function executeBotIntelligence() {
+    /*
+        This is the general bot movement and decision-making function that runs every frame after the spawn delay.
+        It controls the main bot and how it moves, however, it does not control the ghost mode logic, which is handled separately in
+        mainroundanticheese.js to ensure the bot can phase through obstacles without breaking core movement logic or getting stuck.
+    */
     if (!botElement) return;
 
     if (botSpawnTimer < BOT_DELAY_FRAMES) {
@@ -751,7 +762,7 @@ function createHotbarUIOverlay() {
     if (existing) existing.remove();
     if (!window.gameSettings.showItems) return;
 
-        // initializes hotbar overlay container and slots
+    // initializes hotbar overlay container and slots
     const hotbarWrapper = document.createElement('div');
     hotbarWrapper.id = 'game-hotbar-container';
     hotbarWrapper.style.position = 'fixed';
@@ -766,7 +777,7 @@ function createHotbarUIOverlay() {
     hotbarWrapper.style.border = '2px solid rgba(255, 255, 255, 0.15)';
     hotbarWrapper.style.boxShadow = '0 6px 24px rgba(0, 0, 0, 0.6)';
     hotbarWrapper.style.zIndex = '1000';
-        
+    
     // displays each item properly
     hotbarItems.forEach((itemId, index) => {
         const itemSlot = document.createElement('div');
