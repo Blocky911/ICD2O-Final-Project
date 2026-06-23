@@ -64,7 +64,7 @@ let playerInventory = loadStoredInventory();
 let equippedItems = loadStoredEquippedItems();
 
 // State array to manage our 5 hotbar slots
-let hotbarItems = JSON.parse(localStorage.getItem('hotbarItems')) || [null, null, null, null, null];
+let hotbarItems = JSON.parse(localStorage.getItem('hotbarItems')) || [null, null, null, null, null]; // Initialize with 5 null values
 
 let selectedItemId = null; 
 
@@ -95,6 +95,11 @@ function applySpriteStyle(element, item, isLargePreview = false) {
 
 // --- 3. CONSTRUCT THE GRID VIEW ---
 function populateInventoryGrid() {
+    /*
+    Populates the inventory grid with items and skins from the GAME_ITEM_DATABASE.
+    Each grid slot displays the item's sprite, name, and an overlay indicating stockpile count or lock/equipped status.
+    Draggable items can be dragged to the hotbar, while skins are non-draggable and provide visual feedback on their status.
+    */
     const gridContainer = document.getElementById('items-scroll-grid');
     if (!gridContainer) return;
     
@@ -183,7 +188,7 @@ function populateInventoryGrid() {
 }
 
 // --- 4. QUICK ACCESS HOTBAR INITIALIZATION & EVENT LOGIC ---
-function initializeHotbar() {
+function initializeHotbar() { // focuses on setting up the hotbar slots with drag-and-drop functionality, click-to-remove behavior, and rendering the current state of the hotbar based on stored data
     const slots = document.querySelectorAll('.hotbar-slot');
     
     slots.forEach(slot => {
@@ -250,7 +255,7 @@ function initializeHotbar() {
     renderHotbar();
 }
 
-function renderHotbar() {
+function renderHotbar() { // displays hotbar items based on the current state of the hotbarItems array, showing the item sprite or an empty slot indicator
     const slots = document.querySelectorAll('.hotbar-slot');
     slots.forEach((slot, index) => {
         slot.innerHTML = ''; 
@@ -272,7 +277,7 @@ function renderHotbar() {
 }
 
 // --- 5. DETAILS PANELS UPDATE LOGIC ---
-function selectItem(id) {
+function selectItem(id) { // sets the selected item in the inventory, updates the preview panel with its details, and adjusts the action button based on ownership and equipped status
     selectedItemId = id;
     const item = GAME_ITEM_DATABASE[id];
     
@@ -323,6 +328,7 @@ function selectItem(id) {
     }
 }
 
+// This function tells the difference between a bot and a skin
 function equipSelection(id) {
     if (id.startsWith('skin_')) equippedItems.playerSkin = id;
     else if (id.startsWith('bot_')) equippedItems.botSkin = id;
@@ -338,7 +344,6 @@ window.onload = () => {
     initializeHotbar();
 };
 
-// Fix the "X" / restriction cursor from showing up while dragging across the screen
 window.addEventListener('dragover', (e) => {
     e.preventDefault();
 });

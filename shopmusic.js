@@ -1,3 +1,4 @@
+// --- SYNTHETIC GAME AUDIO ENGINE (Web Audio API Synthesizer) ---
 let shopAudioCtx = null;
 let shopMasterVolume = null;
 let shopMusicGain = null;
@@ -5,6 +6,7 @@ let shopSfxGain = null;
 let shopMusicInterval = null;
 let isShopMusicPlaying = false;
 
+// initializes tempo and step index for the shop music rhythm
 let shopTempoBpm = 115; 
 let shopStepIndex = 0;
 
@@ -15,6 +17,7 @@ const DEFAULT_SHOP_VOLUME_SETTINGS = {
 };
 
 function loadShopVolumeSettings() {
+    // load volume settings for shop
     const stored = localStorage.getItem('tagRoyaleSettings');
     if (!stored) return DEFAULT_SHOP_VOLUME_SETTINGS;
     try {
@@ -28,7 +31,14 @@ const shopBassNotes = [
     130.81, 130.81, 130.81, 130.81,  
     146.83, 146.83, 146.83, 146.83,  
     174.61, 174.61, 174.61, 174.61,  
-    220.00, 220.00, 196.00, 164.81   
+    220.00, 220.00, 196.00, 164.81
+    /*
+    These notes are:
+        C3, C3, C3, C3,
+        D3, D3, D3, D3,
+        F3, F3, F3, F3,
+        A3, A3, G3, E3
+    */
 ];
 
 const shopMelodyNotes = [
@@ -36,9 +46,17 @@ const shopMelodyNotes = [
     293.66, 349.23, 440.00, 587.33,  
     349.23, 440.00, 523.25, 698.46,  
     440.00, 523.25, 392.00, 329.63   
+    /*
+    These notes are:
+        C4, E4, G4, C5,
+        D4, F4, A4, D5,
+        F4, A4, C5, F5,
+        A4, C5, G4, E4
+    */
 ];
 
 function initShopAudio() {
+    // initializes shop music.
     try {
         if (!shopAudioCtx) {
             shopAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -65,6 +83,7 @@ function initShopAudio() {
 }
 
 function playCoinBuySound() {
+    // coin buying sound effect
     initShopAudio();
     if (!shopAudioCtx) return;
     
@@ -95,6 +114,7 @@ function playCoinBuySound() {
 }
 
 function playShopStep() {
+    // steps to next note in melody
     if (!shopAudioCtx || shopAudioCtx.state === 'suspended') return;
 
     let stepDuration = 60 / shopTempoBpm; 
@@ -146,6 +166,7 @@ function playShopStep() {
 }
 
 function startShopSoundtrack() {
+    // starts the soundtrack
     initShopAudio();
     if (isShopMusicPlaying) return;
     isShopMusicPlaying = true;

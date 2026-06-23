@@ -7,13 +7,13 @@ let musicPlaybackInterval = null;
 let isMusicPlaying = false;
 let currentTempoBpm = 125;
 
-const DEFAULT_MENU_VOLUME_SETTINGS = {
+const DEFAULT_MENU_VOLUME_SETTINGS = { // default settings for the menu audio volumes, stored in localStorage under 'tagRoyaleSettings'
     masterVolume: 80,
     musicVolume: 50,
     sfxVolume: 70
 };
 
-function loadMenuVolumeSettings() {
+function loadMenuVolumeSettings() { // loads all menu volume settings from localStorage, returning defaults if none are found or if parsing fails
     const stored = localStorage.getItem('tagRoyaleSettings');
     if (!stored) return DEFAULT_MENU_VOLUME_SETTINGS;
     try {
@@ -23,7 +23,7 @@ function loadMenuVolumeSettings() {
     }
 }
 
-function initAudio() {
+function initAudio() { // initializes the Web Audio API context and gain nodes for music and SFX, applying stored volume settings
     if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     masterGainNode = audioCtx.createGain();
@@ -44,7 +44,7 @@ function initAudio() {
     }
 }
 
-function playHoverSound() {
+function playHoverSound() { // plays a short hover sound effect when the user hovers over interactive elements
     initAudio();
     if (!audioCtx) return;
     let osc = audioCtx.createOscillator();
@@ -63,7 +63,7 @@ function playHoverSound() {
     osc.stop(audioCtx.currentTime + 0.04);
 }
 
-function playSelectSound() {
+function playSelectSound() { // plays a short selection sound effect when the user clicks on interactive elements
     initAudio();
     if (!audioCtx) return;
 
@@ -91,7 +91,7 @@ function playSelectSound() {
     osc2.stop(now + 0.18);
 }
 
-function playWooshSound() {
+function playWooshSound() { // plays a woosh sound effect for transitions or selections
     initAudio();
     if (!audioCtx) return;
 
@@ -125,8 +125,8 @@ function playWooshSound() {
 }
 
 // --- CHIPTUNE SYNTH TRACK MAIN SCHEDULER LOOP ---
-const basslineMelodyFrequencies = [110.00, 110.00, 130.81, 146.83, 98.00, 98.00, 110.00, 116.54];
-const leadArpeggioMelodyNotes = [440.00, 523.25, 659.25, 783.99, 587.33, 698.46, 880.00, 1046.50];
+const basslineMelodyFrequencies = [110.00, 110.00, 130.81, 146.83, 98.00, 98.00, 110.00, 116.54]; // frequencies for the bassline melody, corresponding to musical notes A2, A2, C3, D3, G2, G2, A2, A#2
+const leadArpeggioMelodyNotes = [440.00, 523.25, 659.25, 783.99, 587.33, 698.46, 880.00, 1046.50]; // frequencies for the lead arpeggio melody, corresponding to musical notes A4, C5, E5, G5, A4, C5, E5, G5
 let currentStepIndex = 0;
 function soundTrackSchedulerLoop() {
     let stepLengthTime = 60 / currentTempoBpm / 2;
@@ -168,7 +168,7 @@ function soundTrackSchedulerLoop() {
     currentStepIndex = (currentStepIndex + 1) % 16;
 }
 
-function beginSoundtrackPlaybackLoop() {
+function beginSoundtrackPlaybackLoop() { // initiates the music playback loop if it isn't already playing, setting up the interval based on the current tempo
     if (isMusicPlaying) return;
     initAudio();
     isMusicPlaying = true;
@@ -180,17 +180,18 @@ function beginSoundtrackPlaybackLoop() {
 const customCursor = document.getElementById('customCursor');
 const parallaxBgContainer = document.getElementById('parallaxBgContainer');
 
-document.addEventListener('mousemove', (e) => {
+document.addEventListener('mousemove', (e) => { // updates the position of the custom cursor to follow the mouse movements
     customCursor.style.left = e.clientX + 'px';
     customCursor.style.top = e.clientY + 'px';
 });
-window.addEventListener('scroll', () => {
+window.addEventListener('scroll', () => { // applies a parallax effect to the background container based on the scroll position, moving it at 18% of the scroll speed
     let scrolledAmount = window.scrollY;
     parallaxBgContainer.style.transform = `translateY(${scrolledAmount * 0.18}px)`;
 });
-document.addEventListener('mousedown', () => { customCursor.classList.add('clicking'); });
-document.addEventListener('mouseup', () => { customCursor.classList.remove('clicking'); });
-document.querySelectorAll('.target-box').forEach(box => {
+
+document.addEventListener('mousedown', () => { customCursor.classList.add('clicking'); }); // adds a 'clicking' class to the custom cursor when the mouse button is pressed down, allowing for visual feedback of the click action
+document.addEventListener('mouseup', () => { customCursor.classList.remove('clicking'); }); // removes the 'clicking' class from the custom cursor when the mouse button is released, reverting the cursor to its normal state
+document.querySelectorAll('.target-box').forEach(box => { // adds a hover sound effect to all elements with the class 'target-box' when the mouse enters their area, enhancing user interaction feedback
     box.addEventListener('mouseenter', () => { playHoverSound(); });
 });
 
@@ -275,6 +276,15 @@ closePanelBtn.addEventListener('click', () => {
 
 // --- LOAD AND DISPLAY ACHIEVEMENTS ---
 function updateAchievementUI() {
+    /*
+    Updates the achievement display panel based on the player's progress stored in localStorage.
+    Achievements include:
+    - Hard Wins: Unlocks "Impossible" difficulty after 5 hard round wins.
+    - Long Chase: Unlocks after surviving a chase for 60 seconds.
+    - Long Live King: Unlocks after being the last player standing for 30 seconds.
+    - Perfect Run: Unlocks after completing a round without being tagged.
+    Each achievement's status is reflected in the UI with either "UNLOCKED ✓" or "LOCKED" along with progress indicators where applicable.
+    */
     const achievements = JSON.parse(localStorage.getItem('gameAchievements')) || { hardRoundWins: 0, unlockedAchievements: [] };
     
     // Update achievement statuses

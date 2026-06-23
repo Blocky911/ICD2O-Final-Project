@@ -1,3 +1,8 @@
+/*
+    This file contains the core audio engine for the main round of the game, handling dynamic music and sound effects during gameplay.
+*/
+
+// Initializes the Web Audio API context and sets up the audio nodes for music and sound effects.
 let gameplayAudioCtx = null;
 let masterGameplayVolumeNode = null;
 let musicGainNode = null;
@@ -7,11 +12,12 @@ let snareNoiseBuffer = null;
 let gameplayMusicInterval = null;
 let isGameplayMusicPlaying = false;
 
+// initializes tempo and step index for the chase music rhythm
 let chaseTempoBpm = 142; 
 let gameplayStepIndex = 0;
 let lastSprintTimestamp = 0; // Throttles footstep sounds
 
-function generateDistortionCurve(amount = 45) {
+function generateDistortionCurve(amount = 45) { // generates a distortion curve for the guitar effect, allowing for a customizable amount of distortion
     let k = typeof amount === 'number' ? amount : 50;
     let n_samples = 44100;
     let curve = new Float32Array(n_samples);
@@ -23,7 +29,7 @@ function generateDistortionCurve(amount = 45) {
     return curve;
 }
 
-function createNoiseBuffer() {
+function createNoiseBuffer() { // creates a short noise buffer for the snare sound effect, which is used in the music rhythm
     let bufferSize = 44100 * 0.4;
     let buffer = gameplayAudioCtx.createBuffer(1, bufferSize, gameplayAudioCtx.sampleRate);
     let data = buffer.getChannelData(0);
@@ -38,6 +44,13 @@ const intenseBassMelody = [
     110.00, 110.00, 146.83, 130.81, 164.81, 164.81, 130.81, 146.83,
     87.31,  87.31,  103.83, 92.50,  98.00,  98.00,  77.78, 87.31,
     73.42,  73.42,  87.31,  82.41,  98.00,  110.00, 123.47, 103.83
+    /*
+    The notes are:
+    C2, C2, C#2, G#1, A#1, A#1, G1, G#1,
+    C2, C2, D#2, C#2, E2, E2, C#2, D#2,
+    F1, F1, G#1, A#1, G1, G1, D#1, F1,
+    C#1, C#1, F1, E1, G1, C2, D#2, G#1
+    */
 ];
 
 const guitarLeadMelody = [
@@ -45,6 +58,13 @@ const guitarLeadMelody = [
     440.00, 587.33, 659.25, 698.46, 659.25, 587.33, 523.25, 587.33,
     698.46, 698.46, 783.99, 659.25, 587.33, 587.33, 523.25, 493.88,
     440.00, 523.25, 587.33, 659.25, 783.99, 880.00, 987.77, 1046.50
+    /*
+    The notes are:
+    A4, A4, C5, B4, D5, C5, A4, B4,
+    A4, D5, E5, F5, E5, D5, C5, D5,
+    F5, F5, G5, E5, D5, D5, C5, B4,
+    A4, C5, D5, E5, G5, A5, B5, C6
+    */
 ];
 
 const rapidArpeggioNotes = [
@@ -52,9 +72,22 @@ const rapidArpeggioNotes = [
     1396.91, 1174.66, 1046.50, 880.00, 987.77, 1318.51, 1567.98, 1318.51,
     880.00, 1318.51, 1046.50, 1174.66, 1396.91, 1567.98, 1760.00, 1318.51,
     1174.66, 987.77, 880.00, 1046.50, 1174.66, 1318.51, 1567.98, 1975.53
+    /*
+    The notes are:
+    A5, C6, E6, C6, G5, B5, D6, B5,
+    F6, D6, C6, A5, B5, E6, G6, E6,
+    A5, E6, C6, D6, F6, G6, A6, E6,
+    D6, B5, A5, C6, D6, E6, G6, B6
+    */
 ];
 
 function initGameplayAudio() {
+    /*
+        This function initializes the Web Audio API context for the main round gameplay, setting up gain nodes for master volume, music, and sound effects.
+        It also creates a distortion node for the guitar effect and a noise buffer for the snare sound. The function retrieves saved volume settings from localStorage and applies them to the respective gain nodes.
+        If the audio context is suspended, it resumes it to ensure audio playback can occur.
+
+    */
     if (!gameplayAudioCtx) {
         gameplayAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
@@ -180,7 +213,7 @@ function playCrownCatchSound() {
 // ==========================================================
 // MUSIC CORE RHYTHM SECTIONS
 // ==========================================================
-function triggerSynthKick(playTime, duration) {
+function triggerSynthKick(playTime, duration) { // triggers a low thud kick sound effect for the music rhythm, using a sine wave oscillator and exponential frequency ramping
     let osc = gameplayAudioCtx.createOscillator();
     let gain = gameplayAudioCtx.createGain();
     osc.type = 'sine';
@@ -194,7 +227,7 @@ function triggerSynthKick(playTime, duration) {
     osc.stop(playTime + duration * 1.2);
 }
 
-function triggerSynthSnare(playTime, duration) {
+function triggerSynthSnare(playTime, duration) { // triggers a snare sound effect for the music rhythm, using a combination of noise and triangle wave oscillators with filtering and gain control
     let noiseNode = gameplayAudioCtx.createBufferSource();
     let noiseFilter = gameplayAudioCtx.createBiquadFilter();
     let noiseGain = gameplayAudioCtx.createGain();
@@ -222,7 +255,7 @@ function triggerSynthSnare(playTime, duration) {
     osc.stop(playTime + 0.08);
 }
 
-function playGameplayStep() {
+function playGameplayStep() { // plays a single step of the gameplay music rhythm, triggering kick, snare, bass, guitar, and arpeggio sounds based on the current step index and tempo
     let stepDuration = 60 / chaseTempoBpm / 2; 
     let playTime = gameplayAudioCtx.currentTime + 0.01;
     let localBarStep = gameplayStepIndex % 16;
@@ -297,7 +330,7 @@ function playGameplayStep() {
     gameplayStepIndex = (gameplayStepIndex + 1) % 32;
 }
 
-function startChaseSoundtrack() {
+function startChaseSoundtrack() { // plays the game sound track
     if (isGameplayMusicPlaying) return;
     initGameplayAudio();
     isGameplayMusicPlaying = true;

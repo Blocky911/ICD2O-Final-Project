@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS = {
 
 // Global helper to extract active settings profile anywhere
 function loadGameSettings() {
+    // Retrieves the current settings from localStorage, falling back to defaults if not present or if parsing fails
     const stored = localStorage.getItem('tagRoyaleSettings');
     if (!stored) return DEFAULT_SETTINGS;
     try {
@@ -27,6 +28,13 @@ function loadGameSettings() {
 
 // Check if we are currently sitting on the options interface page before execution
 document.addEventListener("DOMContentLoaded", () => {
+    /*
+        Summary of what it does:
+        This block initializes the settings page, linking UI elements to the stored settings in localStorage.
+        It sets up event listeners for volume sliders and checkboxes, allowing users to preview audio changes and save their preferences.
+        The reset button restores default settings, while the accept button saves the current configuration.
+        The cancel button discards changes and returns to the main menu.
+    */
     const masterSlider = document.getElementById('master-vol');
     if (!masterSlider) return; // Not on settings page, safe break exit
 

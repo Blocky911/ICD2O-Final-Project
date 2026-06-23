@@ -470,10 +470,10 @@ function evaluateBotItemUse(distance) {
 // Common landmarks to allow the AI to gravitate to, preventing sticking towards corners and sides of the map
 // They are both used to guide the AI's wandering behavior and to provide a reference for the AI to "remember" where the player was last seen
 const LANDMARKS = [
-    { name: 'house', x: 2700, y: 2300, radius: 450 },       // Corrected to reflect center of 1200x1200px container at 2100,1700
-    { name: 'pool', x: 1650, y: 2675, radius: 250 },        // Corrected to reflect center of 500x350px pool at 1400,2500
+    { name: 'house', x: 2700, y: 2300, radius: 450 },       
+    { name: 'pool', x: 1650, y: 2675, radius: 250 },        
     { name: 'bush_cluster_1', x: 800, y: 2500, radius: 150 },
-    { name: 'bush_cluster_2', x: 3850, y: 650, radius: 200 }, // Corrected based on hedge positions in HTML
+    { name: 'bush_cluster_2', x: 3850, y: 650, radius: 200 }, 
     { name: 'center_chaos', x: 2500, y: 2500, radius: 500 }   // Absolute map center (5000x5000 total map size)
 ];
 
@@ -489,6 +489,10 @@ let easyWanderTargetY = 1900;
 let mediumReactionDelayTimer = 0;
 
 function executeBotIntelligence() {
+    /*
+        This function is the main AI loop for the bot's decision-making and movement.
+        It handles the bot's movement, item usage, and interaction with the player based on the current game state.
+    */
     if (!botElement) return;
     if (botSpawnTimer < BOT_DELAY_FRAMES) {
         botSpawnTimer++;
@@ -683,8 +687,8 @@ function executeBotIntelligence() {
         preferredY /= len;
     }
 
-    // --- VELOCITY MANAGEMENT ---
-    let speedModifier = 0.50; // Dropped Easy speed for balance
+    // --- VELOCITY MANAGEMENT --- (these speeds have been balanced over dozens of times)
+    let speedModifier = 0.50;
     if (gameDifficulty === 'medium') speedModifier = 0.78;
     if (gameDifficulty === 'hard') speedModifier = 1.25;     
     if (gameDifficulty === 'impossible') speedModifier = 1.55; 
@@ -711,13 +715,16 @@ function executeBotIntelligence() {
     let forceIntensity = 2.8;
 
     if (gameDifficulty === 'medium') {
-        safetyBubbleDist = 65;
+        safetyBubbleDist = 65; // somewhat less poor obstacle awareness
         forceIntensity = 1.4;
     } else if (gameDifficulty === 'easy') {
         safetyBubbleDist = 30; // Very poor obstacle awareness
         forceIntensity = 0.4;
     }
 
+    /*
+        This section handles the bot's avoidance of obstacles and map boundaries by applying a "push" force away from them.
+    */
     const botPx = botX + playerOffset + 25;
     const botPy = botY + playerOffset + 25;
     let cornerThreshold = 550;
@@ -880,7 +887,7 @@ function executeBotIntelligence() {
     }
 }
 
-function createHotbarUIOverlay() {
+function createHotbarUIOverlay() { // Creates the UI overlay for the hotbar ingame
     const existing = document.getElementById('game-hotbar-container');
     if (existing) existing.remove();
     if (!window.gameSettings.showItems) return;
@@ -1026,7 +1033,7 @@ function showItemPopup(text, duration = 1600) {
     }, duration);
 }
 
-function activateHotbarSlot(index) {
+function activateHotbarSlot(index) { // Activates the item in the specified hotbar slot
     if (!gameActive || isPaused) return;
     if (playerInventoryCooldownTimer > 0) return; // Prevent use during cooldown
     let itemId = hotbarItems[index];
@@ -1066,7 +1073,7 @@ function activateHotbarSlot(index) {
 // ==========================================
 // PAUSE OVERLAY INTERFACE SYSTEM
 // ==========================================
-function createPauseMenu() {
+function createPauseMenu() { // initiates pause menu.
     pauseMenuOverlay = document.createElement('div');
     pauseMenuOverlay.id = 'game-pause-overlay';
     pauseMenuOverlay.style.position = 'fixed';
@@ -1102,7 +1109,7 @@ function createPauseMenu() {
     document.getElementById('pause-quit-btn').onclick = () => { window.location.href = 'index.html'; };
 }
 
-function togglePauseState(forceStatus) {
+function togglePauseState(forceStatus) { // Toggles the pause state of the game. If forceStatus is provided, it will set the pause state to that value.
     if (!gameActive && forceStatus !== false) return;
 
     isPaused = (forceStatus !== undefined) ? forceStatus : !isPaused;
@@ -1116,7 +1123,7 @@ function togglePauseState(forceStatus) {
     }
 }
 
-function createCrown() {
+function createCrown() { // displays the crown for "it" status. This is a visual indicator for the player and bot.
     crownElement = document.createElement('div');
     crownElement.className = 'game-crown';
     crownElement.style.position = 'absolute';
@@ -1129,7 +1136,7 @@ function createCrown() {
     map.appendChild(crownElement);
 }
 
-function updateCrownPosition() {
+function updateCrownPosition() { // updates the crown's position based on who is "it" and their coordinates.
     if (!crownElement) return;
     
     if (!isPlayerIt) {
@@ -1143,7 +1150,7 @@ function updateCrownPosition() {
 
 let trackerArrow = null;
 
-function createTrackerArrow() {
+function createTrackerArrow() { // Creates the tracker arrow for the bot.
     trackerArrow = document.createElement('div');
     trackerArrow.id = 'bot-tracker-arrow';
     trackerArrow.style.position = 'fixed';
@@ -1158,7 +1165,7 @@ function createTrackerArrow() {
     document.body.appendChild(trackerArrow);
 }
 
-function updateTrackerArrowPosition() {
+function updateTrackerArrowPosition() { // updates the position of the tracker arrow based on the bot's location.
     if (!trackerArrow || !botElement) return;
 
     const vw = window.innerWidth;
@@ -1214,7 +1221,7 @@ function updateTrackerArrowPosition() {
 }
 
 // ==========================================
-// SPRITESHEET MATRIX CONFIGURATION
+// SPRITESHEET SPLITTING AND DISPLAY
 // ==========================================
 const SKIN_ROW_MAPPING = {
     'skin_default_red': 1, 
@@ -1257,6 +1264,8 @@ updateCharacterSpriteFrame();
 // ==========================================
 // BOT ARCHITECTURE
 // ==========================================
+
+// Bot AI variables and initialization
 let botElement = null;
 let botX = playerX; 
 let botY = playerY - 250; 
@@ -1265,12 +1274,14 @@ let botDirectionCol = SPRITE_COLUMNS.FRONT;
 let botIsWalkingFrame = false;
 let botAnimTimer = 0;
 
+// Bot AI state variables
 let botSpawnTimer = 0; 
 const BOT_DELAY_FRAMES = 300; 
 
 const botRowIndex = SKIN_ROW_MAPPING[equippedItems.botSkin] ?? 0;
 
-function createBot() {
+function createBot() { // Creates the bot character element and appends it to the map.
+    if (botElement) return; // Prevent multiple bot elements
     botElement = document.createElement('div');
     botElement.className = 'character bot-character';
     
@@ -1290,6 +1301,7 @@ function createBot() {
 }
 
 function updateBotSpriteFrame() {
+    // Updates the sprite frame for the bot character based on its direction and row index.
     if (!botElement) return;
     const xOffset = botDirectionCol * -120;
     const yOffset = botRowIndex * -120;
@@ -1297,6 +1309,7 @@ function updateBotSpriteFrame() {
 }
 
 function setupDifficultyParameters() {
+    // Sets up the bot's parameters based on the selected game difficulty.
     botSpeed = NORMAL_SPEED;
     chaseStartTime = 0;
     maxChaseDuration = 0;
@@ -1304,7 +1317,7 @@ function setupDifficultyParameters() {
     crownGrabbedAtStart = false;
 }
 
-function unlockAchievement(achievementId) {
+function unlockAchievement(achievementId) { // allows the user to unlock the achievement and saves it to localStorage.
     // Map hardcoded internal IDs to actual descriptive names
     const achievementNames = {
         'hard-wins-5': 'Win 5 hard rounds',
@@ -1324,14 +1337,14 @@ function unlockAchievement(achievementId) {
     }
 }
 
-function saveAchievementProgress() {
+function saveAchievementProgress() { // saves the progress of achievements to localStorage.
     localStorage.setItem('gameAchievements', JSON.stringify(achievements));
 }
 
 // ==========================================
 // INPUT LISTENERS & HOTBAR ACTION HOOKS
 // ==========================================
-window.addEventListener('keydown', (e) => { 
+window.addEventListener('keydown', (e) => {  // Handles keydown events for player movement, sprinting, hotbar activation, and pause functionality.
     if (e.key === 'Escape') {
         togglePauseState();
         return;
@@ -1352,18 +1365,21 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-window.addEventListener('keyup', (e) => { 
+window.addEventListener('keyup', (e) => {  // Handles keyup events to stop player movement and sprinting.
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (key in keys) keys[key] = false; 
 });
 
-window.addEventListener('blur', () => { togglePauseState(true); });
-document.addEventListener('visibilitychange', () => { if (document.hidden) togglePauseState(true); });
+window.addEventListener('blur', () => { togglePauseState(true); }); // Pauses the game when the window loses focus.
+document.addEventListener('visibilitychange', () => { if (document.hidden) togglePauseState(true); }); // Pauses the game when the document becomes hidden (e.g., switching tabs).
 
 // ==========================================
 // ENVIRONMENT INTERSECTIONS
 // ==========================================
 function populateMapEnvironment() {
+    /*
+    This function populates the game map with tree obstacles, ensuring that they are placed randomly while avoiding specific zones such as the pool, house, hedge, and spawn areas. It creates border trees along the edges of the map and randomly places additional trees within the playable area.
+    */
     for (let i = 0; i < mapSize; i += 100) {
         createTreeObstacle(i, 0, 'border-tree');
         createTreeObstacle(i, mapSize - 130, 'border-tree'); 
@@ -1386,7 +1402,7 @@ function populateMapEnvironment() {
     }
 }
 
-function createTreeObstacle(x, y, className) {
+function createTreeObstacle(x, y, className) { // creates a tree obstacle at the specified coordinates with the given class name and adds it to the obstacles array for collision detection.
     const tree = document.createElement('div');
     tree.className = className;
     tree.style.left = x + 'px';
@@ -1397,6 +1413,7 @@ function createTreeObstacle(x, y, className) {
 }
 
 function removeTreeObstaclesUnderBot() {
+    // Removes tree obstacles that are overlapping with the bot's position. This is done to prevent the bot from being obstructed by trees when it spawns or moves.
     if (!botElement) return;
     const botCenterX = botX + 60;
     const botCenterY = botY + 60;
@@ -1416,6 +1433,7 @@ function removeTreeObstaclesUnderBot() {
 }
 
 function removeTreeObstaclesUnderPlayer() {
+    // Removes tree obstacles that are overlapping with the player's position. This is done to prevent the player from being obstructed by trees when they spawn or move.
     const playerCenterX = playerX + 60;
     const playerCenterY = playerY + 60;
     const playerRadius = 60;
@@ -1434,6 +1452,10 @@ function removeTreeObstaclesUnderPlayer() {
 }
 
 function initializeObstacleMatrix() {
+    /*
+    Initializes the obstacle matrix with predefined rectangular obstacles representing various environmental features such as the pool, house, and other structures.
+    These obstacles are used for collision detection to prevent the player and bot from moving through them.
+    */
     obstacles.push({ type: 'rect', x: 2100, y: 1700, w: 360, h: 800 });
     obstacles.push({ type: 'rect', x: 2460, y: 1700, w: 440, h: 360 });
     obstacles.push({ type: 'rect', x: 1400, y: 2500, w: 500, h: 350, isPoolWater: true });
@@ -1457,7 +1479,8 @@ function initializeObstacleMatrix() {
     });
 }
 
-function checkMudCollision(x, y) {
+function checkMudCollision(x, y) { // if the player/bot touches the mod, they will be slowed down.
+    // This function checks if the given coordinates intersect with any mud patches on the map.
     const px = x + 60, py = y + 60;
     let insideMud = false;
     mudPatches.forEach(patch => {
@@ -1469,6 +1492,7 @@ function checkMudCollision(x, y) {
 }
 
 function checkWalkboardPlatformSafety(x, y) {
+    // This function checks if the player/bot is standing on a walkboard platform that is considered safe to walk on. It returns true if the player/bot is within the bounds of any of the defined walkboard platforms.
     const px = x + playerOffset + (playerSize / 2), py = y + playerOffset + (playerSize / 2);
     const mats = [
         { x: 1430, y: 2640, w: 110, h: 65 },
@@ -1501,7 +1525,7 @@ function processEnvironmentIntersection(targetX, targetY) {
     return false;
 }
 
-function executeBotIntelligence() {
+function executeBotIntelligence() { // This function handles the bot's AI behavior, including movement, item usage, and interactions with the player.
     if (!botElement) return;
 
     if (botSpawnTimer < BOT_DELAY_FRAMES) {
@@ -1784,6 +1808,14 @@ function executeBotIntelligence() {
         }
     }
 
+    /*
+        This section does the following:
+        1. Calculates the bot's next position based on its current position and movement vector.
+        2. Determines if the bot is moving and updates its direction and animation frame accordingly.
+        3. Checks for collisions with the environment and updates the bot's position if no collision is detected.
+        4. Updates the bot's sprite frame and the positions of the crown and tracker arrow.
+    */
+
     let botNextX = botX + moveX;
     let botNextY = botY + moveY;
 
@@ -1822,7 +1854,7 @@ function executeBotIntelligence() {
 // ==========================================
 // MAIN RUNTIME CYCLE ENGINE
 // ==========================================
-function coreExecutionEngine() {
+function coreExecutionEngine() { // This function serves as the main game loop, handling player and bot movement, score accumulation, stamina management, and other game mechanics. It is called repeatedly using requestAnimationFrame to create a smooth gameplay experience.
     if (!gameActive) return;
     if (isPaused) {
         requestAnimationFrame(coreExecutionEngine);

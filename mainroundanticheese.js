@@ -1,3 +1,7 @@
+
+// ==========================================
+// GAME INITIALIZATION
+// ==========================================
 populateMapEnvironment();
 initializeObstacleMatrix();
 removeTreeObstaclesUnderPlayer();
@@ -50,8 +54,12 @@ function playGhostSound() {
 }
 
 // Intercept AI routine to append the ghost mechanic tracking
-// Intercept AI routine to append the ghost mechanic tracking
 executeBotIntelligence = function() {
+    /*
+        This function wraps the original bot intelligence logic to add anti-stuck ghost mode functionality.
+        It tracks the bot's movement and detects if it is stuck or pacing in a small area. If the bot is determined to be stuck for a prolonged period, it enters ghost mode, allowing it to phase through obstacles until it is free.
+        The function also manages the bot's position clamping to ensure it remains within the map boundaries and handles the visual effects associated with ghost mode.
+    */
     if (!botElement) return originalExecuteBotIntelligence();
 
     let oldX = botX;

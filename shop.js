@@ -3,6 +3,7 @@ let playerCoins = localStorage.getItem('playerCoins') !== null ? parseInt(localS
 let playerPoints = localStorage.getItem('playerPoints') !== null ? parseInt(localStorage.getItem('playerPoints')) : 0;
 
 function loadStoredInventory() {
+    // loads the inventory from localStorage, falling back to defaults if not present or if parsing fails
     let stored = {};
     try {
         stored = JSON.parse(localStorage.getItem('playerInventory') || '{}');
@@ -25,6 +26,7 @@ function loadStoredInventory() {
 }
 
 function loadStoredEquippedItems() {
+    // loads items stored in the hotbar
     let stored = {};
     try {
         stored = JSON.parse(localStorage.getItem('equippedItems') || '{}');
@@ -44,6 +46,7 @@ let equippedItems = loadStoredEquippedItems();
 
 // --- 2. SAVE DATA FUNCTION ---
 function saveGameData() {
+    // saves entire data
     localStorage.setItem('playerCoins', playerCoins);
     localStorage.setItem('playerPoints', playerPoints);
     localStorage.setItem('playerInventory', JSON.stringify(playerInventory));
@@ -51,7 +54,7 @@ function saveGameData() {
 }
 
 // --- 2a. TOAST HELPERS ---
-function showToast(message, type = 'info', duration = 3200) {
+function showToast(message, type = 'info', duration = 3200) { // shows info about whether the item is bought, etc.
     const container = document.getElementById('toast-container');
     if (!container) return;
 
@@ -99,6 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateShopUI() {
+    /*
+        The purpose of this function is to show which skins are purchased and display coins and points.
+    */
     // Update coin display
     const coinDisplay = document.getElementById('player-coins');
     if (coinDisplay) coinDisplay.innerText = playerCoins;
