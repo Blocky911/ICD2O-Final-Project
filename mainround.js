@@ -392,31 +392,56 @@ function evaluateBotItemUse(distance) {
         This item-copying logic makes the game balanced, as both players have the same items
         and prevents one side from having an unfair advantage by having better items in their hotbar
     */
+
     if (botStunTimer > 0 || playerStunTimer > 0) return;
-    if (botInventoryCooldownTimer > 0) return; // Guard: Prevent item usage during active cooldown
+    if (botInventoryCooldownTimer > 0) return; 
     if (botHotbarItems.every(item => !item)) return;
 
-    // --- SIGNIFICANT EASY AND MEDIUM ITEM USE NERFS ---
-    // Easy bots are completely clueless: 75% chance every frame to skip item logic entirely
-    if (gameDifficulty === 'easy' && Math.random() < 0.75) return;
-    // Medium bots now have a 35% chance to skip item logic, making them noticeably more flawed
-    if (gameDifficulty === 'medium' && Math.random() < 0.35) return;
+    // --- EASY DIFFICULTY: BARELY USES ITEMS & WASTES DEFENSIVE ONES ---
+    if (gameDifficulty === 'easy') {
+        // 98% chance per frame to completely ignore item use
+        if (Math.random() < 0.98) return;
+        
+        // Easy mode completely avoids offensive tracking items since they are rangeless.
+        // It will only occasionally waste a defensive item when it shouldn't.
+        if (botHotbarItems.includes('energy_bar') && botStamina > 70) {
+            if (consumeBotItem('energy_bar')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
+        }
+        if (botHotbarItems.includes('potion') && distance > 600) {
+            if (consumeBotItem('potion')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
+        }
+        return; 
+    }
 
-    // Emergency Heal: Pop stamina bar if low during crucial moments
+    // --- MEDIUM DIFFICULTY: CONSERVATIVE & CLUMSY ITEM USE ---
+    if (gameDifficulty === 'medium') {
+        // 92% chance per frame to ignore execution
+        if (Math.random() < 0.92) return;
+
+        // Extremely low chance to successfully trigger an offensive item
+        if (Math.random() < 0.85) {
+            // Wastes speed boosts while already moving at full speed through mud or open areas
+            if (botHotbarItems.includes('gummy_bears') && distance > 800) {
+                if (consumeBotItem('gummy_bears')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
+            }
+            return; 
+        }
+    }
+
+    // --- HARD / IMPOSSIBLE ORIGINAL LOGIC ---
     if (botStamina < 35 && botHotbarItems.includes('energy_bar')) {
-        let healRange = (gameDifficulty === 'easy') ? 100 : (gameDifficulty === 'medium' ? 250 : (isPlayerIt ? 600 : 350));
+        let healRange = (gameDifficulty === 'medium' ? 200 : (isPlayerIt ? 600 : 350));
         if (distance < healRange) {
             if (consumeBotItem('energy_bar')) {
-                botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; // Trigger cooldown
+                botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES;
                 return;
             }
         }
     }
 
-    // Smart Offensive Hold: Harder bots don't throw if player is untaggable. Easy/Medium bots waste them!
-    if (isUntaggableActive && gameDifficulty !== 'easy' && gameDifficulty !== 'medium') return;
+    if (isUntaggableActive && gameDifficulty !== 'medium') return;
 
-    if (!isPlayerIt) { // Bot is holding the crown (Fleeing)
+    if (!isPlayerIt) { // Fleeing
         if (!botUntaggableActive && botHotbarItems.includes('potion') && distance < 260) {
             if (consumeBotItem('potion')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
@@ -429,7 +454,7 @@ function evaluateBotItemUse(distance) {
         if (botHotbarItems.includes('fart_bomb') && distance < 200) {
             if (consumeBotItem('fart_bomb')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
-    } else { // Bot is "It" (Chasing)
+    } else { // Chasing
         if (botGummyBearSpeedTimer === 0 && botHotbarItems.includes('gummy_bears') && distance > 300 && !checkMudCollision(botX, botY)) {
             if (consumeBotItem('gummy_bears')) { botInventoryCooldownTimer = INVENTORY_COOLDOWN_FRAMES; return; }
         }
@@ -441,7 +466,6 @@ function evaluateBotItemUse(distance) {
         }
     }
 }
-
 
 // Common landmarks to allow the AI to gravitate to
 const LANDMARKS = [
@@ -455,31 +479,149 @@ const LANDMARKS = [
 let aiCurrentLandmarkTarget = null;
 let aiLandmarkSwitchTimer = 0;
 
-// new: added gravitation towards those landmarks
-function executeBotIntelligence() {
-    if (!gameActive || isPaused) return;
+// Persistent global memory states for blind pathing
+let botLastKnownPlayerX = 1900;
+let botLastKnownPlayerY = 1900;
+let easyWanderTimer = 0;
+let easyWanderTargetX = 1900;
+let easyWanderTargetY = 1900;
+let mediumReactionDelayTimer = 0;
 
-    // Distance calculation between player and bot
+function executeBotIntelligence() {
+    if (!botElement) return;
+    if (botSpawnTimer < BOT_DELAY_FRAMES) {
+        botSpawnTimer++;
+        botDirectionCol = SPRITE_COLUMNS.FRONT;
+        updateBotSpriteFrame();
+        updateCrownPosition();
+        updateTrackerArrowPosition();
+        return;
+    }
+
+    if (tagCooldownTimer > 0) {
+        tagCooldownTimer--;
+    }
+
+    if (botStunTimer > 0) {
+        botStunTimer--;
+        if (botStunMaxDuration === 900) {
+            botElement.style.filter = "drop-shadow(0px 0px 14px #a6ff00) hue-rotate(90deg) brightness(0.75)";
+        } else {
+            botElement.style.filter = "drop-shadow(0px 0px 14px #ff3333) sepia(0.4) brightness(0.8)";
+        }
+
+        const currentDist = Math.sqrt((playerX - botX)**2 + (playerY - botY)**2);
+        if (tagCooldownTimer === 0 && currentDist < 45) {
+            if (!isPlayerIt && isUntaggableActive) {
+                isUntaggableActive = false;
+                botStunTimer = 60;
+                botStunMaxDuration = 60;
+                tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+            } else if (isPlayerIt && botUntaggableActive) {
+                botUntaggableActive = false;
+                playerStunTimer = 60;
+                playerStunMaxDuration = 60;
+                tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+            } else {
+                isPlayerIt = !isPlayerIt;
+                tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+                if (playerWasPreviouslyIt === false && isPlayerIt === true) {
+                    hasLostCrownThisRound = true;
+                    chaseStartTime = 0;
+                } else if (playerWasPreviouslyIt === true && isPlayerIt === false) {
+                    if (chaseStartTime === 0) {
+                        chaseStartTime = Date.now();
+                        if (crownGrabbedAtStart === false) crownGrabbedAtStart = true;
+                    }
+                }
+                playerWasPreviouslyIt = isPlayerIt;
+            }
+        }
+
+        botElement.style.left = botX + 'px';
+        botElement.style.top = botY + 'px';
+        updateBotSpriteFrame();
+        updateCrownPosition();
+        updateTrackerArrowPosition();
+        return;
+    }
+
+    let botIsCurrentlySprinting = false;
+    if (botIsExhausted) {
+        botStamina += STAMINA_RECOVER_RATE;
+        if (botStamina >= MAX_STAMINA) {
+            botStamina = MAX_STAMINA;
+            botIsExhausted = false;
+        }
+        botWasSprintingLastFrame = false;
+    } else {
+        const distForSprint = Math.sqrt((playerX - botX)**2 + (playerY - botY)**2);
+        let shouldSprint = false;
+        
+        // Easy and Medium bots don't sprint efficiently or aggressively
+        if (gameDifficulty !== 'easy' && gameDifficulty !== 'medium') {
+            if (isPlayerIt && distForSprint > 280) shouldSprint = true;
+            if (!isPlayerIt && distForSprint < 400) shouldSprint = true;
+        } else if (gameDifficulty === 'medium') {
+            if (isPlayerIt && distForSprint > 350 && Math.random() < 0.3) shouldSprint = true;
+        }
+
+        if (shouldSprint && botStamina > 0) {
+            botIsCurrentlySprinting = true;
+            if (!botWasSprintingLastFrame) {
+                botStamina -= SPRINT_STARTUP_COST;
+            }
+            botStamina -= STAMINA_DRAIN_RATE;
+            if (botStamina <= 0) {
+                botStamina = 0;
+                botIsExhausted = true;
+                botIsCurrentlySprinting = false;
+            }
+            botWasSprintingLastFrame = true;
+        } else {
+            botStamina += STAMINA_RECOVER_RATE;
+            if (botStamina > MAX_STAMINA) botStamina = MAX_STAMINA;
+            botWasSprintingLastFrame = false;
+        }
+    }
+
     const dx = playerX - botX;
     const dy = playerY - botY;
     const distanceToPlayer = Math.sqrt(dx * dx + dy * dy);
 
-    let targetX = botX;
-    let targetY = botY;
+    // --- CRITICALLY LOWERED EYESIGHT VISIBILITY RADII ---
+    let canSeePlayer = true;
+    if (gameDifficulty === 'easy') {
+        if (distanceToPlayer > 180) canSeePlayer = false; // Near blind bubble
+    } else if (gameDifficulty === 'medium') {
+        if (distanceToPlayer > 400) canSeePlayer = false; // Restricted field of view
+    }
+
+    // Reaction tracking matrix
+    if (canSeePlayer) {
+        if (gameDifficulty === 'medium') {
+            mediumReactionDelayTimer--;
+            if (mediumReactionDelayTimer <= 0) {
+                botLastKnownPlayerX = playerX;
+                botLastKnownPlayerY = playerY;
+                mediumReactionDelayTimer = 25; // Introduce a reaction lag delay
+            }
+        } else {
+            botLastKnownPlayerX = playerX;
+            botLastKnownPlayerY = playerY;
+        }
+    }
+
+    let preferredX = 0;
+    let preferredY = 0;
 
     if (botHasCrown) {
-        // --- FIXED: ANTI-TREE CORNER HUGGING EVASION LOGIC ---
-        
-        // 1. Periodically switch which landmark obstacle the AI wants to use to juke the player
         aiLandmarkSwitchTimer--;
         if (aiLandmarkSwitchTimer <= 0 || !aiCurrentLandmarkTarget) {
-            // Pick a random landmark (House, Pool, or major Bush clusters) instead of the outer borders
             aiCurrentLandmarkTarget = LANDMARKS[Math.floor(Math.random() * LANDMARKS.length)];
-            // Keep this target for 3 to 6 seconds (180 to 360 frames)
             aiLandmarkSwitchTimer = 180 + Math.random() * 180;
         }
 
-        // 2. Calculate vector away from player
         let fleeX = -dx;
         let fleeY = -dy;
         if (distanceToPlayer > 0) {
@@ -487,78 +629,256 @@ function executeBotIntelligence() {
             fleeY /= distanceToPlayer;
         }
 
-        // 3. Blend fleeing from the player with orbiting/running toward the chosen landmark
-        // This stops the AI from simply hitting the tree line walls
         const landmarkDx = aiCurrentLandmarkTarget.x - botX;
         const landmarkDy = aiCurrentLandmarkTarget.y - botY;
         const distanceToLandmark = Math.sqrt(landmarkDx * landmarkDx + landmarkDy * landmarkDy);
 
-        let landmarkPullX = 0;
-        let landmarkPullY = 0;
-
+        let landmarkPullX = 0, landmarkPullY = 0;
         if (distanceToLandmark > 0) {
-            // If too far from the landmark, pull toward it. If too close, orbit around it (perpendicular vector)
             if (distanceToLandmark > aiCurrentLandmarkTarget.radius) {
                 landmarkPullX = landmarkDx / distanceToLandmark;
                 landmarkPullY = landmarkDy / distanceToLandmark;
             } else {
-                // Orbit vector creates excellent pathing around the house/pool
                 landmarkPullX = -landmarkDy / distanceToLandmark;
                 landmarkPullY = landmarkDx / distanceToLandmark;
             }
         }
 
-        // 4. Combine vectors: 60% fleeing player, 40% looping the interior environment features
-        let finalDirX = (fleeX * 0.6) + (landmarkPullX * 0.4);
-        let finalDirY = (fleeY * 0.6) + (landmarkPullY * 0.4);
+        preferredX = (fleeX * 0.6) + (landmarkPullX * 0.4);
+        preferredY = (fleeY * 0.6) + (landmarkPullY * 0.4);
+    } else {
+        // Bot chasing player
+        if (canSeePlayer) {
+            preferredX = dx;
+            preferredY = dy;
+        } else {
+            if (gameDifficulty === 'easy') {
+                // Easy bot completely forgets where you are and wanders out into space
+                easyWanderTimer--;
+                if (easyWanderTimer <= 0) {
+                    easyWanderTargetX = botX + (Math.random() * 400 - 200);
+                    easyWanderTargetY = botY + (Math.random() * 400 - 200);
+                    easyWanderTimer = 150 + Math.random() * 100;
+                }
+                preferredX = easyWanderTargetX - botX;
+                preferredY = easyWanderTargetY - botY;
+            } else {
+                // Medium tracking lags back to the old location
+                preferredX = botLastKnownPlayerX - botX;
+                preferredY = botLastKnownPlayerY - botY;
+                
+                // If it reaches the old spot and still can't see you, wander clumsily
+                if (Math.abs(preferredX) < 20 && Math.abs(preferredY) < 20) {
+                    preferredX = Math.sin(Date.now() / 500);
+                    preferredY = Math.cos(Date.now() / 500);
+                }
+            }
+        }
+    }
 
-        // Normalize final vector
-        const finalLength = Math.sqrt(finalDirX * finalDirX + finalDirY * finalDirY);
-        if (finalLength > 0) {
-            finalDirX /= finalLength;
-            finalDirY /= finalLength;
+    let len = Math.sqrt(preferredX * preferredX + preferredY * preferredY);
+    if (len > 0) {
+        preferredX /= len;
+        preferredY /= len;
+    }
+
+    // --- VELOCITY MANAGEMENT ---
+    let speedModifier = 0.50; // Dropped Easy speed for balance
+    if (gameDifficulty === 'medium') speedModifier = 0.78;
+    if (gameDifficulty === 'hard') speedModifier = 1.25;     
+    if (gameDifficulty === 'impossible') speedModifier = 1.55; 
+
+    let currentBotSpeed = NORMAL_SPEED * speedModifier;
+    if (checkMudCollision(botX, botY)) {
+        currentBotSpeed = MUD_SPEED;
+    } else {
+        if (botHasCrown) currentBotSpeed += CROWN_SPEED_BOOST;
+    }
+    if (botIsCurrentlySprinting) currentBotSpeed += SPRINT_BOOST_SPEED;
+    if (botGummyBearSpeedTimer > 0) {
+        botGummyBearSpeedTimer--;
+        currentBotSpeed += 3.5;
+    }
+
+    let moveX = preferredX * currentBotSpeed;
+    let moveY = preferredY * currentBotSpeed;
+
+    // --- RAYCAST OBSTACLE SAFETY BUBBLE SCALING ---
+    let pushX = 0;
+    let pushY = 0;
+    let safetyBubbleDist = 110;
+    let forceIntensity = 2.8;
+
+    if (gameDifficulty === 'medium') {
+        safetyBubbleDist = 65;
+        forceIntensity = 1.4;
+    } else if (gameDifficulty === 'easy') {
+        safetyBubbleDist = 30; // Very poor obstacle awareness
+        forceIntensity = 0.4;
+    }
+
+    const botPx = botX + playerOffset + 25;
+    const botPy = botY + playerOffset + 25;
+    let cornerThreshold = 550;
+    let cornerMultiplierX = 1.0;
+    let cornerMultiplierY = 1.0;
+
+    if ((botPx < 130 + cornerThreshold || botPx > 4870 - cornerThreshold) && (botPy < 130 + cornerThreshold || botPy > 4870 - cornerThreshold)) {
+        cornerMultiplierX = 2.8;
+        cornerMultiplierY = 2.8;
+    }
+
+    if (botPx < 130 + safetyBubbleDist) pushX += forceIntensity * cornerMultiplierX;
+    if (botPx > 4870 - safetyBubbleDist) pushX -= forceIntensity * cornerMultiplierX;
+    if (botPy < 130 + safetyBubbleDist) pushY += forceIntensity * cornerMultiplierY;
+    if (botPy > 4870 - safetyBubbleDist) pushY -= forceIntensity * cornerMultiplierY;
+
+    for (let i = 0; i < obstacles.length; i++) {
+        const obs = obstacles[i];
+        if (obs.type === 'circle') {
+            let vX = botPx - obs.x;
+            let vY = botPy - obs.y;
+            let distToCircle = Math.sqrt(vX * vX + vY * vY);
+            let triggerRange = obs.radius + safetyBubbleDist;
+            if (distToCircle < triggerRange && distToCircle > 0) {
+                let force = (triggerRange - distToCircle) / triggerRange;
+                pushX += (vX / distToCircle) * force * forceIntensity * 2;
+                pushY += (vY / distToCircle) * force * forceIntensity * 2;
+            }
+        } else if (obs.type === 'rect') {
+            if (obs.isPoolWater && checkWalkboardPlatformSafety(botX, botY)) continue;
+            let closestX = Math.max(obs.x, Math.min(botPx, obs.x + obs.w));
+            let closestY = Math.max(obs.y, Math.min(botPy, obs.y + obs.h));
+            let vX = botPx - closestX;
+            let vY = botPy - closestY;
+            let distToRect = Math.sqrt(vX * vX + vY * vY);
+            if (distToRect < safetyBubbleDist && distToRect > 0) {
+                let force = (safetyBubbleDist - distToRect) / safetyBubbleDist;
+                pushX += (vX / distToRect) * force * forceIntensity * 2;
+                pushY += (vY / distToRect) * force * forceIntensity * 2;
+            }
+        }
+    }
+
+    moveX += pushX;
+    moveY += pushY;
+
+    // Path Angle Step Intersections
+    if (processEnvironmentIntersection(botX + moveX, botY + moveY)) {
+        let pathFound = false;
+        let maxAngle = 180;
+        let angleStep = 15;
+        if (gameDifficulty === 'medium') angleStep = 45;
+        if (gameDifficulty === 'easy') angleStep = 90; // Horrible redirection recovery
+
+        for (let angleOffset = angleStep; angleOffset <= maxAngle; angleOffset += angleStep) {
+            let radPositive = (angleOffset * Math.PI) / 180;
+            let radNegative = (-angleOffset * Math.PI) / 180;
+            
+            let txPos = Math.cos(radPositive) * moveX - Math.sin(radPositive) * moveY;
+            let tyPos = Math.sin(radPositive) * moveX + Math.cos(radPositive) * moveY;
+            if (!processEnvironmentIntersection(botX + txPos, botY + tyPos)) {
+                moveX = txPos; moveY = tyPos; pathFound = true; break;
+            }
+            let txNeg = Math.cos(radNegative) * moveX - Math.sin(radNegative) * moveY;
+            let tyNeg = Math.sin(radNegative) * moveX + Math.cos(radNegative) * moveY;
+            if (!processEnvironmentIntersection(txNeg + botX, tyNeg + botY)) {
+                moveX = txNeg; moveY = tyNeg; pathFound = true; break;
+            }
         }
 
-        // Set movement target just ahead of the bot
-        targetX = botX + finalDirX * 100;
-        targetY = botY + finalDirY * 100;
+        if (!pathFound) {
+            if (gameDifficulty === 'easy' && Math.random() < 0.6) {
+                moveX *= -0.2; moveY *= -0.2;
+            } else {
+                if (!processEnvironmentIntersection(botX + moveX, botY)) {
+                    moveY = 0;
+                } else if (!processEnvironmentIntersection(botX, botY + moveY)) {
+                    moveX = 0;
+                } else {
+                    moveX = -preferredX * 0.4; moveY = -preferredY * 0.4;
+                }
+            }
+        }
+    }
 
-        // 5. Keep the AI bounded strictly within inner gameplay zones so it never gets glued to outer trees
-        targetX = Math.max(400, Math.min(3600, targetX));
-        targetY = Math.max(400, Math.min(3600, targetY));
+    let botNextX = botX + moveX;
+    let botNextY = botY + moveY;
+    let botIsMoving = Math.abs(moveX) > 0.1 || Math.abs(moveY) > 0.1;
 
+    if (botIsMoving) {
+        botAnimTimer++;
+        if (botAnimTimer >= 10) {
+            botIsWalkingFrame = !botIsWalkingFrame;
+            botAnimTimer = 0;
+        }
+        if (Math.abs(moveX) > Math.abs(moveY)) {
+            botDirectionCol = moveX > 0 ? SPRITE_COLUMNS.RIGHT : SPRITE_COLUMNS.LEFT;
+        } else {
+            botDirectionCol = moveY > 0 ? SPRITE_COLUMNS.FRONT : SPRITE_COLUMNS.BACK;
+        }
+        if (botIsWalkingFrame) botDirectionCol += 1;
     } else {
-        // --- BOT IS CHASING PLAYER (Standard Aggressive Behavior) ---
-        targetX = playerX;
-        targetY = playerY;
+        if (botDirectionCol % 2 !== 0) botDirectionCol -= 1;
+        botAnimTimer = 0;
     }
 
-    // --- REMAINDER OF YOUR EXISTING BOT MOVEMENT & COLLISION DETECTION ENGINE ---
-    let botMoveX = targetX - botX;
-    let botMoveY = targetY - botY;
-    let dist = Math.sqrt(botMoveX * botMoveX + botMoveY * botMoveY);
+    if (!processEnvironmentIntersection(botNextX, botY)) botX = botNextX;
+    if (!processEnvironmentIntersection(botX, botNextY)) botY = botNextY;
 
-    if (dist > 5) {
-        botMoveX /= dist;
-        botMoveY /= dist;
+    botElement.style.left = botX + 'px';
+    botElement.style.top = botY + 'px';
 
-        // Apply bot speed parameters
-        let botSpeed = NORMAL_SPEED * 0.95; 
-        if (botHasCrown) botSpeed *= CROWN_SPEED_BOOST;
-
-        let nextBotX = botX + botMoveX * botSpeed;
-        let nextBotY = botY + botMoveY * botSpeed;
-
-        // Process grid collisions using your pre-existing environment matrix
-        if (!processEnvironmentIntersection(nextBotX, botY)) botX = nextBotX;
-        if (!processEnvironmentIntersection(botX, nextBotY)) botY = nextBotY;
-
-        bot.style.left = botX + 'px';
-        bot.style.top = botY + 'px';
+    if (botX < 130 || botX > 4870 || botY < 130 || botY > 4870) {
+        botElement.style.opacity = "0.5";
+    } else {
+        if (botStunTimer > 0) {
+            // Context styles handled above
+        } else if (checkMudCollision(botX, botY)) {
+            botElement.style.filter = "sepia(0.6) brightness(0.75)";
+        } else {
+            if (botUntaggableActive) {
+                botElement.style.filter = "drop-shadow(0px 0px 14px #cc00ff) brightness(1.2)";
+            } else {
+                botElement.style.filter = "none";
+            }
+        }
+        botElement.style.opacity = "1";
     }
-    
-    // (Keep your tag checking collision calculations here at the bottom...)
+
+    evaluateBotItemUse(distanceToPlayer);
+    updateBotSpriteFrame();
+    updateCrownPosition();
+    updateTrackerArrowPosition();
+
+    if (tagCooldownTimer === 0 && distanceToPlayer < 45) {
+        if (!isPlayerIt && isUntaggableActive) {
+            isUntaggableActive = false;
+            botStunTimer = 60;
+            botStunMaxDuration = 60;
+            tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+        } else if (isPlayerIt && botUntaggableActive) {
+            botUntaggableActive = false;
+            playerStunTimer = 60;
+            playerStunMaxDuration = 60;
+            tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+        } else {
+            isPlayerIt = !isPlayerIt;
+            tagCooldownTimer = TAG_COOLDOWN_FRAMES;
+            if (playerWasPreviouslyIt === false && isPlayerIt === true) {
+                hasLostCrownThisRound = true;
+                chaseStartTime = 0;
+            } else if (playerWasPreviouslyIt === true && isPlayerIt === false) {
+                if (chaseStartTime === 0) {
+                    chaseStartTime = Date.now();
+                    if (crownGrabbedAtStart === false) crownGrabbedAtStart = true;
+                }
+            }
+            playerWasPreviouslyIt = isPlayerIt;
+        }
+    }
 }
+
 function createHotbarUIOverlay() {
     const existing = document.getElementById('game-hotbar-container');
     if (existing) existing.remove();
