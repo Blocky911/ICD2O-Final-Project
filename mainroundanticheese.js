@@ -50,6 +50,7 @@ function playGhostSound() {
 }
 
 // Intercept AI routine to append the ghost mechanic tracking
+// Intercept AI routine to append the ghost mechanic tracking
 executeBotIntelligence = function() {
     if (!botElement) return originalExecuteBotIntelligence();
 
@@ -58,8 +59,15 @@ executeBotIntelligence = function() {
     const originalIntersection = processEnvironmentIntersection;
 
     if (botIsGhostMode) {
-        // Ignore environmental obstacles while in ghost mode
-        processEnvironmentIntersection = function() { return false; };
+        // Ignore internal obstacles but respect outer map boundary walls (border trees)
+        processEnvironmentIntersection = function(targetX, targetY) { 
+            const px = targetX + playerOffset;
+            const py = targetY + playerOffset;
+            const pw = playerSize;
+            const ph = playerSize;
+            if (px < 130 || px + pw > 4870 || py < 130 || py + ph > 4870) return true;
+            return false; 
+        };
         botElement.style.opacity = "0.45";
         botElement.style.filter = "invert(1) drop-shadow(0px 0px 18px #00ffff)";
     }
@@ -77,7 +85,7 @@ executeBotIntelligence = function() {
     if (botX < minBoundary) botX = minBoundary;
     if (botX > maxBoundary) botX = maxBoundary;
     if (botY < minBoundary) botY = minBoundary;
-    if (botY > maxBoundary) maxBoundary; // fixed potential original script typo logic if needed, left as is
+    if (botY > maxBoundary) botY = maxBoundary; 
 
     // Re-synchronize style variables in case the safety clamp updated coordinates
     botElement.style.left = botX + 'px';
@@ -174,5 +182,7 @@ executeBotIntelligence = function() {
     }
 };
 
+// Start game and add 3-second startup grace period protection
+tagCooldownTimer = 180; 
 gameActive = true;
 requestAnimationFrame(coreExecutionEngine);
