@@ -4,18 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tag Royale - Inventory</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  
   <link rel="stylesheet" href="styles.css" />
 
   <style>
     body {
-      background-color: #0b0f19 !important; /* Deep arcade blue fallback */
+      background-color: #0b0f19 !important; /* Fallback deep navy background color */
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
-      /* CUSTOM GAME CURSOR FOR INVENTORY SCREEN */
+      overflow-x: hidden;                  /* Suppresses horizontal page shifting/scrolling */
+      
+      /* CUSTOM GAME CURSOR FOR INVENTORY SCREEN
+         Overwrites standard mouse pointer into an arcade reticle crosshair */
       cursor: crosshair !important;
     }
 
@@ -26,29 +30,31 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: -1 !important; /* Keeps it behind all elements */
-      pointer-events: none;
+      z-index: -1 !important; /* Keeps the grid layers rendered underneath all UI elements */
+      pointer-events: none;   /* Ensures clicks ignore this background layer and hit the buttons */
       
-      /* Creates the cyan neon grid lines */
+      /* Procedural Canvas Grid lines: Creates repetitive intersecting cyan neon paths via gradients */
       background-image: 
         linear-gradient(rgba(0, 210, 255, 0.08) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px);
       background-size: 50px 50px;
       
-      /* Adds a deep purple/cyan vignette glow to the edges */
+      /* Adds a deep purple/cyan vignette glow casting dark shades into borders */
       box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8), 
                   inset 0 -300px 300px rgba(0, 210, 255, 0.05);
       
-      /* Animates the grid lines so they scroll down slowly */
+      /* Runs a slow infinite loop moving the grid along a vertical path */
       animation: gridScroll 12s linear infinite;
     }
 
+    /* Logic for the scrolling background: shifts layout starting coordinates downward by 50px */
     @keyframes gridScroll {
       from { background-position: 0 0; }
       to { background-position: 0 50px; }
     }
 
-    /* Safety override: Makes sure your main container doesn't hide the background */
+    /* Safety override: Prevents opacity or styling parameters on the core container 
+       from blinding or breaking visibility of the retro background grid */
     .inventory-container {
       background: transparent !important;
       position: relative;
@@ -56,23 +62,30 @@
     }
 
     /* ================= MOUSE HOVER & IMAGE/TITLE RING STYLING ================= */
+    /* Forces the custom crosshair reticle onto standard buttons and items */
     .back-btn, .hotbar-slot, #inventory-action-btn {
       cursor: crosshair !important;
     }
 
-    /* Position visual anchors inside panels for the absolute pseudo rings */
+    /* Establishes localized coordinate maps so absolute pseudo-elements (::after rings) 
+       snap precisely around these wrappers */
     .big-item-visual, .hotbar-slot, .scroll-grid > div {
       position: relative;
     }
 
-    /* Ring around the Large Preview Sprite Image on Hover */
+    /* Large selected item display layout properties */
     .preview-art-sprite {
       position: relative;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease; /* Smooth enlargement window */
     }
+    
+    /* Pop-up scaling effect when hovering cursor over the current inspected element */
     .big-item-visual:hover .preview-art-sprite {
       transform: scale(1.05);
     }
+    
+    /* GENERATES THE ANIMATED RING ON HOVER:
+       Injects a rotating dashed golden target circle behind the sprite image */
     .big-item-visual:hover .preview-art-sprite::after {
       content: '';
       position: absolute;
@@ -84,21 +97,21 @@
       border: 3px dashed #ffd700;
       border-radius: 50%;
       box-shadow: 0 0 15px #ffd700;
-      animation: spinRing 4s linear infinite;
+      animation: spinRing 4s linear infinite; /* Constantly rotates the dashed border line */
       pointer-events: none;
     }
 
-    /* Ring around the Large Preview Title Header text on Hover */
+    /* Dynamic text color swap for preview header labels on card hover actions */
     .preview-title {
       position: relative;
       display: inline-block;
       transition: color 0.2s ease;
     }
     .big-item-visual:hover .preview-title {
-      color: #ffd700 !important;
+      color: #ffd700 !important; /* Highlights title text gold */
     }
 
-    /* Rings around the Hotbar quick access slots */
+    /* Glowing borders generated around quick use inventory hotbar item slots */
     .hotbar-slot:hover::after {
       content: '';
       position: absolute;
@@ -112,25 +125,26 @@
       pointer-events: none;
     }
 
-    /* Keyframe Animations for active elements */
+    /* Handles angular rotations from 0 to 360 degrees for the inspected hover rings */
     @keyframes spinRing {
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
-    /* Hover updates for navigation items */
+    /* Interactive text lighting for back / shop navigation shortcuts */
     .back-btn:hover {
       color: #ffd700 !important;
       text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
     }
 
+    /* Glow highlights for action buttons when they are interactive (:not(:disabled)) */
     #inventory-action-btn:not(:disabled):hover {
       background-color: #ffd700 !important;
       color: #000000 !important;
       box-shadow: 0 0 15px #ffd700;
     }
 
-    /* CSS rules targeting dynamic JavaScript item block content injection maps */
+    /* Styling rules that attach to programmatically constructed grid items generated by JavaScript */
     #items-scroll-grid div:hover {
       border-color: #ffd700 !important;
       box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);

@@ -4,41 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tag Royal(e) - Select Difficulty</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  
   <link rel="stylesheet" href="styles.css">
+  
   <style>
+    /* THEME-SPECIFIC INTERNAL STYLES:
+       These styles control the placement and animations of the temporary "Toast" pop-up alerts.
+    */
+    
+    /* Container that holds the pop-ups. Centered horizontally at the top of the screen. */
     .toast-container {
       position: fixed;
       top: 20px;
       left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
+      transform: translateX(-50%); /* Perfectly centers the container horizontally */
+      z-index: 9999;               /* Ensures toasts appear on top of all other elements */
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
+      flex-direction: column;      /* Allows multiple toasts to stack vertically */
+      gap: 10px;                   /* Spacing between multiple toasts */
+      pointer-events: none;        /* Allows clicks to pass through the container when empty */
     }
+    
+    /* Style for individual toast alert popups */
     .toast {
       min-width: 260px;
       max-width: 360px;
       padding: 14px 16px;
       border-radius: 14px;
-      background: rgba(13, 18, 26, 0.95);
+      background: rgba(13, 18, 26, 0.95); /* Dark, semi-transparent background */
       color: #fff;
       font-family: 'DM Sans', sans-serif;
       font-size: 0.95rem;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.08);
-      pointer-events: auto;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35); /* Heavy shadow to give depth */
+      border: 1px solid rgba(255,255,255,0.08); /* Subtle border for visibility on dark backgrounds */
+      pointer-events: auto;        /* Restores click actions specifically onto the popup text/buttons */
+      
+      /* Hidden by default state: invisible and shifted slightly upward */
       opacity: 0;
       transform: translateY(-8px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      transition: opacity 0.2s ease, transform 0.2s ease; /* Smooth fade-in and drop-down animation */
     }
+    
+    /* Active state when the toast is made visible via JavaScript */
     .toast.show {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0);    /* Resets position to its normal location */
     }
     /* Lock overlay kept minimal here; main theme rules are in styles.css */
   </style>
@@ -47,6 +61,7 @@
 
   <div class="scanlines"></div>
   <div class="bg-grid"></div>
+  
   <div id="toast-container" class="toast-container"></div>
 
   <main class="settings-container">
@@ -58,24 +73,30 @@
 
     <div class="difficulty-layout">
       <section class="settings-panel difficulty-panel">
+        
         <div class="difficulty-grid">
+          
           <div class="diff-card">
             <div class="circle-visual"><span class="placeholder-icon">🟢</span></div>
             <button class="diff-btn easy" onclick="selectDifficulty('easy')">EASY</button>
           </div>
+          
           <div class="diff-card">
             <div class="circle-visual"><span class="placeholder-icon">🟡</span></div>
             <button class="diff-btn medium" onclick="selectDifficulty('medium')">MEDIUM</button>
           </div>
+          
           <div class="diff-card">
             <div class="circle-visual"><span class="placeholder-icon">🔴</span></div>
             <button class="diff-btn hard" onclick="selectDifficulty('hard')">HARD</button>
           </div>
+          
           <div class="diff-card impossible">
             <div class="circle-visual"><span class="placeholder-icon">🟣</span></div>
             <div class="lock-overlay" aria-hidden="true"><span class="lock-icon">🔒</span>IMPOSSIBLE MODE</div>
             <button class="diff-btn impossible" onclick="selectDifficulty('impossible')">IMPOSSIBLE</button>
           </div>
+          
         </div>
       </section>
     </div>

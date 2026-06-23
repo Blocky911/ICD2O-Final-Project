@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tag Royale — Tag Game</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -12,13 +13,15 @@
   <style>
     /* --- CUSTOM MOUSE POINTER HIGHLIGHT --- */
     * {
-      cursor: none !important;
+      /* HARDWARE OVERRIDE: Destroys default operating system hardware cursors globally. 
+         This isolates pointer interactions so our customized coordinate tracking canvas ring can execute. */
+      cursor: none !important; 
     }
 
     html, body {
       width: 100%;
       min-height: 100vh;
-      overflow: hidden;  
+      overflow: hidden;  /* Prevents accidental document scroll leakage from structural bounce animations */
       margin: 0;
       padding: 0;
       background-color: #0b1411; 
@@ -32,13 +35,18 @@
       border-radius: 50%;
       position: fixed;
       transform: translate(-50%, -50%);
-      pointer-events: none;
+      /* PERFORMANCE NOTE: 'pointer-events: none' keeps this custom tracker div from absorbing mouse coordinates. 
+         Without this, standard buttons lying directly underneath the user cursor will fail to trigger hover or click events. */
+      pointer-events: none; 
       z-index: 9999;
       box-shadow: 0 0 15px #ff0055, inset 0 0 10px #ff0055;
+      /* GPU ACCELERATION: Utilizing transform over left/top coordinates keeps updates bound directly 
+         to composite layers, mitigating layout reflow bottlenecks on modern displays. */
       transition: transform 0.08s ease-out, background 0.2s, border-color 0.2s;
     }
 
     .cursor-highlight.clicking {
+      /* RUNTIME MUTATION: Toggled via JavaScript click tracking listeners to register physical input feedback responses */
       transform: translate(-50%, -50%) scale(0.75);
       background: rgba(0, 255, 200, 0.4);
       border-color: #00ffc8;
@@ -57,7 +65,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 1000; /* Stacks asset validation layers safely over the functional viewport layout */
     }
 
     .opening-text-stage {
@@ -94,7 +102,8 @@
     }
 
     .animate-progress {
-      animation: splashProgress 2s forwards cubic-bezier(0.4, 0, 0.2, 1);
+      /* LIFE CYCLE MECHANIC: Governs initial layout compilation timeouts before dispatching reveal loops */
+      animation: splashProgress 2s forwards cubic-bezier(0.4, 0, 0.2, 1); 
     }
 
     /* Cinematic White Flash Overlay */
@@ -105,7 +114,7 @@
       width: 100vw;
       height: 100vh;
       background: #ffffff;
-      z-index: 1001;
+      z-index: 1001; /* Layered immediately above the splash screen to mask transition pop-in */
       opacity: 0;
       pointer-events: none;
     }
@@ -122,7 +131,7 @@
       width: 100vw;
       height: 100vh;
       background: linear-gradient(to bottom, #000000, #0b1411);
-      z-index: 2000;
+      z-index: 2000; /* Highest priority container; acts as a global blind masking page exits and link routing events */
       pointer-events: none;
     }
 
@@ -143,7 +152,7 @@
       width: 100vw;
       height: 100vh; 
       pointer-events: none;
-      z-index: 1;
+      z-index: 1; /* Anchors graphics layers firmly underneath active interactive controls */
       overflow: hidden;
       background: radial-gradient(circle at 50% 40%, #1c331a 0%, #070d0b 80%);
     }
@@ -161,7 +170,9 @@
         linear-gradient(rgba(83, 148, 44, 0.4) 2px, transparent 2px),
         linear-gradient(90deg, rgba(83, 148, 44, 0.4) 2px, transparent 2px);
       background-size: 16px 16px, 50px 50px, 50px 50px;
-      transform: perspective(400px) rotateX(65deg);
+      /* VISUAL MATH NOTE: This pseudo element uses a heavy 3D X-axis pitch rotation combined with perspective depth scaling. 
+         This simulates a retro Mode-7 pseudo-3D plain horizon layout directly inside CSS without running WebGL engines. */
+      transform: perspective(400px) rotateX(65deg); 
       transform-origin: top center;
     }
 
@@ -177,20 +188,20 @@
     /* --- MATCH-ACCURATE PROPS WITH LOGS & HOUSES --- */
     .world-prop-tree {
       position: absolute;
-      bottom: 24vh; /* Pulled further forward out of the background tree wall grid */
+      bottom: 24vh; /* Advanced baseline positioning to align accurately with spatial perspective rules */
       display: flex;
       flex-direction: column;
       align-items: center;
-      z-index: 10; /* Elevated layer to separate correctly from background elements */
+      z-index: 10; 
     }
 
     .world-prop-tree.left-side {
-      left: 20%; /* Shifted right into a clear, open grass segment */
+      left: 20%; 
       transform: scale(0.95);
     }
 
     .world-prop-tree.right-side {
-      right: 50%; /* Adjusted toward the center lane to balance space opposite the house */
+      right: 50%; 
       transform: scale(1.15);
     }
 
@@ -291,7 +302,9 @@
       justify-content: space-between;
       width: 160px; 
       height: 100%;
-      animation: completeWrapAroundChase 14s linear infinite;
+      /* RENDERING MECHANIC: Drives endless left-to-right looping movement of the mini chase layout 
+         via hardware-linked keyframe structures. */
+      animation: completeWrapAroundChase 14s linear infinite; 
     }
 
     /* Shared In-Game Style 2D Box Character Design Base Layout */
@@ -327,6 +340,7 @@
     .player-actor-red {
       background-color: #ff4a4a;
       box-shadow: 0 0 20px rgba(255, 74, 74, 0.6), 0 10px 15px rgba(0,0,0,0.4);
+      /* BEHAVIOR NOTE: Emulates continuous vertical game velocity gait parameters via alternate easing loops */
       animation: boundingRunGait 0.2s infinite alternate ease-in-out;
     }
 
@@ -344,13 +358,15 @@
     .bot-actor-blue {
       background-color: #0077ff;
       box-shadow: 0 0 20px rgba(0, 119, 255, 0.6), 0 10px 15px rgba(0,0,0,0.4);
-      animation: boundingRunGait 0.16s infinite alternate-reverse ease-in-out;
+      /* ANIMATION MATH NOTE: Uses 'alternate-reverse' alongside a slightly compressed duration offset 
+         to desynchronize the bot's stride pattern from the runner, creating a natural organic match appearance. */
+      animation: boundingRunGait 0.16s infinite alternate-reverse ease-in-out; 
     }
 
     /* --- UI STRUCTURE GRID --- */
     .container {
       position: relative;
-      z-index: 40;
+      z-index: 40; /* Elevated stack assignment ensures elements map mouse hit tests reliably over deep environment components */
       display: grid;
       grid-template-columns: 1fr; 
       gap: 30px;
@@ -358,14 +374,14 @@
       max-width: 1100px; 
       margin: 0 auto;
       height: 100vh;
-      padding: 0 30px; 
+      padding: 0 30px;
       box-sizing: border-box;
       align-items: center;
     }
 
     .main-left-content {
       position: fixed;
-      top: 48%; 
+      top: 48%;
       left: 8%;
       transform: translateY(-50%);
       display: flex;
@@ -435,6 +451,7 @@
       text-align: center;
     }
 
+    /* THEMATIC SCHEME MAPPING: Configures specific button anchor color rules matching sub-system styles.css guidelines */
     .btn-primary a.nav-link { color: #000000 !important; }
     .btn-secondary a.nav-link { color: #3bc7b2 !important; }
     .btn-inventory a.nav-link { color: #f73656 !important; }
@@ -451,7 +468,9 @@
     .hero-sub, .crown-banner, .actions, .achievement-menu-btn {
       opacity: 0;
       transform: translateY(15px);
-      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      /* TIMING MECHANIC: Leveraged by cascading script timeouts inside core script files 
+         to glide dashboard links up into clear tracking focus incrementally. */
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out; 
     }
 
     body.stage-logo-reveal .logo-container {
@@ -509,11 +528,13 @@
       display: flex;
       flex-direction: column;
       max-height: 80vh;
-      z-index: 150;
+      z-index: 150; /* High priority visibility mask layer; overlays basic page interaction areas cleanly */
       backdrop-filter: blur(14px);
       opacity: 0;
       visibility: hidden;
-      pointer-events: none;
+      /* INTERACTION NOTE: 'pointer-events: none' keeps a hidden sidebar layout container from eating clicks 
+         meant for underlying level assets when the drawer state is rolled back. */
+      pointer-events: none; 
       transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.4s;
     }
 
@@ -569,7 +590,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      overflow-y: auto; 
+      overflow-y: auto; /* Scans container depth thresholds and initializes internal scrolls if layout boundaries overflow */
       padding-right: 4px;
     }
 

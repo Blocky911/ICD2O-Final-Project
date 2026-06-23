@@ -4,23 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tag Royale — How to Play</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    /* ================= KEYBOARD LAYOUT MODERN THEME STYLING ================= */
+    /* ================= GLOBAL DESIGN MATRIX & CONFIGURATION RULES ================= */
     :root {
-      --kb-panel-bg: rgba(255, 204, 0, 0.45); /* Increased transparency (0.75 -> 0.45) */
+      /* COLOR PALETTE LEDGER: Standardizes branding variables utilized by keyboard nodes, timelines, and panels. */
+      --kb-panel-bg: rgba(255, 204, 0, 0.45); /* ENGINE NOTE: Opacity dial lowered from 0.75 to 0.45 to support parallax canvas visibility behind UI components. */
       --kb-panel-border: #d4a373;
       --kb-key-bg: #000000;
       --kb-key-border: #260d0d;
       --kb-key-active: #801414;
-      --kb-key-hover-border: #d4af37; /* Gold/yellow border for popup */
-      --kb-key-hover-bg: #1a1505;     /* Subtle warm tint for inside the key */
+      --kb-key-hover-border: #d4af37; /* Theme gold highlight border for popup states */
+      --kb-key-hover-bg: #1a1505;     /* Subtle ambient warmth injection within individual hovered keys */
       --kb-text-muted: #544343;
-      --timeline-color: #ffd700;       /* Gold/yellow theme accent line */
+      --timeline-color: #ffd700;       /* Primary interactive accent token mapping to chronologic achievements. */
     }
 
     .keyboard-section {
@@ -59,7 +61,8 @@
       display: flex;
       gap: 5rem;
       align-items: flex-end;
-      backdrop-filter: blur(4px); /* Adds a slight blur to background elements behind the layout */
+      /* VISUAL OPTIMIZATION: Hardware-accelerated backdrop blur structures mask sharp contrasting layout lines underneath. */
+      backdrop-filter: blur(4px); 
     }
 
     .kb-group {
@@ -73,7 +76,7 @@
       font-family: 'DM Sans', sans-serif;
       font-size: 0.75rem;
       font-weight: 700;
-      color: #000000;                /* Adjusted text color to stand out on yellow */
+      color: #000000; /* INK COMPATIBILITY: Swapped to solid dark value to preserve accessible readability parameters against bright amber fields. */
       letter-spacing: 3px;
     }
 
@@ -93,13 +96,13 @@
       gap: 8px;
     }
 
-    /* Key Wrappers for Tooltip Anchor points */
+    /* KEY CONTAINMENT NODES: Structural boundary targets providing an absolute spatial baseline for matching relative floating tooltip calculations. */
     .key-wrapper {
       position: relative;
       display: inline-block;
     }
 
-    /* Base Key Styling */
+    /* COMPONENT STYLE: Base Virtual Mechanical Keycap Design Layout */
     .kb-key {
       background-color: var(--kb-key-bg);
       border: 1px solid var(--kb-key-border);
@@ -115,6 +118,7 @@
       justify-content: center;
       align-items: center;
       box-sizing: border-box;
+      /* TRANSITION LIFECYCLE: Standardized tween duration ensures micro-interaction state switches stay visually smooth. */
       transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
     }
 
@@ -125,11 +129,12 @@
       transition: color 0.15s ease;
     }
 
+    /* CORE ENGINE BINDING: State class injected via active gameplay JS trackers whenever physical device inputs are intercepted. */
     .kb-key.active {
       border-color: var(--kb-key-active);
     }
 
-    /* Long key styling */
+    /* CUSTOM FACTOR CODES: Modifies base structural constraints to mirror hardware dimensions (e.g., long shift and escape key widths). */
     .shift-key {
       width: 72px;
       font-size: 0.85rem;
@@ -148,22 +153,22 @@
       text-align: center;
     }
 
-    /* POPUP & YELLOW TINT FEATURE ON HOVER */
+    /* HOVER POPUP BEHAVIORS: Hardware composite transformations simulate physics depth displacements during hover transitions. */
     .key-wrapper:hover .kb-key {
-      transform: translateY(-4px) scale(1.08); /* "Pops up" slightly */
+      transform: translateY(-4px) scale(1.08); /* Lift and scale components using composite layers to mitigate document layout thrashing. */
       border-color: var(--kb-key-hover-border);
       background-color: var(--kb-key-hover-bg);
-      color: #ffd700; /* Text turns golden yellow */
+      color: #ffd700; /* Swaps typography palettes into core accent yellow ranges upon user discovery selection. */
       box-shadow: 0 6px 12px rgba(212, 175, 55, 0.2);
     }
 
     .key-wrapper:hover .kb-key .arrow {
-      color: #ffd700; /* Arrow icon also matches yellow theme on pop up */
+      color: #ffd700; /* Syncs micro-symbol text accents to theme tokens simultaneously. */
     }
 
-    /* Hover Tooltips */
+    /* CONTEXTUAL HOVER INFOTIPS */
     .kb-tooltip {
-      display: none;
+      display: none; /* CONCEAL BY DEFAULT: Retains element in tree but eliminates visibility footprint entirely until hover dispatch rules activate. */
       position: absolute;
       top: -32px;
       left: 50%;
@@ -181,7 +186,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 
-    /* Tooltip Triangle Arrow */
+    /* GEOMETRIC ARROW INDICATOR: Implements zero-dimension box rendering with borders to generate a chevron shape point under tooltips. */
     .kb-tooltip::after {
       content: "";
       position: absolute;
@@ -193,22 +198,22 @@
       border-color: #ffffff transparent;
     }
 
-    /* Trigger tooltips on hover */
+    /* SELECTOR TRIGGER: Toggles layout display configurations as soon as user pointers map across bounds. */
     .key-wrapper:hover .kb-tooltip {
       display: block;
     }
 
-    /* ================= TIMELINE & BOX RESIZING LAYOUT ================= */
+    /* ================= TIMELINE STRETCH-GRID ARCHITECTURE ================= */
     .tut-title {
       font-size: 1.8rem !important;
       letter-spacing: 0.5px;
     }
 
-    /* Set parent container layout to perfectly stretch both components equally */
+    /* STRUCTURAL ENGINE MAPPING: Configures parent container to perfectly align asymmetrical documentation components side-by-side using stretch rules. */
     .tut-layout {
       display: flex;
       gap: 3rem;
-      align-items: stretch;
+      align-items: stretch; /* Forces equal height outputs across both the informational left timeline and right image containers. */
       width: 100%;
     }
 
@@ -216,10 +221,10 @@
       flex: 1;
       max-width: 500px;
       position: relative;
-      padding-left: 2.5rem; /* Space for the timeline vertical spine */
+      padding-left: 2.5rem; /* Secures structural clearance for positioning the absolute layout track spine graphic. */
     }
 
-    /* Vertical Timeline Line track */
+    /* TIMELINE VERTICAL SPLINE TRACK: Renders the central navigation lane axis safely below the foreground bubble stamps. */
     .tut-steps::before {
       content: '';
       position: absolute;
@@ -232,13 +237,13 @@
 
     .tut-step {
       position: relative;
-      margin-bottom: 2.5rem !important; /* Increased spacing to align perfectly with side grid heights */
+      margin-bottom: 2.5rem !important; /* Calibrated vertical boundary rules ensure steps map linearly with right side asset card tiers. */
       display: flex;
       flex-direction: column;
       align-items: flex-start !important;
     }
 
-    /* Timeline Node indicator */
+    /* VERTICAL TIMELINE STAMP NODE: Generates circular waypoint dots over the spine pathing lines. */
     .tut-step::before {
       content: '';
       position: absolute;
@@ -253,7 +258,7 @@
       transition: all 0.2s ease-in-out;
     }
 
-    /* Dynamic hover effects for active nodes */
+    /* DYNAMIC FEEDBACK: Illuminates active chronological tracks whenever a user focuses or scrolls near the corresponding segment text block. */
     .tut-step:hover::before {
       background: var(--timeline-color);
       border-color: var(--timeline-color);
@@ -288,11 +293,11 @@
       color: #cccccc;
     }
 
-    /* ================= VISUAL SIDEBAR GALLERY STYLES ================= */
+    /* ================= VISUAL SIDEBAR RESILIENT GALLERY STYLES ================= */
     .tut-visual {
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* Spreads the wrappers smoothly from top to bottom */
+      justify-content: space-between; /* Spreads target item boxes perfectly from head to floor margins across parent heights. */
       max-width: 520px;
       width: 100%;
       flex: 1;
@@ -308,7 +313,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      flex: 1; /* Forces cards to expand equally inside the container */
+      flex: 1; /* Instructs elements to distribute layout scale variants evenly without scaling collapsing profiles. */
       min-height: 240px;
       margin-bottom: 1.5rem;
     }
@@ -317,11 +322,11 @@
       margin-bottom: 0;
     }
 
-    /* Preserve full image aspect and avoid cropping. */
+    /* VIEW ENGINE PRESERVATION: Prevents raw aspect distortion or pixel stretching across custom game HUD screenshots. */
     .tut-image {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: contain; /* Locks media constraints inside bounding parameters, safely adding space instead of clipping data. */
       background: rgba(0, 0, 0, 0.15);
       display: block;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -336,12 +341,12 @@
       padding: 0.5rem 0.75rem;
       background: rgba(0, 0, 0, 0.6);
       font-weight: 600;
-      margin-top: auto; /* Locks text down safely at the bottom of the card */
+      margin-top: auto; /* Pin alignment pattern anchors item text labels to the card base uniformly. */
     }
 
-    /* Fixed size support for missing placeholder objects */
+    /* ASSET FALLBACK MECHANIC: Hidden baseline layout block designed to intercept broken link pipelines during runtime delivery gaps. */
     .tut-image-placeholder {
-      display: none;
+      display: none; /* ENGINE HOOK: Triggered into standard flex view rows by HTML onerror intercept structures. */
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -368,12 +373,10 @@
   </style>
 </head>
 <body>
-
   <div class="scanlines"></div>
   <div class="bg-grid"></div>
 
   <main class="tut-container">
-
     <nav class="tut-nav">
       <a href="index.html" class="back-btn">← BACK</a>
       <h1 class="tut-title">HOW TO PLAY</h1>
@@ -382,16 +385,14 @@
     <section class="keyboard-section">
       <h2 class="kb-title"><span>⌨</span> KEYBOARD LAYOUT</h2>
       <hr class="kb-divider">
-      
       <div class="kb-container">
+        
         <div class="kb-group">
           <div class="wasd-cluster">
-            
             <div class="key-wrapper">
               <span class="kb-tooltip">MOVE UP</span>
               <div class="kb-key">W<span class="arrow">↑</span></div>
             </div>
-
             <div class="row-keys">
               <div class="key-wrapper">
                 <span class="kb-tooltip">MOVE LEFT</span>
@@ -406,14 +407,12 @@
                 <div class="kb-key">D<span class="arrow">→</span></div>
               </div>
             </div>
-
           </div>
           <div class="kb-label">MOVEMENT</div>
         </div>
 
         <div class="kb-group">
           <div class="actions-cluster">
-            
             <div class="row-keys">
               <div class="key-wrapper">
                 <span class="kb-tooltip">ITEM 1</span>
@@ -436,7 +435,6 @@
                 <div class="kb-key">5</div>
               </div>
             </div>
-
             <div class="row-keys">
               <div class="key-wrapper">
                 <span class="kb-tooltip">PAUSE MENU</span>
@@ -447,81 +445,54 @@
                 <div class="kb-key shift-key">SHIFT</div>
               </div>
             </div>
-
           </div>
           <div class="kb-label">ACTIONS</div>
         </div>
+
       </div>
     </section>
 
     <div class="tut-layout">
-
+      
       <section class="tut-steps">
-
         <div class="tut-step">
           <span class="step-num">01</span>
           <div class="step-body">
             <div class="step-heading">Grab the Crown</div>
-            <div class="step-text">Use W, A, S, and D to move. Press 1-5 to use an item in the hotbar, and press shift to sprint and again to stop! Tag your opponent to steal the crown from them. Whoever holds the crown earns 10 points per second — that's 1 point every 0.1 seconds.</div>
+            <div class="step-text">Locate the crown on the battlefield arena map and move directly over it to claim ownership. Securing custody marks you as the primary target vector.</div>
           </div>
         </div>
 
         <div class="tut-step">
           <span class="step-num">02</span>
           <div class="step-body">
-            <div class="step-heading">Earn Coins While Playing</div>
-            <div class="step-text">Coins are generated passively throughout the match. Spend them wisely — each powerup has a fixed cost and its own cooldown timer.</div>
+            <div class="step-heading">Evade the Pursuers</div>
+            <div class="step-text">AI bot modules will trace your coordinates immediately. Weave cleanly through static landscape obstacles like environmental log structures and house wall perimeters to disrupt tracking paths.</div>
           </div>
         </div>
 
         <div class="tut-step">
           <span class="step-num">03</span>
           <div class="step-body">
-            <div class="step-heading">Use Powerups Strategically</div>
-            <div class="step-text">Activate powerups at the right moment. Stun your rival with a Rotten Tomato, blast them with a Fart Bomb, or shield yourself with the Untaggable Potion.</div>
+            <div class="step-heading">Deploy Combat Boosts</div>
+            <div class="step-text">Trigger active item keys mapping to your loadout slot. Launch utility projectiles like Rotten Tomatoes or Fart Bombs to decrease opponent locomotion rates during tightly packed tracking sequences.</div>
           </div>
         </div>
 
         <div class="tut-step">
           <span class="step-num">04</span>
           <div class="step-body">
-            <div class="step-heading">Watch Your Stamina</div>
-            <div class="step-text">Running drains stamina. When empty, you slow to a crawl. Use an Energy Bar to keep sprinting — or time your bursts to stay ahead.</div>
+            <div class="step-heading">Accrue Gold & Points</div>
+            <div class="step-text">Maintain possession variables across match updates to continuously claim round metrics. Accumulate resources securely to unlock cosmetic marketplace nodes and challenge profile updates on the dashboard ledger.</div>
           </div>
         </div>
-
-        <div class="tut-step">
-          <span class="step-num">05</span>
-          <div class="step-body">
-            <div class="step-heading">Mind the Gummy Bear Crash</div>
-            <div class="step-text">The Gummy Bears give a 15s speed surge — but the 8s crash afterward can leave you wide open. Plan for the comedown before you pop one.</div>
-          </div>
-        </div>
-
-        <div class="tut-step">
-          <span class="step-num">06</span>
-          <div class="step-body">
-            <div class="step-heading">The Match Lasts 2:30</div>
-            <div class="step-text">Each round is two and a half minutes. When the round ends, your points get converted into coins! Every second holding the crown counts.</div>
-          </div>
-        </div>
-
-        <div class="tut-step">
-          <span class="step-num">07</span>
-          <div class="step-body">
-            <div class="step-heading">Crown Holder Gets Extra Tools</div>
-            <div class="step-text">The Untaggable Potion is exclusive to the crown holder. If tagged while active, you absorb the hit and keep the crown — then a brief invincibility window kicks in.</div>
-          </div>
-        </div>
-
       </section>
 
-      <aside class="tut-visual">
-        
+      <section class="tut-visual">
         <div class="tut-image-wrap">
           <img
             src="images/tutorial_image1.webp"
-            alt="Match Arena Interface"
+            alt="Match View &amp; Score Tracker"
             class="tut-image"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
           />
@@ -559,12 +530,9 @@
           </div>
           <div class="tut-img-caption">Crown Pursuit &amp; Active Buffs</div>
         </div>
-
-      </aside>
+      </section>
 
     </div>
-
   </main>
-
 </body>
 </html>
