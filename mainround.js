@@ -467,13 +467,14 @@ function evaluateBotItemUse(distance) {
     }
 }
 
-// Common landmarks to allow the AI to gravitate to
+// Common landmarks to allow the AI to gravitate to, preventing sticking towards corners and sides of the map
+// They are both used to guide the AI's wandering behavior and to provide a reference for the AI to "remember" where the player was last seen
 const LANDMARKS = [
-    { name: 'house', x: 2000, y: 2000, radius: 250 }, // Coordinates near your house element
-    { name: 'pool', x: 1200, y: 1500, radius: 200 },  // Coordinates near your pool element
+    { name: 'house', x: 2700, y: 2300, radius: 450 },       // Corrected to reflect center of 1200x1200px container at 2100,1700
+    { name: 'pool', x: 1650, y: 2675, radius: 250 },        // Corrected to reflect center of 500x350px pool at 1400,2500
     { name: 'bush_cluster_1', x: 800, y: 2500, radius: 150 },
-    { name: 'bush_cluster_2', x: 2800, y: 1000, radius: 150 },
-    { name: 'center_chaos', x: 2000, y: 2000, radius: 400 }
+    { name: 'bush_cluster_2', x: 3850, y: 650, radius: 200 }, // Corrected based on hedge positions in HTML
+    { name: 'center_chaos', x: 2500, y: 2500, radius: 500 }   // Absolute map center (5000x5000 total map size)
 ];
 
 let aiCurrentLandmarkTarget = null;
